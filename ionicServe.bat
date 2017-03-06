@@ -1,0 +1,2 @@
+cd GlucoMan
+ionic serve
