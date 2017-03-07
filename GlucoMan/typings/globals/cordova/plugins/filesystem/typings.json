@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/e729485568cee259f220eea8c4f8a8536c3a78c7/cordova/plugins/FileSystem.d.ts",
+    "raw": "registry:dt/cordova/plugins/filesystem#0.0.0+20160823215534",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/e729485568cee259f220eea8c4f8a8536c3a78c7/cordova/plugins/FileSystem.d.ts"
+  }
+}
