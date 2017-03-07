@@ -9,6 +9,11 @@ import { NutritionPage } from '../pages/nutrition/nutrition';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
 
+import { BrowserModule } from '@angular/platform-browser';
+import { ChartModule } from 'angular2-highcharts';
+
+declare var require: any;
+
 @NgModule({
   declarations: [
     MyApp,
@@ -21,7 +26,9 @@ import { TabsPage } from '../pages/tabs/tabs';
     TabsPage
   ],
   imports: [
-    IonicModule.forRoot(MyApp)
+    IonicModule.forRoot(MyApp),
+    BrowserModule,
+    ChartModule.forRoot(require('highcharts'))
   ],
   bootstrap: [IonicApp],
   entryComponents: [
