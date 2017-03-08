@@ -11,21 +11,19 @@ declare var cordova: any;
 export class NutritionPage {
   resultBarcode: any;
 
-/*  static get parameters(){
-    return [[Http]];
-  }
-  */
+  /*  static get parameters(){
+      return [[Http]];
+    }
+    */
   constructor(public navCtrl: NavController, public platform: Platform,
     public storage: Storage) {
 
   }
 
-  scan(){
+  scan() {
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
-        this.storage.ready().then(() => {
-          this.storage.set('valueBarcodeNutrition', result.text);
-        });
+        this.storage.set('valueBarcodeNutrition', result.text);
       });
     });
   }
