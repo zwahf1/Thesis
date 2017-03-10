@@ -11,9 +11,14 @@ declare var cordova: any;
 export class MedicationPage {
   resultFromBarcode: any;
 
-  constructor(public platform: Platform, public navController: NavController,
-     public storage: Storage) {
+  medis: [{title: string, dose: string}];
 
+  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage) {
+    this.medis = [{title: "Algifor", dose: "10mg"},{title: "Ibuprofen",dose: "2/Tag"}];
+  }
+
+  detailMedi(medi) {
+    
   }
 
   scan() {

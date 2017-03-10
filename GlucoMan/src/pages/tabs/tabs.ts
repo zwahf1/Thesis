@@ -12,11 +12,10 @@ import { SettingsPage } from '../settings/settings';
 export class TabsPage {
   // this tells the tabs component which Pages
   // should be each tab's root Page
-  tab1Root: any = MeasurementsPage;
-  tab2Root: any = NutritionPage;
-  tab3Root: any = HomePage;
+  tab1Root: any = HomePage;
+  tab2Root: any = MeasurementsPage;
+  tab3Root: any = NutritionPage;
   tab4Root: any = MedicationPage;
-  tab5Root: any = SettingsPage;
 
   constructor() {
 

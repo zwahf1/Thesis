@@ -1,19 +1,47 @@
 <ion-header>
-  <ion-navbar>
-    <ion-title>Medication</ion-title>
-  </ion-navbar>
+  <ion-grid class="menuGrid">
+    <ion-row align-items: center>
+      <ion-col class="menuCol">
+        {{resultFromBarcode}}
+      </ion-col>
+      <ion-col class="menuCol">
+        <ion-title>Home</ion-title>
+      </ion-col>
+      <ion-col class="menuCol">
+        <button primary (click)="scan()">
+          <ion-icon name="add-circle"></ion-icon>
+        </button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-header>
 
 <ion-content padding>
-  <h2>Welcome to Ionic!</h2>
-  <p>
-    This starter project comes with simple tabs-based layout for apps
-    that are going to primarily use a Tabbed UI.
-  </p>
-  <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
-  </p>
-   <button primary (click)="scan()">Scan</button>
-   {{resultFromBarcode}}
+  <ion-list class="mediList">
+
+    <ion-item-divider class="divider"> Regelmässige Medikamente </ion-item-divider>
+
+    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+      {{m.title}}
+    </ion-item>
+
+    <ion-item-divider class="divider"> Selbstgekaufte Medikamente </ion-item-divider>
+
+    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+      {{m.title}}
+    </ion-item>
+
+    <ion-item-divider class="divider"> Insulin </ion-item-divider>
+
+    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+      {{m.title}}
+    </ion-item>
+
+    <ion-item-divider class="divider"> Unverträglichkeiten </ion-item-divider>
+
+    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+      {{m.title}}
+    </ion-item>
+
+  </ion-list>
 </ion-content>

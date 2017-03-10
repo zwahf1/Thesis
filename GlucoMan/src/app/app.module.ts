@@ -9,6 +9,7 @@ import { MedicationPage } from '../pages/medication/medication';
 import { NutritionPage } from '../pages/nutrition/nutrition';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
+import { ContactsPage } from '../pages/contacts/contacts';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
@@ -25,7 +26,8 @@ declare var require: any;
     MedicationPage,
     NutritionPage,
     SettingsPage,
-    TabsPage
+    TabsPage,
+    ContactsPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -41,7 +43,8 @@ declare var require: any;
     MedicationPage,
     NutritionPage,
     SettingsPage,
-    TabsPage
+    TabsPage,
+    ContactsPage
   ],
   providers: [
     Storage,
