@@ -15,6 +15,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
 import { Storage } from '@ionic/storage';
 
+import { HttpModule, JsonpModule } from '@angular/http';
+
 declare var require: any;
 
 @NgModule({
@@ -32,7 +34,9 @@ declare var require: any;
   imports: [
     IonicModule.forRoot(MyApp),
     BrowserModule,
-    ChartModule.forRoot(require('highcharts'))
+    ChartModule.forRoot(require('highcharts')),
+    HttpModule,
+    JsonpModule
   ],
   bootstrap: [IonicApp],
   entryComponents: [

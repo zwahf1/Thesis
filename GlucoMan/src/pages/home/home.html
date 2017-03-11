@@ -1,19 +1,11 @@
 <ion-header>
   <ion-navbar>
-    <ion-grid class="menuGrid">
-      <ion-row align-items: center>
-        <ion-col class="menuCol">
-        </ion-col>
-        <ion-col class="menuCol">
-          <ion-title>Home</ion-title>
-        </ion-col>
-        <ion-col class="menuCol">
-          <button ion-button>
-            <ion-icon name="settings"></ion-icon>
-          </button>
-        </ion-col>
-      </ion-row>
-    </ion-grid>
+    <ion-title>Home</ion-title>
+    <ion-buttons end>
+      <button ion-button>
+        <ion-icon name="settings"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 <!--
   <button ion-button>
@@ -23,22 +15,29 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-grid>
-    <ion-row align-items: center justify-content: around>
+  <ion-grid width-100>
+    <ion-row>
       <ion-col>
       </ion-col>
     </ion-row>
     <ion-row align-items: center>
-      <ion-col>
+      <ion-col width-5></ion-col>
+
+      <ion-col width-40>
         <button ion-button (click)="openContacts()" class="homeButton">
           Kontakte
         </button>
       </ion-col>
-      <ion-col>
+
+      <ion-col width-10></ion-col>
+
+      <ion-col width-40>
         <button ion-button (click)="openSettings()" class="homeButton">
           settings
         </button>
       </ion-col>
+
+      <ion-col width-5 ></ion-col>
     </ion-row>
   </ion-grid>
 </ion-content>

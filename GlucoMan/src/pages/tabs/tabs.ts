@@ -5,6 +5,7 @@ import { MeasurementsPage } from '../measurements/measurements';
 import { MedicationPage } from '../medication/medication';
 import { NutritionPage } from '../nutrition/nutrition';
 import { SettingsPage } from '../settings/settings';
+import { LoginPage } from '../login/login';
 
 @Component({
   templateUrl: 'tabs.html'
@@ -18,6 +19,6 @@ export class TabsPage {
   tab4Root: any = MedicationPage;
 
   constructor() {
-
+    
   }
 }

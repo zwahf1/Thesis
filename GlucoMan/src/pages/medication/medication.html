@@ -1,19 +1,12 @@
 <ion-header>
-  <ion-grid class="menuGrid">
-    <ion-row align-items: center>
-      <ion-col class="menuCol">
-        {{resultFromBarcode}}
-      </ion-col>
-      <ion-col class="menuCol">
-        <ion-title>Home</ion-title>
-      </ion-col>
-      <ion-col class="menuCol">
-        <button primary (click)="scan()">
-          <ion-icon name="add-circle"></ion-icon>
-        </button>
-      </ion-col>
-    </ion-row>
-  </ion-grid>
+  <ion-navbar>
+    <ion-title>Medikation</ion-title>
+    <ion-buttons end>
+      <button primary (click)="getMedi('test')">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+    </ion-buttons>
+  </ion-navbar>
 </ion-header>
 
 <ion-content padding>
@@ -21,25 +14,25 @@
 
     <ion-item-divider class="divider"> Regelmässige Medikamente </ion-item-divider>
 
-    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(m)" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Selbstgekaufte Medikamente </ion-item-divider>
 
-    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of selfMedis" (click)="detailMedi(m)" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Insulin </ion-item-divider>
 
-    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of insulin" (click)="detailMedi(m)" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Unverträglichkeiten </ion-item-divider>
 
-    <ion-item *ngFor="let m of medis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of intolerances" (click)="detailMedi(m)" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
