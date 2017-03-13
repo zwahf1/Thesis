@@ -51,7 +51,16 @@ export class MedicationPage {
   detailMedi(medi) {
 
   }
+/**************************************************
+              scan a barcode
 
+conneciton to cordova plugin scanner to get the barcode.
+Get the medication data from the hospINDEX and
+store it ith the storage.
+
+storage:
+  MedicationData: the last scanned medication
+***************************************************/
   scan() {
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
@@ -66,6 +75,16 @@ export class MedicationPage {
     });
   }
 
+  /**************************************************
+                test for scanner
+
+  get the information about the medication Algifor
+  for testing on the web,because the cordova plugin
+  only runs on the builded app.
+
+  storage:
+    MedicationData: the last scanned medication
+  ***************************************************/
   scanTest() {
 
     var mediData = this.getHCIData('7680504110875');
@@ -144,7 +163,7 @@ return:
                         imgBackDrug: result.article[0].url_drugback};
 
       // otherwise without images
-      } else { 
+      } else {
         mediData = {gtni: result.article[0].gtni,
                         description: result.article[0].dscrd,
                         pharma: result.article[0].phar};
