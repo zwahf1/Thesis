@@ -1,3 +1,20 @@
 page-measurements {
 
 }
+[col-65px] {
+  -webkit-flex: 0 0 65px;
+  -ms-flex: 0 0 65px;
+  flex: 0 0 65px;
+  width: 65px;
+  max-width: 65px;
+}
+[col-100-60px] {
+  -webkit-flex: 0 0 calc(100% - 60px);
+  -ms-flex: 0 0 calc(100% - 60px);
+  flex: 0 0 calc(100% - 60px);
+  width: calc(100% - 60px);
+  max-width: calc(100% - 60px);
+}
+h2 {
+  text-align: center;
+}

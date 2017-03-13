@@ -18,6 +18,9 @@ import { Storage } from '@ionic/storage';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 declare var require: any;
+var Highcharts = require('highcharts');
+require('highcharts/highcharts-more.js')(Highcharts);
+export { Highcharts };
 
 @NgModule({
   declarations: [

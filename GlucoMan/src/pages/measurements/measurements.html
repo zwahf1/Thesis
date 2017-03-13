@@ -4,6 +4,43 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content padding>
-  <chart [options]="options"></chart>
+<ion-content>
+  <h2>Blutdruck</h2>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-65px>
+        <ion-scroll scrollX="false" scrollY="false" style="width: 65px; height: 400px;" class="scroll-x scroll-y">
+          <chart [options]="options1"></chart>
+        </ion-scroll>
+      </ion-col>
+      <ion-col>
+        <ion-scroll scrollX="true" scrollY="true" style="height: 400px;" class="scroll-x scroll-y">
+
+          <chart [options]="options2"></chart>
+
+        </ion-scroll>
+
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <p>
+
+    blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla blablabla
+  </p>
+  <p>
+    {{zeit}}
+  </p>
+  <div>
+    <ion-scroll scrollX="true" scrollY="true" style="width: 60px; height: 400px" class="scroll-x scroll-y">
+
+      <chart [options]="options1"></chart>
+    </ion-scroll>
+
+    <ion-scroll scrollX="true" scrollY="true" style="width: 100%; height: 400px" class="scroll-x scroll-y">
+
+      <chart [options]="options2"></chart>
+
+    </ion-scroll>
+  </div>
+
 </ion-content>
