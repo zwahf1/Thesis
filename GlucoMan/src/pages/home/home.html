@@ -2,7 +2,7 @@
   <ion-navbar>
     <ion-title>Home</ion-title>
     <ion-buttons end>
-      <button ion-button>
+      <button ion-button (click)="openSettings()">
         <ion-icon name="settings"></ion-icon>
       </button>
     </ion-buttons>
@@ -32,7 +32,7 @@
       <ion-col width-10></ion-col>
 
       <ion-col width-40>
-        <button ion-button (click)="openSettings()" class="homeButton">
+        <button ion-button (click)="openContacts()" class="homeButton">
           settings
         </button>
       </ion-col>

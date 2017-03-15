@@ -43,41 +43,15 @@ export interface DateToValue
      unit: string;
  }
 
- export interface MIDATA_HL7CommRes {
+ export interface MIDATA_MedicationRes {
    resourceType:string;
-
    category:string;
-   sender:MIDATA_HL7CommRes_Person;
    status:string;
-   recipient:Array<any>;
-   payload:Array<MIDATA_HL7CommRes_Payload_String|MIDATA_HL7CommRes_Payload_Attachment|MIDATA_HL7CommRes_Payload_Refernce>;
-   medium:Array<MIDATA_HL7CommRes_Medium>;
-   encounter:any;
    sent:Date;
    received:Date;
-   reason:Array<any>;
-   subject:any;
-   requestDetail:any;
  }
 
- export interface MIDATA_HL7CommRes_Person {
-   reference:string;
-   display:string;
+ export interface LOCAL_MedicationRes {
+   title: string;
+   date: Date;
  }
-
- export interface MIDATA_HL7CommRes_Payload_String {
-   contentString:string;
- }
-
- export interface MIDATA_HL7CommRes_Payload_Attachment {
-   contentAttachment:any;
- }
-
- export interface MIDATA_HL7CommRes_Payload_Refernce {
-   contentRefernce:string;
- }
-
-export interface MIDATA_HL7CommRes_Medium {
-  type:string;
-  name:string;
-}

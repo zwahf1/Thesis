@@ -10,6 +10,7 @@ import { NutritionPage } from '../pages/nutrition/nutrition';
 import { SettingsPage } from '../pages/settings/settings';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ContactsPage } from '../pages/contacts/contacts';
+import { MedicationDetailPage } from '../pages/medicationDetail/medicationDetail';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
@@ -32,7 +33,8 @@ export { Highcharts };
     NutritionPage,
     SettingsPage,
     TabsPage,
-    ContactsPage
+    ContactsPage,
+    MedicationDetailPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -51,7 +53,8 @@ export { Highcharts };
     NutritionPage,
     SettingsPage,
     TabsPage,
-    ContactsPage
+    ContactsPage,
+    MedicationDetailPage
   ],
   providers: [
     Storage,
