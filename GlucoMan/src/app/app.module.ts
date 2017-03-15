@@ -1,5 +1,4 @@
 import { NgModule, ErrorHandler } from '@angular/core';
-//import { Http } from '@angular/http';
 import { IonicApp, IonicModule, IonicErrorHandler } from 'ionic-angular';
 import { MyApp } from './app.component';
 import { LoginPage } from '../pages/login/login';
@@ -19,8 +18,20 @@ import { Storage } from '@ionic/storage';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 declare var require: any;
-var Highcharts = require('highcharts');
+var Highcharts = require('highcharts/highstock');
+
 require('highcharts/highcharts-more.js')(Highcharts);
+
+Highcharts.setOptions({
+  lang: {
+    months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
+    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+    weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+    shortWeekdays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
+    resetZoom: 'alle anzeigen'
+  },
+});
+
 export { Highcharts };
 
 @NgModule({
@@ -39,9 +50,13 @@ export { Highcharts };
   imports: [
     IonicModule.forRoot(MyApp),
     BrowserModule,
-    ChartModule.forRoot(require('highcharts')),
     HttpModule,
-    JsonpModule
+    JsonpModule,
+    ChartModule.forRoot(
+      require('highcharts/highstock'),
+      require('highcharts/highcharts-more')
+    ),
+
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -58,7 +73,8 @@ export { Highcharts };
   ],
   providers: [
     Storage,
-    {provide: ErrorHandler, useClass: IonicErrorHandler}
+    { provide: ErrorHandler, useClass: IonicErrorHandler }
   ]
 })
-export class AppModule {}
+
+export class AppModule { }
