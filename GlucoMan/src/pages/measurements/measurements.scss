@@ -1,39 +1,12 @@
 page-measurements {
 
 }
-[col-60px] {
-  -webkit-flex: 0 0 60px;
-  -ms-flex: 0 0 60px;
-  flex: 0 0 60px;
-  width: 60px;
-  max-width: 60px;
-  padding: 0;
-}
-[col-55px] {
-  -webkit-flex: 0 0 55px;
-  -ms-flex: 0 0 55px;
-  flex: 0 0 55px;
-  width: 55px;
-  max-width: 55px;
-  padding: 0;
-}
-[col-50px] {
-  -webkit-flex: 0 0 50px;
-  -ms-flex: 0 0 50px;
-  flex: 0 0 50px;
-  width: 50px;
-  max-width: 50px;
-  padding: 0;
-}
-[col-100-60px] {
-  -webkit-flex: 0 0 calc(100% - 60px);
-  -ms-flex: 0 0 calc(100% - 60px);
-  flex: 0 0 calc(100% - 60px);
-  width: calc(100% - 60px);
-  max-width: calc(100% - 60px);
-  padding: 0;
-}
+//the headers above the charts are aligned in the center and has the backgroundcolor skyblue
 h2 {
   text-align: center;
   background-color: skyblue;
+}
+//the charts are streched to the whole width
+chart {
+  width: 100%;
 }

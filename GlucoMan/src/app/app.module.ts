@@ -22,6 +22,7 @@ var Highcharts = require('highcharts/highstock');
 
 require('highcharts/highcharts-more.js')(Highcharts);
 
+//the language of the charts from the Highcharts modul are translated to german.
 Highcharts.setOptions({
   lang: {
     months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],

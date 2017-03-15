@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 
 import { NavController } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
+import { Storage } from '@ionic/storage';
 
 @Component({
   selector: 'page-measurements',
@@ -13,11 +14,27 @@ export class MeasurementsPage {
   chartBP: any;
   chartPulse: any;
   chartWeight: any;
+  /**************************************************
+                    constructor
 
-  constructor(public navCtrl: NavController) {
+  create the medication page with parameters
+    - nacCtrl: navigation controller to navigate between pages
+    - storage: local storage
+
+  storage SET:
+    -glucoseValues: the measurements of the blood glucose
+    -bpValues: the measurements of the blood pressure
+    -pulseValues: the measurements of the pulse
+    -weightValues: the measurements of the scale
+**************************************************/
+  constructor(public navCtrl: NavController, public storage: Storage) {
+    /**************************************************
+    sample data for glucose, blood pressure, pulse and weight
+    **************************************************/
     var valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
       [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
       [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+
 
     var valuesBP = [[Date.UTC(2016, 3, 4), 1, 2], [Date.UTC(2016, 3, 5), 2, 4], [Date.UTC(2016, 3, 7), 3, 6], [Date.UTC(2016, 3, 8), 4, 8],
       [Date.UTC(2016, 3, 9), 5, 10], [Date.UTC(2016, 3, 11), 6, 9], [Date.UTC(2016, 3, 12), 7, 8], [Date.UTC(2016, 3, 14), 8, 9],
@@ -27,54 +44,25 @@ export class MeasurementsPage {
       [Date.UTC(2016, 3, 9), 62], [Date.UTC(2016, 3, 11), 75], [Date.UTC(2016, 3, 12), 83], [Date.UTC(2016, 3, 14), 59],
       [Date.UTC(2016, 3, 17), 65], [Date.UTC(2016, 3, 18), 73]];
 
-      var valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
-        [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
-        [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
+    var valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
+      [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
+      [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
 
+    //the sample data are stored in local storage
+
+    this.storage.ready().then(() => {
+      this.storage.set('glucoseValues', valuesGlucose);
+      this.storage.set('bpValues', valuesBP);
+      this.storage.set('pulseValues', valuesPulse);
+      this.storage.set('weightValues', valuesWeight);
+    });
+
+    //the four charts are created by the Chart-class
     this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', valuesGlucose);
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', valuesBP);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', valuesPulse);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', valuesWeight);
 
-    /*
-      this.chartBP = {
-        chart: {
-          type: 'columnrange',
-          height: 300,
-        },
-        rangeSelector: {
-          selected: 2,
-          enabled: false,
-        },
-        yAxis: {
-          title: {
-            text: 'mmHg'
-          },
-          min: 0,
-          opposite: false
-        },
-        navigator: {
-          enabled: false
-        },
-        scrollbar: {
-          enabled: true,
-          liveRedraw: false
-        },
-        title: {
-          text: '',
-        },
-        tooltip: {
-          valueSuffix: 'mmHg',
-          followTouchMove: false,
-          followPointer: false
-
-        },
-        series: [{
-          name: 'Blutdruck',
-          data: valuesBP,
-        }]
-      }
-  */
   }
   /*
   newValue() {
@@ -86,92 +74,5 @@ export class MeasurementsPage {
     }
   }
 */
-  /*
-    createGlucoseChart(type: string, marginLeft: any, title: string, suffix: string, data: any) {
-      this.chartGluco1 = {
-        chart: {
-          type: type,
-          marginLeft: marginLeft,
-        },
-        title: {
-          text: ''
-        },
-        xAxis: {
-          type: 'datetime'
-        },
-        yAxis: {
-          title: {
-            text: title+'('+ suffix+')'
-          }
-        },
-        tooltip: {
-          valueSuffix: suffix
-        },
-        plotOptions: {
-          columnrange: {
-            dataLabels: {
-              enabled: true,
-              formatter: function() {
-                return this.y + suffix;
-              }
-            }
-          }
-        },
-        legend: {
-          enabled: false
-        },
-        series: [{
-          name: '',
-          data: data,
-        }]
-      };
-      this.chartGluco2 = {
-        chart: {
-          type: type
-        },
-        title: {
-          text: ''
-        },
-        xAxis: {
-          type: 'datetime'
-        },
-        yAxis: {
-          title: {
-            text: null
-          },
-          labels:
-          {
-            enabled: false
-          }
-        },
-        tooltip: {
-          valueSuffix: suffix
-        },
-        plotOptions: {
-          spline: {
-            dataLabels: {
-              enabled: true,
-              formatter: function() {
-                return this.y + suffix;
-              }
-            }
-          }
-        },
-        legend: {
-          enabled: false
-        },
-        series: [{
-          name: title,
-          data: data,
-          lineWidth: 0,
-          states: {
-            hover: {
-              //lineWidthPlus: 0
-            }
-          }
-        }]
-      };
-    }
-    */
 
 }

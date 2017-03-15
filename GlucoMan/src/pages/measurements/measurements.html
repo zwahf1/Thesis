@@ -5,16 +5,32 @@
 </ion-header>
 
 <ion-content style="width: 100%">
+  <!--
+    Chart for blood glucose, provided by Highcharts.com
+    it's zoomable and moveble
+  -->
   <h2>Blutzucker</h2>
-  <chart type="StockChart" [options]="chartGluco" style="width: 100%"></chart>
+  <chart type="StockChart" [options]="chartGluco" ></chart>
 
+  <!--
+    Chart for blood pressure, provided by Highcharts.com
+    it's zoomable and moveble
+  -->
   <h2>Blutdruck</h2>
-  <chart type="StockChart" [options]="chartBP" style="width: 100%"></chart>
+  <chart type="StockChart" [options]="chartBP" ></chart>
 
+  <!--
+    Chart for pulse, provided by Highcharts.com
+    it's zoomable and moveble
+  -->
   <h2>Puls</h2>
-  <chart type="StockChart" [options]="chartPulse" style="width: 100%"></chart>
+  <chart type="StockChart" [options]="chartPulse" ></chart>
 
+  <!--
+    Chart for weight, provided by Highcharts.com
+    it's zoomable and movable
+  -->
   <h2>Gewicht</h2>
-  <chart type="StockChart" [options]="chartWeight" style="width: 100%"></chart>
+  <chart type="StockChart" [options]="chartWeight" ></chart>
 
 </ion-content>
