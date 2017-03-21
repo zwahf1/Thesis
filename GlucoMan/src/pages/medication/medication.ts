@@ -137,14 +137,14 @@ storage SET:
     // get the medication data from the hospINDEX request
     var mediData = this.getHCIData('7680504110875');
     // get only the relevant data from the medication data
-    //var specMediData = this.getJSONData(mediData);
+    var specMediData = this.getJSONData(mediData);
     // if storage is ready to use
     this.storage.ready().then(() => {
       // save the new medication in the storage
-    //  this.storage.set('MedicationData', specMediData);
+      this.storage.set('MedicationData', specMediData);
     });
     // show alert for choosing category
-    //this.showRadio(specMediData);
+    this.showRadio(specMediData);
 
     console.log(mediData);
   }
