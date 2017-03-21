@@ -24,6 +24,8 @@ input parameters:
   constructor(type: string, title: string, unit: string, data: any) {
     this.chart = {
       chart: {
+        //type of the chart. spline for blood glucose, weight and pulse,
+        //columnrange for blood pressure
         type: type,
         //the height is fixed because of the rotation of the smartphone
         height: 300,
@@ -56,20 +58,19 @@ input parameters:
         followTouchMove: false,
         followPointer: false
       },
-      //navigator and scrollbar aren't visible - reason of usability
+      //navigator, range selector and scrollbar aren't visible - reason of usability
+
       navigator: {
         enabled: false
+      },
+      rangeSelector: {
+        selected: 1,
+        enabled: false,
       },
       scrollbar: {
         enabled: false,
         liveRedraw: false
       },
-      /*
-      rangeSelector: {
-        selected: 1,
-        enabled: false,
-      },
-      */
       //the legend isn't visible, so the user can't disable e serie of data
       legend: {
         enabled: false

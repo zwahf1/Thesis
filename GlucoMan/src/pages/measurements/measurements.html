@@ -4,33 +4,41 @@
   </ion-navbar>
 </ion-header>
 
-<ion-content style="width: 100%">
+<ion-content padding>
+  <div>
+  <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
+  <chart type="StockChart" [options]="chartAll"></chart>
+</div>
   <!--
     Chart for blood glucose, provided by Highcharts.com
     it's zoomable and moveble
   -->
-  <h2>Blutzucker</h2>
-  <chart type="StockChart" [options]="chartGluco" ></chart>
-
+  <div class="glucoChart">
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
+    <chart type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
+  </div>
   <!--
     Chart for blood pressure, provided by Highcharts.com
     it's zoomable and moveble
   -->
-  <h2>Blutdruck</h2>
-  <chart type="StockChart" [options]="chartBP" ></chart>
-
+  <div>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
+    <chart type="StockChart" [options]="chartBP"></chart>
+  </div>
   <!--
     Chart for pulse, provided by Highcharts.com
     it's zoomable and moveble
   -->
-  <h2>Puls</h2>
-  <chart type="StockChart" [options]="chartPulse" ></chart>
-
+  <div>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
+    <chart type="StockChart" [options]="chartPulse"></chart>
+  </div>
   <!--
     Chart for weight, provided by Highcharts.com
     it's zoomable and movable
   -->
-  <h2>Gewicht</h2>
-  <chart type="StockChart" [options]="chartWeight" ></chart>
-
+  <div>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
+    <chart type="StockChart" [options]="chartWeight"></chart>
+  </div>
 </ion-content>

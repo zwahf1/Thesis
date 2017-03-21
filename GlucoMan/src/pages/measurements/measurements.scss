@@ -2,11 +2,16 @@ page-measurements {
 
 }
 //the headers above the charts are aligned in the center and has the backgroundcolor skyblue
+/*
 h2 {
   text-align: center;
   background-color: skyblue;
 }
+*/
 //the charts are streched to the whole width
 chart {
   width: 100%;
+}
+ion-app.md [padding], ion-app.md [padding] .scroll-content {
+    padding: 0px; 
 }

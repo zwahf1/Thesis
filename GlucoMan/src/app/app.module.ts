@@ -25,11 +25,14 @@ require('highcharts/highcharts-more.js')(Highcharts);
 //the language of the charts from the Highcharts modul are translated to german.
 Highcharts.setOptions({
   lang: {
-    months: ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli', 'August', 'September', 'Oktober', 'November', 'Dezember'],
-    shortMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul', 'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
-    weekdays: ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag'],
+    months:   ['Januar', 'Februar', 'März', 'April', 'Mai', 'Juni', 'Juli',
+              'August', 'September', 'Oktober', 'November', 'Dezember'],
+    shortMonths:  ['Jan', 'Feb', 'Mar', 'Apr', 'Mai', 'Jun', 'Jul',
+                  'Aug', 'Sep', 'Okt', 'Nov', 'Dez'],
+    weekdays:     ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch',
+                  'Donnerstag', 'Freitag', 'Samstag'],
     shortWeekdays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
-    resetZoom: 'alle anzeigen'
+    resetZoom: 'alles anzeigen'
   },
 });
 

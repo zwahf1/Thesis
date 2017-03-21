@@ -1,5 +1,120 @@
 <ion-header>
   <ion-navbar>
+    <ion-title>Einstellungen</ion-title>
+    <ion-buttons end>
+      <button (click)="presentConfirm()">
+Speichern
+</button>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-item>
+      <table>
+        <tbody>
+          <tr>
+            <th colspan="4">Zielbereich</th>
+            <th>Einheit</th>
+            <th>Datum</th>
+          </tr>
+          <tr id="glucoseRow">
+            <td>Glukose</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td> <select>
+  <option selected>mmol/L</option>
+<option>mg/dL</option>
+</select> </td>
+            <td>
+              <p class='date'>{{dateGlucose}}
+            </td>
+          </tr>
+          <tr id="bloodpressureRow">
+            <td>Blutdruck</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>mmHg</td>
+            <td>
+              {{dateBloodPressure}}
+            </td>
+          </tr>
+          <tr id="weightRow">
+            <td>Gewicht</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>kg</td>
+            <td>
+              {{dateWeight}}
+            </td>
+          </tr>
+          <tr id="hbRow">
+            <td>HbA1c</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>%</td>
+            <td>
+              {{dateHb}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ion-item>
+    <button ion-button full (click)='presentConfirm()'>Speichern</button>
+  </ion-list>
+<ion-header>
+  <ion-navbar>
+    <ion-title>Settings</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content>
+  <ion-list>
+    <ion-list-header>Follow us on Twitter</ion-list-header>
+    <ion-item>
+      <ion-icon name="ionic" item-left></ion-icon>
+      @ionicframework
+    </ion-item>
+  </ion-list>
+<ion-header>
+  <ion-navbar>
     <ion-title>Settings</ion-title>
   </ion-navbar>
 </ion-header>

@@ -19,12 +19,8 @@
 }
 
 .divider {
-  background-color: #ff4d4d;
+  background-color: color($colors, primary);
   color: black;
   font-weight: bold;
   font-size: 18px;
-}
-
-.medi {
-  background-color: #ffcccc;
 }
