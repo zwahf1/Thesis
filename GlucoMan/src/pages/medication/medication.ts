@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { Platform, NavController, AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
-import { Http } from '@angular/http';
+import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
@@ -136,16 +136,71 @@ storage SET:
     // get the medication data from the hospINDEX request
     var mediData = this.getHCIData('7680504110875');
     // get only the relevant data from the medication data
-    var specMediData = this.getJSONData(mediData);
+    //var specMediData = this.getJSONData(mediData);
     // if storage is ready to use
     this.storage.ready().then(() => {
       // save the new medication in the storage
-      this.storage.set('MedicationData', specMediData);
+    //  this.storage.set('MedicationData', specMediData);
     });
     // show alert for choosing category
-    this.showRadio(specMediData);
+    //this.showRadio(specMediData);
 
     console.log(mediData);
+  }
+
+  getGet(artbar) {
+    let email = 'EPN236342@hcisolutions.ch';
+    let password = 'UMPbDJu7!W';
+
+    let creds = btoa(email+':'+password);
+
+    var headers = new Headers();
+    headers.append('Authorization', 'Basic ' + creds);
+    headers.append('Content-Type', 'text/html');
+    var options = new RequestOptions({headers: headers});
+    this.http.get( 'https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX', options)
+    .map(
+      res => console.log(res)
+    )
+    .subscribe(
+      data => console.log(data),
+      err => console.log(err)
+    );
+  }
+
+  getHCI (barcode) {
+    let email = 'EPN236342@hcisolutions.ch';
+    let password = 'UMPbDJu7!W';
+
+    let creds = btoa(email+':'+password);
+    let body = {'Authorization': 'Basic '+creds};
+
+    let headers = new Headers({'Content-Type': 'application/x-www-form-urlencoded'});
+    let options = new RequestOptions({
+			headers: headers
+		});
+
+
+    return this.http.post('https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX',
+    body, options).toPromise().then(response => { console.log(response.json()) }, this.handleError);
+
+/*
+    return new Promise(resolve => {
+
+      this.http.post('https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX',
+      body, options).subscribe(data => {
+
+        if(data.json().success){
+          console.log(data.json().token);
+        }
+      });
+    });
+
+*/
+  }
+
+  handleError(error) {
+    console.log(error);
   }
 
 /**************************************************
