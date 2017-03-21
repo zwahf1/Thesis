@@ -16,8 +16,8 @@ export class MidataPersistence {
   private static mp:MidataPersistence;
   private md: any;
 
-  private appname = 'MIWADO';
-  private appsecr = 'g82xlcisy4zneu5n9k3dgxgcifr6vfmx';
+  private appname = 'GlucoMan';
+  private appsecr = 'AkSyC8Ab2D2JgA5CjohH8q4JFDqOaSAw';
   private server = 'https://test.midata.coop:9000';
   private role: string;
   private username: string;

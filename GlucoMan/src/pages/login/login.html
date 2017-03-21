@@ -5,20 +5,15 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-list>
-
-  <ion-item>
-    <ion-label stacked>Username</ion-label>
-    <ion-input type="text"></ion-input>
-  </ion-item>
-
-  <ion-item>
-    <ion-label stacked>Password</ion-label>
-    <ion-input type="password"></ion-input>
-  </ion-item>
-
-</ion-list>
-<div padding>
-  <button block>Sign In</button>
-</div>
+  <form (ngSubmit)="login()">
+      <ion-item>
+        <ion-label stacked>Username</ion-label>
+        <ion-input type="text" [(ngModel)]="input.username" name="title"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label stacked>Password</ion-label>
+        <ion-input type="password" [(ngModel)]="input.password" name="description"></ion-input>
+      </ion-item>
+      <button ion-button type="submit" block>Login</button>
+    </form>
 </ion-content>

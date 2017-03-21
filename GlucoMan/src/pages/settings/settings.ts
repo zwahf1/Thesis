@@ -1,6 +1,10 @@
 import { Component } from '@angular/core';
 
-import { NavController } from 'ionic-angular';
+import { App, NavController } from 'ionic-angular';
+
+import { LoginPage } from '../login/login';
+
+import { MidataPersistence } from '../../util/midataPersistence';
 
 @Component({
   selector: 'page-settings',
@@ -8,8 +12,15 @@ import { NavController } from 'ionic-angular';
 })
 export class SettingsPage {
 
-  constructor(public navCtrl: NavController) {
+  private mp = MidataPersistence.getInstance();
 
+  constructor(public navCtrl: NavController, public appCtrl: App) {
+
+  }
+
+  logout() {
+    this.mp.logout();
+    this.appCtrl.getRootNav().setRoot(LoginPage);
   }
 
 }
