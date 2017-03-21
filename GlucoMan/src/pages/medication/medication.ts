@@ -117,6 +117,7 @@ storage SET:
 
         this.storage.ready().then(() => {
           this.storage.set('MedicationData', mediData);
+          this.showRadio(mediData);
         });
       });
     });
