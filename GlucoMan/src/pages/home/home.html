@@ -2,12 +2,12 @@
   <ion-navbar>
     <ion-title>Home</ion-title>
     <ion-buttons end>
-      <button ion-button (click)="openSettings()">
+      <button ion-button (click)="goTo('Settings')">
         <ion-icon name="settings"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
-<!--
+  <!--
   <button ion-button>
     <ion-icon name="settings"></ion-icon>
   </button>
@@ -15,20 +15,54 @@
 </ion-header>
 
 <ion-content padding>
-  <ion-grid width-100>
-    <ion-row align-items: center>
-      <ion-col width-3>
-        <button ion-button (click)="openContacts()" class="homeButton">
-          Kontakte
-        </button>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-6>
+        <button ion-button col-12 (click)="goTo('Emergency')">
+        <div>
+          <ion-icon name="alert"></ion-icon>
+          <p>Notfall</p>
+        </div>
+      </button>
       </ion-col>
-      <ion-col width-3>
-        <button ion-button (click)="openSettings()" class="homeButton">
-          Einstellungen
-        </button>
+      <ion-col col-6>
+        <button ion-button col-12 (click)="goTo('Information')">
+        <div>
+          <ion-icon name="information-circle"></ion-icon>
+          <p>Informationen</p>
+        </div>
+      </button>
       </ion-col>
     </ion-row>
+    <ion-row>
+      <ion-col col-6>
+        <button ion-button col-12 (click)="goTo('Contacts')">
+            <div>
+              <ion-icon name="contacts"></ion-icon>
+              <p>Kontakte</p>
+            </div>
+          </button>
+      </ion-col>
 
-
+      <ion-col col-6>
+        <button ion-button col-12 (click)="goTo('Measureplan')">
+        <div>
+          <ion-icon name="clipboard"></ion-icon>
+          <p>Messschema</p>
+        </div>
+      </button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col col-6>
+        <button ion-button col-12 (click)="goTo('Checkups')">
+        <div>
+          <ion-icon name="eye"></ion-icon>
+          <p>Kontrollen</p>
+        </div>
+      </button>
+      </ion-col>
+    </ion-row>
   </ion-grid>
+
 </ion-content>

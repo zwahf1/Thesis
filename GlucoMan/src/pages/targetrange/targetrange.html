@@ -1,0 +1,27 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>Zielbereich</ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+
+  <ion-list>
+
+
+    <!-- Loops through and creates multiple items -->
+    <ion-item *ngFor="let item of items">
+      Item {{item}}
+    </ion-item>
+
+    <!-- Button item with an icon on the left -->
+    <button ion-item>
+      <ion-icon name="star" item-left></ion-icon>
+      Button Item
+    </button>
+
+
+
+  </ion-list>
+
+</ion-content>

@@ -1,8 +1,11 @@
 import { Component } from '@angular/core';
-import { NavController } from 'ionic-angular';
+import { App, NavController } from 'ionic-angular';
 import { ContactsPage } from '../contacts/contacts';
 import { SettingsPage } from '../settings/settings';
-import { LoginPage } from '../login/login';
+import { InformationPage } from '../information/information';
+import { EmergencyPage } from '../emergency/emergency';
+import { MeasureplanPage } from '../measureplan/measureplan';
+import { CheckupsPage } from '../checkups/checkups';
 
 @Component({
   selector: 'page-home',
@@ -10,19 +13,36 @@ import { LoginPage } from '../login/login';
 })
 export class HomePage {
 
-  page: {title: string, component: any};
+  //page: {title: string, component: any};
 
 
-  constructor(public navCtrl: NavController) {
+  constructor(public navCtrl: NavController, public appCtrl: App) {
+
 
   }
 
-  openSettings() {
-    this.navCtrl.push(SettingsPage);
-  }
 
-  openContacts() {
-    this.navCtrl.push(ContactsPage);
+  goTo(target) {
+    console.log(''+target);
+    switch(target){
+      case 'Settings':
+        this.navCtrl.push(SettingsPage);
+        break;
+      case 'Contacts':
+        this.navCtrl.push(ContactsPage);
+        break;
+      case 'Emergency':
+        this.navCtrl.push(EmergencyPage);
+        break;
+      case 'Information':
+        this.navCtrl.push(InformationPage);
+        break;
+      case 'Measureplan':
+        this.navCtrl.push(MeasureplanPage);
+        break;
+      case 'Checkups':
+        this.navCtrl.push(CheckupsPage);
+        break;
+    }
   }
-
 }

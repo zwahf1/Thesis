@@ -79,12 +79,10 @@ export class MeasurementsPage {
         zoomType: 'x',
             resetZoomButton: {
                 position: {
-                    align: 'right', // by default
-                    verticalAlign: 'top', // by default
-                    x: -10,
-                    y: 10
+                    verticalAlign: 'bottom', // by default
+                    y: -35,
                 },
-                relativeTo: 'chart'
+                relativeTo: 'plot'
             },
       },
       title: {

@@ -1,16 +1,28 @@
 page-home {
+  ion-content {
+    ion-icon {
+      font-size: 4rem;
+    }
 
+    button {
+      height: inherit !important;
+    }
+  }
 }
 
 .menuGrid {
-  padding: 0px;
+  padding: 0;
 }
 
 .menuCol {
-  padding: 0px;
+  padding: 0;
   align-items: center;
 }
 
 .homeButton {
   width: 100%;
+}
+
+.ion-loading-c {
+  font-size: 90px;
 }
