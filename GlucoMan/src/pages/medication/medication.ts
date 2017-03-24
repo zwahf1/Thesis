@@ -50,9 +50,9 @@ storage SET:
       this.storage.set('selfMedis', []);
       this.storage.set('insulin', []);
       this.storage.set('intolerances', []);
-      // refresh page (load list)
-      this.refreshPage();
     });
+    // refresh page (load list)
+    this.refreshPage();
   }
 
 /**************************************************
@@ -123,6 +123,19 @@ storage SET:
     });
   }
 
+
+/*******************************************************************************
+
+    -------------   -------------   -------------   -------------
+          |        |               |                      |
+         |        |               |                      |
+        |        |------------    -------------         |
+       |        |                            |         |
+      |        |                            |         |
+     |         -------------   -------------         |
+
+/*******************************************************************************
+
 /**************************************************
               test for scanner
 
@@ -135,18 +148,18 @@ storage SET:
 ***************************************************/
   scanTest() {
     // get the medication data from the hospINDEX request
-    var mediData = this.getHCIData('7680504110875');
+    var HCIData = this.getHCIData('7680504110875');
     // get only the relevant data from the medication data
-    var specMediData = this.getJSONData(mediData);
+    var mediData = this.getJSONData(HCIData);
     // if storage is ready to use
     this.storage.ready().then(() => {
       // save the new medication in the storage
-      this.storage.set('MedicationData', specMediData);
+      this.storage.set('MedicationData', mediData);
     });
     // show alert for choosing category
-    this.showRadio(specMediData);
+    this.showRadio(mediData);
 
-    console.log(mediData);
+    console.log(HCIData);
   }
 
   getGet(artbar) {
@@ -203,6 +216,8 @@ storage SET:
   handleError(error) {
     console.log(error);
   }
+
+/*******************************************************************************
 
 /**************************************************
             Get medication from hospINDEX

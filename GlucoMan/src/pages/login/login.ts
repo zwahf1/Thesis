@@ -40,9 +40,12 @@ export class LoginPage {
       subTitle: 'the entered username or password is incorrect',
       buttons: ['OK']
     });
-
     alert.present();
 });;
+  }
+  
+  backdoor() {
+    this.navCtrl.setRoot(TabsPage)
   }
 
 }
