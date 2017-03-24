@@ -7,8 +7,16 @@ import { MeasurementsPage } from '../pages/measurements/measurements';
 import { MedicationPage } from '../pages/medication/medication';
 import { NutritionPage } from '../pages/nutrition/nutrition';
 import { SettingsPage } from '../pages/settings/settings';
+import { TargetrangePage } from '../pages/targetrange/targetrange';
+import { DisplayPage } from  '../pages/display/display';
+import { DataPage } from '../pages/data/data';
+import { MeasureplanPage } from '../pages/measureplan/measureplan';
+import { MIDATAPage } from '../pages/midata/midata';
 import { TabsPage } from '../pages/tabs/tabs';
 import { ContactsPage } from '../pages/contacts/contacts';
+import { InformationPage } from '../pages/information/information';
+import { EmergencyPage } from '../pages/emergency/emergency';
+import { CheckupsPage } from '../pages/checkups/checkups';
 import { MedicationDetailPage } from '../pages/medicationDetail/medicationDetail';
 
 import { BrowserModule } from '@angular/platform-browser';
@@ -47,6 +55,14 @@ export { Highcharts };
     MedicationPage,
     NutritionPage,
     SettingsPage,
+    TargetrangePage,
+    DisplayPage,
+    DataPage,
+    MeasureplanPage,
+    InformationPage,
+    EmergencyPage,
+    MIDATAPage,
+    CheckupsPage,
     TabsPage,
     ContactsPage,
     MedicationDetailPage
@@ -71,6 +87,14 @@ export { Highcharts };
     MedicationPage,
     NutritionPage,
     SettingsPage,
+    TargetrangePage,
+    DisplayPage,
+    DataPage,
+    MeasureplanPage,
+    InformationPage,
+    EmergencyPage,
+    CheckupsPage,
+    MIDATAPage,
     TabsPage,
     ContactsPage,
     MedicationDetailPage
