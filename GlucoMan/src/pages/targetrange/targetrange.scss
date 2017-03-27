@@ -1,3 +1,12 @@
 page-targetrange {
-
+  .item-divider-md {
+    border-top:: 1px solid #dedede;
+    border-bottom: 0px solid #dedede;
+  }
+  ion-input {
+    text-align: center;
+  }
+  input{
+    text-align: inherit;
+  }
 }

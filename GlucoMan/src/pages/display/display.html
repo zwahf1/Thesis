@@ -7,9 +7,39 @@
 <ion-content padding>
 
   <ion-list>
-
-
-
+    <ion-list-header>
+      Grafiken
+    </ion-list-header>
+    <ion-item>
+      <ion-label>Übersicht</ion-label>
+      <ion-toggle checked="false"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Glukose</ion-label>
+      <ion-toggle checked="false"></ion-toggle>
+    </ion-item>
+    <ion-item>
+      <ion-label>Blutdruck</ion-label>
+      <ion-toggle checked="false"></ion-toggle>
+    </ion-item>
+    <ion-item>
+  <ion-label>Puls</ion-label>
+  <ion-toggle checked="false"></ion-toggle>
+</ion-item>
+<ion-item>
+  <ion-label>Gewicht</ion-label>
+  <ion-toggle checked="false"></ion-toggle>
+</ion-item>
+<ion-list-header>
+  Einheiten
+</ion-list-header>
+<ion-item>
+  <ion-label>Glukose</ion-label>
+  <ion-select [(ngModel)]="glucoseUnit">
+    <ion-option value="mmol">mmol/L</ion-option>
+    <ion-option value="mg">mg/dL</ion-option>
+  </ion-select>
+</ion-item>
   </ion-list>
 
 </ion-content>

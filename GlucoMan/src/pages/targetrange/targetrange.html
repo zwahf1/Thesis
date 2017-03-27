@@ -5,23 +5,169 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-list>
+    <ion-item-group *ngFor="let item of vitalRangeList">
+      <ion-item-divider>
+        {{ item.vitalRange.title }}
+      </ion-item-divider>
+      <table>
+        <tr>
+          <td>
+            <ion-item>
+              <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.lowerLimit}}"></ion-input>
+            </ion-item>
+          </td>
+          <td>-</td>
+          <td>
+            <ion-item>
+              <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.upperLimit}}"></ion-input>
+            </ion-item>
+          </td>
+          <td>
+            {{item.vitalRange.unit}}
+          </td>
+          <td>
+            {{item.vitalRange.date | date:'dd.MM.yyyy'}}
+          </td>
+        </tr>
+      </table>
+    </ion-item-group>
+    <button ion-button full (click)='presentConfirm()'>Speichern</button>
+  </ion-list>
+
+  <table>
+    <tbody>
+      <ion-list>
+        <ion-item-group *ngFor="let item of vitalRangeList">
+          <tr>
+            <td colspan="5">
+              <ion-item-divider>
+                {{ item.vitalRange.title }}
+              </ion-item-divider>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.lowerLimit}}"></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.upperLimit}}"></ion-input>
+              </ion-item>
+            </td>
+            <td>
+
+              {{item.vitalRange.unit}}
+
+
+            </td>
+            <td>
+              
+              <ion-item>
+              {{item.vitalRange.date | date:'dd.MM.yyyy'}}
+            </ion-item>
+            </td>
+          </tr>
+        </ion-item-group>
+        <button ion-button full (click)='presentConfirm()'>
+    Speichern
+  </button>
+      </ion-list>
+    </tbody>
+  </table>
 
   <ion-list>
-
-
-    <!-- Loops through and creates multiple items -->
-    <ion-item *ngFor="let item of items">
-      Item {{item}}
+    <ion-item>
+      <table>
+        <tbody>
+          <tr>
+            <th colspan="4">Zielbereich</th>
+            <th>Einheit</th>
+            <th>Datum</th>
+          </tr>
+          <tr id="glucoseRow">
+            <td>Glukose</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>
+              <select>
+                <option selected>mmol/L</option>
+                <option>mg/dL</option>
+              </select> </td>
+            <td>
+              <p class='date'>{{dateGlucose}}</p>
+            </td>
+          </tr>
+          <tr id="bloodpressureRow">
+            <td>Blutdruck</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>mmHg</td>
+            <td>
+              {{dateBloodPressure}}
+            </td>
+          </tr>
+          <tr id="weightRow">
+            <td>Gewicht</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>kg</td>
+            <td>
+              {{dateWeight}}
+            </td>
+          </tr>
+          <tr id="hbRow">
+            <td>HbA1c</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>-</td>
+            <td>
+              <ion-item>
+                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
+              </ion-item>
+            </td>
+            <td>%</td>
+            <td>
+              {{dateHb}}
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </ion-item>
-
-    <!-- Button item with an icon on the left -->
-    <button ion-item>
-      <ion-icon name="star" item-left></ion-icon>
-      Button Item
-    </button>
-
-
-
+    <button ion-button full (click)='presentConfirm()'>Speichern</button>
   </ion-list>
 
 </ion-content>

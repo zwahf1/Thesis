@@ -1,3 +1,10 @@
 page-data {
-
+  .alert-wrapper {
+      min-width: 90% !important;
+      max-width: 95% !important;
+    }
+    .alert-md .alert-wrapper {
+        min-width: 90% !important;
+        max-width: 95% !important;
+      }
 }

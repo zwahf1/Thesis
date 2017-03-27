@@ -12,8 +12,6 @@ import { MidataPersistence } from '../../util/midataPersistence';
 })
 export class DisplayPage {
 
-  private mp = MidataPersistence.getInstance();
-
   constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController) {
 
   }
