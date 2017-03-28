@@ -43,15 +43,79 @@ export interface DateToValue
      unit: string;
  }
 
- export interface MIDATA_MedicationRes {
+ export interface FHIR_MedicationRes {
    resourceType:string;
-   category:string;
+   code:CodeableConcept;
    status:string;
-   sent:Date;
-   received:Date;
+   isBrand:boolean;
+   isOverTheCounter:boolean;
+   form:CodeableConcept;
+   ingredient:Array<MedicationIngredient>;
+   package:{
+     container:CodeableConcept;
+     content:Array<MedicationPackageContent>;
+     batch:Array<MedicationBatch>;
+   };
+   image:Array<MedicationImage>;
  }
 
- export interface LOCAL_MedicationRes {
-   title: string;
-   date: Date;
+ export interface FHIR_ObservationRes_1Value {
+   resourceType: string,
+   status: string,
+   effectiveDateTime: any,
+   category: CodeableConcept,
+   code: CodeableConcept,
+   valueQuantity: Value
+ }
+
+ export interface FHIR_ObservationRes_2Value {
+   resourceType: string,
+   status: string,
+   code: CodeableConcept,
+   effectiveDateTime: any,
+   category: CodeableConcept,
+   component: Array<Component>
+ }
+
+ export interface CodeableConcept {
+   coding:Array<Coding>;
+   text?:string;
+ }
+
+ export interface Coding {
+   system:string;
+   code:string;
+   display:string;
+ }
+
+ export interface Value {
+   value: number,
+   unit: string,
+   system: string
+ }
+
+ export interface Component {
+   code: CodeableConcept,
+   valueQuantity: CodeableConcept
+ }
+
+ export interface MedicationIngredient {
+   itemCodeableConcept:CodeableConcept;
+   isActive:boolean;
+   amount:any;
+ }
+
+ export interface MedicationPackageContent {
+   itemCodeableConcept:CodeableConcept;
+   amount:any;
+ }
+
+ export interface MedicationBatch {
+   lotNumber:string;
+   expirationDate:Date;
+ }
+
+ export interface MedicationImage {
+   url:string;
+   title:string;
  }

@@ -109,4 +109,8 @@ export class MidataPersistence {
     return this.md.search(resourceType, params);
   }
 
+  save(res: any) {
+    return this.md.save(res);
+}
+
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Platform, NavController, AlertController } from 'ionic-angular';
+import { Platform, NavController, AlertController, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 import { Http, Headers, RequestOptions } from '@angular/http';
@@ -8,6 +8,7 @@ import 'rxjs/add/operator/toPromise';
 
 import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
 
+import { MidataPersistence } from '../../util/midataPersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
 declare var cordova: any;
@@ -18,13 +19,15 @@ declare var cordova: any;
 })
 
 export class MedicationPage {
+
+  private mp = MidataPersistence.getInstance();
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
-  chronicMedis: [TYPES.LOCAL_MedicationRes];
-  selfMedis: [TYPES.LOCAL_MedicationRes];
-  insulin: [TYPES.LOCAL_MedicationRes];
-  intolerances: [TYPES.LOCAL_MedicationRes];
+  chronicMedis: [TYPES.FHIR_MedicationRes];
+  selfMedis: [TYPES.FHIR_MedicationRes];
+  insulin: [TYPES.FHIR_MedicationRes];
+  intolerances: [TYPES.FHIR_MedicationRes];
 
 /**************************************************
                   constructor
@@ -42,7 +45,8 @@ storage SET:
   - insulin: all insulin
   - intolerances: all medication intolerances
 ***************************************************/
-  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage, public http: Http, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
+                public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     // if storage is ready to use
     this.storage.ready().then(() => {
       // import all medication from MIDATA
@@ -68,20 +72,31 @@ storage GET:
   - intolerances: all medication intolerances
 ***************************************************/
   refreshPage () {
-    this.storage.ready().then(() => {
-      this.storage.get('chronicMedis').then((val) => {
-        this.chronicMedis = val;
-      });
-      this.storage.get('selfMedis').then((val) => {
-        this.selfMedis = val;
-      });
-      this.storage.get('insulin').then((val) => {
-        this.insulin = val;
-      });
-      this.storage.get('intolerances').then((val) => {
-        this.intolerances = val;
-      });
+    let loading = this.loadingCtrl.create({
+      content: 'Please wait...'
     });
+
+    loading.present();
+
+    setTimeout(() => {
+      loading.dismiss();
+
+      this.storage.ready().then(() => {
+        this.storage.get('chronicMedis').then((val) => {
+          this.chronicMedis = val;
+        });
+        this.storage.get('selfMedis').then((val) => {
+          this.selfMedis = val;
+        });
+        this.storage.get('insulin').then((val) => {
+          this.insulin = val;
+        });
+        this.storage.get('intolerances').then((val) => {
+          this.intolerances = val;
+        });
+      });
+    }, 500);
+
   }
 
 /**************************************************
@@ -123,6 +138,28 @@ storage SET:
     });
   }
 
+  saveMedication() {
+    this.mp.save(this.getMedicationRes());
+  }
+
+  saveWeight(v,d) {
+    this.mp.save(this.getWeightRes(55.1,new Date()));
+  }
+
+  getObservations() {
+    var o =this.mp.search("Observation");
+    console.log(o);
+    return o;
+  }
+
+  getMedication() {
+    var m =this.mp.search("Medication");
+    console.log(m);
+    return m;
+  }
+
+
+
 
 /*******************************************************************************
 
@@ -137,7 +174,7 @@ storage SET:
 /*******************************************************************************
 
 /**************************************************
-              test for scanner
+              test for HCI hospINDEX
 
 get the information about the medication Algifor
 for testing on the web,because the cordova plugin
@@ -149,14 +186,12 @@ storage SET:
   scanTest() {
     // get the medication data from the hospINDEX request
     var HCIData = this.getHCIData('7680504110875');
-    // get only the relevant data from the medication data
+
     var mediData = this.getJSONData(HCIData);
-    // if storage is ready to use
+
     this.storage.ready().then(() => {
-      // save the new medication in the storage
       this.storage.set('MedicationData', mediData);
     });
-    // show alert for choosing category
     this.showRadio(mediData);
 
     console.log(HCIData);
@@ -182,7 +217,7 @@ storage SET:
     );
   }
 
-  getHCI (barcode) {
+  getHCI(barcode) {
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
 
@@ -217,8 +252,6 @@ storage SET:
     console.log(error);
   }
 
-/*******************************************************************************
-
 /**************************************************
             Get medication from hospINDEX
 
@@ -249,6 +282,91 @@ return:
       return response;
     });
   }
+
+
+  //*******************************************************************************
+
+
+  getWeightRes(v,d) {
+    var weight: TYPES.FHIR_ObservationRes_1Value;
+    var weight = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding:  [{
+            system: "http://hl7.org/fhir/observation-category",
+            code: "vital-signs",
+            display: "Vital-Signs"
+        }]
+      },
+      code: {
+        text: "Gewicht",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '3141-9',
+          display: 'Weight Measured'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'kg',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return weight;
+  }
+
+
+  getMedicationRes() {
+    var mediRes:TYPES.FHIR_MedicationRes;
+    mediRes = {
+      resourceType: "Medication",
+      code: {
+        coding: [{
+          system: "http://hl7.org/fhir/sid/ndc",
+          code: "0206-8862-02",
+          display: "Zosyn"
+        }]
+      },
+      isBrand: true,
+      form: {
+        coding: [{
+          system: "http://snomed.info/sct",
+          code: "385219001",
+          display: "Injection solution (qualifier vallue)"
+        }]
+      },
+      ingredient: [{
+        itemCodeableConcept: {
+          coding: [{
+            system: "http://www.nlm.nih.gov/research/umls/rxnorm",
+            code: "203134",
+            display: "Piperacillin Sodium"
+          }]
+        },
+        amount: {
+          numerator: {
+            value: 4,
+            system: "http://unitsofmeasure.org",
+            code: "g"
+          },
+          denominator: {
+            value: 20,
+            system: "http://unitsofmeasure.org",
+            code: "mL"
+          }
+        },
+        isActive: true
+      }]
+    } as TYPES.FHIR_MedicationRes;
+    return mediRes;
+  }
+
+
+
+
+
 
 /***************************************************
             Get the data in JSON format
@@ -390,8 +508,11 @@ storage GET:
               });
               // save the current medication to the storage
               this.storage.set(data, medis);
-              // refresh page
-              this.refreshPage();
+
+              navTransition.then(() => {
+                // refresh page
+                this.refreshPage();
+              });
             });
           });
         });
