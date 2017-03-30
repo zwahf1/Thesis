@@ -43,20 +43,28 @@ export interface DateToValue
      unit: string;
  }
 
- export interface FHIR_MedicationRes {
+ export interface FHIR_MedicationStatementRes {
    resourceType:string;
-   code:CodeableConcept;
+   identifier?:Array<any>;
+   basedOn?:Array<any>;
+   partOf?:Array<any>;
+   context?:any;
    status:string;
-   isBrand:boolean;
-   isOverTheCounter:boolean;
-   form:CodeableConcept;
-   ingredient:Array<MedicationIngredient>;
-   package:{
-     container:CodeableConcept;
-     content:Array<MedicationPackageContent>;
-     batch:Array<MedicationBatch>;
-   };
-   image:Array<MedicationImage>;
+   category?:CodeableConcept;
+   medicationCodeableConcept:CodeableConcept;
+   medicationReference?:any;
+   effectiveDateTime:any;
+   effectivePeriod?:any;
+   dateAsserted?:any;
+   informationSource?:any;
+   subject?:any;
+   derivedFrom?:Array<any>;
+   taken:string;
+   reasonNotTaken?:Array<CodeableConcept>;
+   reasonCode?:Array<CodeableConcept>;
+   reasonReference?:Array<any>;
+   note?:Array<any>;
+   dosage?:Array<any>;
  }
 
  export interface FHIR_ObservationRes_1Value {

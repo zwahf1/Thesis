@@ -24,10 +24,10 @@ export class MedicationPage {
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
-  chronicMedis: [TYPES.FHIR_MedicationRes];
-  selfMedis: [TYPES.FHIR_MedicationRes];
-  insulin: [TYPES.FHIR_MedicationRes];
-  intolerances: [TYPES.FHIR_MedicationRes];
+  chronicMedis: [TYPES.FHIR_MedicationStatementRes];
+  selfMedis: [TYPES.FHIR_MedicationStatementRes];
+  insulin: [TYPES.FHIR_MedicationStatementRes];
+  intolerances: [TYPES.FHIR_MedicationStatementRes];
 
 /**************************************************
                   constructor
@@ -47,14 +47,6 @@ storage SET:
 ***************************************************/
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
                 public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
-    // if storage is ready to use
-    this.storage.ready().then(() => {
-      // import all medication from MIDATA
-      this.storage.set('chronicMedis', []);
-      this.storage.set('selfMedis', []);
-      this.storage.set('insulin', []);
-      this.storage.set('intolerances', []);
-    });
     // refresh page (load list)
     this.refreshPage();
   }
@@ -72,16 +64,24 @@ storage GET:
   - intolerances: all medication intolerances
 ***************************************************/
   refreshPage () {
-    let loading = this.loadingCtrl.create({
-      content: 'Please wait...'
-    });
+    let loading = this.loadingCtrl.create();
 
     loading.present();
 
     setTimeout(() => {
-      loading.dismiss();
-
       this.storage.ready().then(() => {
+
+        if((this.chronicMedis == undefined) &&
+            (this.selfMedis == undefined) &&
+            (this.insulin == undefined) &&
+            (this.intolerances == undefined)) {
+          // import all medication from MIDATA
+          this.storage.set('chronicMedis', []);
+          this.storage.set('selfMedis', []);
+          this.storage.set('insulin', []);
+          this.storage.set('intolerances', []);
+        }
+
         this.storage.get('chronicMedis').then((val) => {
           this.chronicMedis = val;
         });
@@ -95,7 +95,9 @@ storage GET:
           this.intolerances = val;
         });
       });
-    }, 500);
+
+      loading.dismiss();
+    }, );
 
   }
 
@@ -139,8 +141,15 @@ storage SET:
   }
 
   saveMedication() {
-    this.mp.save(this.getMedicationRes());
+    this.mp.save(this.getMedicationStatementRes());
   }
+
+  getMedication() {
+    var m =this.mp.search("MedicationStatement");
+    console.log(m);
+    return m;
+  }
+
 
   saveWeight(v,d) {
     this.mp.save(this.getWeightRes(55.1,new Date()));
@@ -152,11 +161,6 @@ storage SET:
     return o;
   }
 
-  getMedication() {
-    var m =this.mp.search("Medication");
-    console.log(m);
-    return m;
-  }
 
 
 
@@ -318,55 +322,45 @@ return:
   }
 
 
-  getMedicationRes() {
-    var mediRes:TYPES.FHIR_MedicationRes;
+  getMedicationStatementRes() {
+    var mediRes:TYPES.FHIR_MedicationStatementRes;
     mediRes = {
-      resourceType: "Medication",
-      code: {
-        coding: [{
-          system: "http://hl7.org/fhir/sid/ndc",
-          code: "0206-8862-02",
-          display: "Zosyn"
-        }]
-      },
-      isBrand: true,
-      form: {
+      resourceType: "MedicationStatement",
+      status: "active",
+      medicationCodeableConcept: {
         coding: [{
           system: "http://snomed.info/sct",
-          code: "385219001",
-          display: "Injection solution (qualifier vallue)"
+          code: "27658006",
+          display: "Amoxicillin"
         }]
       },
-      ingredient: [{
-        itemCodeableConcept: {
-          coding: [{
-            system: "http://www.nlm.nih.gov/research/umls/rxnorm",
-            code: "203134",
-            display: "Piperacillin Sodium"
-          }]
-        },
-        amount: {
-          numerator: {
-            value: 4,
-            system: "http://unitsofmeasure.org",
-            code: "g"
-          },
-          denominator: {
-            value: 20,
-            system: "http://unitsofmeasure.org",
-            code: "mL"
+      effectiveDateTime:new Date(),
+      taken:"y",
+      note: [{
+        text:"chronicMedis"
+      }],
+      dosage:[{
+        text:"one capsule three times daily",
+        timing: {
+          repeat: {
+            frequency:3,
+            period:1,
+            periodUnit:"d"
           }
         },
-        isActive: true
+        asNeededBoolean:false,
+        route: {
+          coding: [{
+            system:"http://snomed.info/sct",
+            code:"260548002",
+            display:"Oral"
+          }]
+        }
       }]
-    } as TYPES.FHIR_MedicationRes;
+
+    } as TYPES.FHIR_MedicationStatementRes;
     return mediRes;
   }
-
-
-
-
-
 
 /***************************************************
             Get the data in JSON format
@@ -508,6 +502,8 @@ storage GET:
               });
               // save the current medication to the storage
               this.storage.set(data, medis);
+
+              this.saveMedication();
 
               navTransition.then(() => {
                 // refresh page

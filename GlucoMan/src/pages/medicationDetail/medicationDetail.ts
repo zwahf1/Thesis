@@ -10,7 +10,7 @@ import * as TYPES from '../../util/typings/MIDATA_Types';
 })
 
 export class MedicationDetailPage {
-  medication : TYPES.FHIR_MedicationRes;
+  medication : TYPES.FHIR_MedicationStatementRes;
 /**************************************************
                   constructor
 
