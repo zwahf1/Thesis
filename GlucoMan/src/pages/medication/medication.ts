@@ -191,13 +191,6 @@ storage SET:
     // get the medication data from the hospINDEX request
     var HCIData = this.getHCI('7680504110875');
 
-    var mediData = this.getJSONData(HCIData);
-
-    this.storage.ready().then(() => {
-      this.storage.set('MedicationData', mediData);
-    });
-    this.showRadio(mediData);
-
     console.log(HCIData);
   }
 
