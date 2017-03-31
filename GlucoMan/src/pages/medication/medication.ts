@@ -202,7 +202,7 @@ storage SET:
 
     var xhr = new XMLHttpRequest();
     var method = "GET";
-    var url = "https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX";
+    var url = "https://index.hcisolutions.ch/index/current/get.aspx?schema=ARTICLE&keytype=ARTBAR&key="+barcode+"&index=hospINDEX";
 
     xhr.open(method, url);
 
