@@ -189,7 +189,7 @@ storage SET:
 ***************************************************/
   scanTest() {
     // get the medication data from the hospINDEX request
-    var HCIData = this.getHCIData('7680504110875');
+    var HCIData = this.getHCI('7680504110875');
 
     var mediData = this.getJSONData(HCIData);
 
@@ -201,59 +201,29 @@ storage SET:
     console.log(HCIData);
   }
 
-  getGet(artbar) {
-    let email = 'EPN236342@hcisolutions.ch';
-    let password = 'UMPbDJu7!W';
-
-    let creds = btoa(email+':'+password);
-
-    var headers = new Headers();
-    headers.append('Authorization', 'Basic ' + creds);
-    headers.append('Content-Type', 'text/html');
-    var options = new RequestOptions({headers: headers});
-    this.http.get( 'https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX', options)
-    .map(
-      res => console.log(res)
-    )
-    .subscribe(
-      data => console.log(data),
-      err => console.log(err)
-    );
-  }
-
   getHCI(barcode) {
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
 
-    let creds = btoa(email+':'+password);
-    let body = {'Authorization': 'Basic '+creds};
+    let reqHeader = 'Basic '+btoa(email+':'+password);
 
-    let headers = new Headers({'Content-Type': 'application/x-www-form-urlencoded'});
-    let options = new RequestOptions({
-			headers: headers
-		});
+    var xhr = new XMLHttpRequest();
+    var method = "GET";
+    var url = "https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX";
 
+    xhr.open(method, url);
 
-    return this.http.post('https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX',
-    body, options).toPromise().then(response => { console.log(response.json()) }, this.handleError);
+    xhr.setRequestHeader('Authorization',reqHeader);
 
-/*
-    return new Promise(resolve => {
+    xhr.onreadystatechange = () => {
+      if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log(xhr.responseText);
+      } else {
+        console.log("Error!");
+      }
+    };
 
-      this.http.post('https://index.hcisolutions.ch/index/current/get.asmx?schema=ARTICLE&keytype=ARTBAR&key=7680504110875&index=hospINDEX',
-      body, options).subscribe(data => {
-
-        if(data.json().success){
-          console.log(data.json().token);
-        }
-      });
-    });
-
-*/
-  }
-
-  handleError(error) {
-    console.log(error);
+    xhr.send();
   }
 
 /**************************************************
