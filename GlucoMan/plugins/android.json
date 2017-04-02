@@ -1,0 +1,15 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "cordova-plugin-clipboard-x": {
+            "PACKAGE_NAME": "com.ionicframework.glucoman595729"
+        }
+    },
+    "dependent_plugins": {}
+}
