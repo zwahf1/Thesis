@@ -14,5 +14,41 @@
 
 
 <ion-content padding>
+  <div id="german">
+    <p><span>Falls ich mich </span><span style="text-decoration:underline;">ungewöhnlich verhalte</span><span> und den Eindruck erwecke, als wäre ich betrunken, kann das ein Zeichen einer Unterzuckerung sein.</span></p>
 
+    <p><span>Bitte geben Sie mir 20g </span><span style="text-decoration:underline;">Zucker</span><span>, z.B. als 2dl gesüsstes Getränk (nicht die light-Variante) oder mind. 4 Stück Traubenzucker oder Würfelzucker. Verbessert sich mein Zustand nicht innert 10 Minuten, rufen Sie einen Arzt oder den Notfalldienst.</span></p>
+
+    <p><span style="color:#FF0000;">Falls ich bewusstlos bin, geben Sie mir </span><span style="text-decoration:underline;color:#FF0000;">nichts</span><span style="color:#FF0000;"> und rufen Sie </span><span style="text-decoration:underline;color:#FF0000;">sofort </span>
+      <span style="color:#FF0000;">
+      einen Arzt oder den Notfalldienst.
+      </span>
+    </p>
+    <button ion-button full (click)="changeLanguage('english', 'german')">
+    English
+  </button>
+  <ion-footer>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-8>
+          <span>Bitte fügen Sie diesen Text bei den Notfallinformationen des Telefons ein</span>
+        </ion-col>
+        <ion-col col-4>
+          <button ion-button (click)="copyText('german')">Text<br/>kopieren</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
+  </div>
+  <div id="english" style="display: none">
+    <p><span>In case you find me </span><span style="text-decoration:underline;">disoriented</span><span>or</span><span style="text-decoration:underline;">confused</span><span> this may be a sign of low blood sugar.</span></p>
+
+    <p><span>Please give me </span><span style="text-decoration:underline;">some form of sugar</span><span>(20 g), e.g. 200 ml sugary drink (not a diet drink) or dextrose tablet. If my situation does not improve within 10 minutes call a doctor or an ambulance.</span></p>
+
+    <p><span style="color:#FF0000;">If I am unconscious </span><span style="text-decoration:underline;color:#FF0000;">do not</span><span style="color:#FF0000;">give me anything by mouth. Call a doctor or an </span><span style="text-decoration:underline;color:#FF0000;">ambulance immediately.</span></p>
+
+    <button ion-button full (click)="changeLanguage('german', 'english')">
+    Deutsch
+  </button>
+  </div>
 </ion-content>

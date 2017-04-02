@@ -14,8 +14,11 @@
 
 <ion-content padding>
   <ion-list>
-    <button ion-item (click)="showAlert()">
+    <button ion-item (click)="presentPopover()">
       Datenschutzerklärung
+    </button>
+    <button ion-item red (click)="deleteAllData()">
+      Alle Daten löschen
     </button>
   </ion-list>
 </ion-content>

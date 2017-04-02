@@ -15,13 +15,15 @@ export class VitalRange {
   upperLimit: any;
   unit: any;
   date: any;
-  constructor(title: any, lower: any, upper: any, unit: any, date: any) {
+  visible: any;
+  constructor(title: any, lower: any, upper: any, unit: any, date: any, visible: any) {
     this.vitalRange = {
       title: title,
       lowerLimit: lower,
       upperLimit: upper,
       unit: unit,
-      date: date
+      date: date,
+      visible: visible,
     }
   }
   //get-method

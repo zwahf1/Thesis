@@ -1,6 +1,4 @@
 
-import { MeasurementsPage } from '../pages/measurements/measurements';
-
 /**************************************************
 Class Chart
 creates the single charts of the MeasurementsPage, called by measurements.ts

@@ -9,4 +9,21 @@ page-targetrange {
   input{
     text-align: inherit;
   }
+  tbody {
+    width: inherit;
+  }
+  tr {
+    width: inherit;
+  }
+  td:nth-child(2){
+    display: none;
+  }
+  ion-item-group:nth-child(1){
+    td:nth-child(2){
+      display: table-cell;
+    }
+  }
+  td.date{
+    width: 75px;
+  }
 }

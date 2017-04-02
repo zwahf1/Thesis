@@ -18,6 +18,7 @@ import { InformationPage } from '../pages/information/information';
 import { EmergencyPage } from '../pages/emergency/emergency';
 import { CheckupsPage } from '../pages/checkups/checkups';
 import { MedicationDetailPage } from '../pages/medicationDetail/medicationDetail';
+import { DisclaimerPage } from '../pages/disclaimer/disclaimer';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
@@ -65,7 +66,8 @@ export { Highcharts };
     CheckupsPage,
     TabsPage,
     ContactsPage,
-    MedicationDetailPage
+    MedicationDetailPage,
+    DisclaimerPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -97,7 +99,8 @@ export { Highcharts };
     MIDATAPage,
     TabsPage,
     ContactsPage,
-    MedicationDetailPage
+    MedicationDetailPage,
+    DisclaimerPage
   ],
   providers: [
     Storage,

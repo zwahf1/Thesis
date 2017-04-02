@@ -1,10 +1,9 @@
 import { Component } from '@angular/core';
-import { App, NavController, AlertController  } from 'ionic-angular';
-import { LoginPage } from '../login/login';
+import { App, NavController, LoadingController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 
+import { VitalRange } from '../../util/VitalRange';
 
-import { ContactsPage } from '../contacts/contacts';
-import { MidataPersistence } from '../../util/midataPersistence';
 
 @Component({
   selector: 'page-display',
@@ -12,10 +11,51 @@ import { MidataPersistence } from '../../util/midataPersistence';
 })
 export class DisplayPage {
 
-  constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController) {
+  glucoseUnit = 'mmol/L';
+  visibleList = [];
 
+
+  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage, public loadingCtrl: LoadingController) {
+    this.visibleList['all'] = true;
+    this.visibleList['glucose'] = true;
+    this.visibleList['bloodpressure'] = true;
+    this.visibleList['pulse'] = true;
+    this.visibleList['weight'] = true;
+
+    this.storage.ready().then(() => {
+      this.storage.get('VisibleList').then((val) => {
+        if (val) {
+          this.visibleList = val;
+        }
+      })
+      this.storage.get('GlucoseUnit').then((val) => {
+        if (val) {
+          this.glucoseUnit = val;
+        }
+      })
+    });
   }
 
+  ionViewDidEnter() {
+    /*
+    let loading = this.loadingCtrl.create();
+    loading.present();
+    loading.dismiss();
+    */
+  }
 
+  visibleChange() {
+    this.storage.ready().then(() => {
+      this.storage.set('VisibleList', this.visibleList);
+    });
+  }
+  unitChange(unit) {
+    console.log(unit);
+    this.glucoseUnit = unit;
+    console.log(this.glucoseUnit);
+    this.storage.ready().then(() => {
+      this.storage.set('GlucoseUnit', this.glucoseUnit);
+    });
+  }
 
 }

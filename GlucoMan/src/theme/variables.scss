@@ -38,8 +38,43 @@ $colors: (
   dark:       #222
 
 ) !default;
+/*
+$popover-ios-width:             1000px !default;
+$popover-ios-min-width:         950px !default;
+$popover-ios-max-width:         1050px !default;
 
+$popover-md-width:             1000px !default;
+$popover-md-min-width:         950px !default;
+$popover-md-max-width:         1050px !default;
 
+$popover-wp-width:             1000px !default;
+$popover-wp-min-width:         950px !default;
+$popover-wp-max-width:         1050px !default;
+*/
+
+$popover-ios-width:             90% !default;
+$popover-ios-min-width:         85% !default;
+$popover-ios-max-width:         95% !default;
+
+$popover-md-width:              90% !default;
+  $popover-md-min-width:         85% !default;
+$popover-md-max-width:          95% !default;
+
+$popover-wp-width:             90% !default;
+$popover-wp-min-width:         85% !default;
+$popover-wp-max-width:         95% !default;
+
+$popover-ios-heigth:             90% !default;
+$popover-ios-min-heigth:         85% !default;
+$popover-ios-max-heigth:         95% !default;
+
+$popover-md-heigth:              90% !default;
+$popover-md-min-heigth:         85% !default;
+$popover-md-max-heigth:        95% !default;
+
+$popover-wp-heigth:             90% !default;
+$popover-wp-min-heigth:         85% !default;
+$popover-wp-max-heigth:         95% !default;
 $text-color:                 #000 !default;
 $link-color:                 color($colors, primary) !default;
 $background-color:           #fff !default;
@@ -50,6 +85,9 @@ $font-size-base:             1.4rem !default; // 1.4rem == 14px
 
 $content-padding:            0px !default;
 $content-margin:             0px !default;
+
+$alert-min-width:             250px !default;
+$alert-max-width:             95% !default;
 
 $toolbar-background:         #f8f8f8 !default;
 $toolbar-border-color:       #b2b2b2 !default;

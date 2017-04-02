@@ -7,26 +7,33 @@
 <ion-content padding>
   <ion-list>
     <ion-item-group *ngFor="let item of vitalRangeList">
-      <ion-item-divider>
-        {{ item.vitalRange.title }}
-      </ion-item-divider>
       <table>
+        <tr style="width: inherit">
+          <th colspan="4">
+            <ion-item-divider>
+              {{ item.vitalRange.title }}
+            </ion-item-divider>
+          </th>
+          <td>
+            zuletzt aktualisiert
+          </td>
+        </tr>
         <tr>
           <td>
             <ion-item>
               <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.lowerLimit}}"></ion-input>
             </ion-item>
           </td>
-          <td>-</td>
+          <td style="max-width: 1em">-</td>
           <td>
             <ion-item>
               <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.upperLimit}}"></ion-input>
             </ion-item>
           </td>
-          <td>
+          <td style="min-width: 4em;">
             {{item.vitalRange.unit}}
           </td>
-          <td>
+          <td class="date">
             {{item.vitalRange.date | date:'dd.MM.yyyy'}}
           </td>
         </tr>
@@ -35,49 +42,6 @@
     <button ion-button full (click)='presentConfirm()'>Speichern</button>
   </ion-list>
 
-  <table>
-    <tbody>
-      <ion-list>
-        <ion-item-group *ngFor="let item of vitalRangeList">
-          <tr>
-            <td colspan="5">
-              <ion-item-divider>
-                {{ item.vitalRange.title }}
-              </ion-item-divider>
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.lowerLimit}}"></ion-input>
-              </ion-item>
-            </td>
-            <td>-</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.upperLimit}}"></ion-input>
-              </ion-item>
-            </td>
-            <td>
-
-              {{item.vitalRange.unit}}
-
-
-            </td>
-            <td>
-              
-              <ion-item>
-              {{item.vitalRange.date | date:'dd.MM.yyyy'}}
-            </ion-item>
-            </td>
-          </tr>
-        </ion-item-group>
-        <button ion-button full (click)='presentConfirm()'>
-    Speichern
-  </button>
-      </ion-list>
-    </tbody>
-  </table>
 
   <ion-list>
     <ion-item>

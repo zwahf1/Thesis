@@ -16,6 +16,9 @@ export class MeasurementsPage {
   chartBP: any;
   chartPulse: any;
   chartWeight: any;
+  visibleList = [];
+  glucoseUnit: string = 'mmol/L';
+
   /**************************************************
                     constructor
 
@@ -30,6 +33,10 @@ export class MeasurementsPage {
     -weightValues: the measurements of the scale
 **************************************************/
   constructor(public navCtrl: NavController, public storage: Storage) {
+
+
+
+
     /**************************************************
     sample data for glucose, blood pressure, pulse and weight
     **************************************************/
@@ -50,7 +57,7 @@ export class MeasurementsPage {
       [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
       [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
 
-    //the sample data are stored in local storage
+    //the sample data are stored in the device storage
 
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', valuesGlucose);
@@ -60,13 +67,60 @@ export class MeasurementsPage {
     });
 
     //the charts are created by the Chart-class
-
-    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', valuesGlucose);
+    this.generateAllChart(valuesGlucose, valuesBP, valuesPulse, valuesWeight);
+    this.chartGluco = new Chart('spline', 'Blutzucker', ''+this.glucoseUnit, valuesGlucose);
     this.chartGlucoVisible = 'inline';
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', valuesBP);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', valuesPulse);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', valuesWeight);
+    console.log(this.chartGluco);
+    console.log(this.glucoseUnit);
+    console.log(this.chartGluco.yAxis.title.text);
 
+  }
+  ionViewDidEnter() {
+    console.log(this.chartGluco);
+    console.log(this.chartAll);
+    this.storage.ready().then(() => {
+      this.storage.get('VisibleList').then((val) => {
+        //if (val) {
+        this.visibleList = val;
+        this.hideCharts();
+        //  }
+      })
+      this.storage.get('GlucoseUnit').then((val) => {
+        if (val) {
+          this.glucoseUnit = val;
+        }
+      })
+    });
+  }
+
+  expand(src) {
+    var element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+    var mode = '' + src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0].getAttribute('style');
+
+    if (mode.search('none') < 0) {
+      //this.chartGlucoVisible = 'none';
+      element.style.display = 'none';
+    } else if (mode.search('none') > 0) {
+      //this.chartGlucoVisible = 'inline';
+      element.style.display = 'inline';
+    }
+  }
+
+  hideCharts() {
+    for (var key in this.visibleList) {
+      var x = document.getElementById(key)
+      if (this.visibleList[key]) {
+        x.style.display = 'block';
+      } else {
+        x.style.display = 'none';
+      }
+    }
+
+  }
+  generateAllChart(valuesGlucose, valuesBP, valuesPulse, valuesWeight) {
     this.chartAll = {
       chart: {
         // Edit chart spacing
@@ -77,13 +131,13 @@ export class MeasurementsPage {
         width: null,
         height: 300,
         zoomType: 'x',
-            resetZoomButton: {
-                position: {
-                    verticalAlign: 'bottom', // by default
-                    y: -35,
-                },
-                relativeTo: 'plot'
-            },
+        resetZoomButton: {
+          position: {
+            verticalAlign: 'bottom', // by default
+            y: -35,
+          },
+          relativeTo: 'plot'
+        },
       },
       title: {
         text: null
@@ -119,10 +173,10 @@ export class MeasurementsPage {
             yAxis: 0,
             data: valuesWeight
           }],
-          //the legend isn't visible, so the user can't disable e serie of data
-          legend: {
-            enabled: true
-          },
+      //the legend isn't visible, so the user can't disable e serie of data
+      legend: {
+        enabled: true
+      },
       navigator: {
         enabled: false
       },
@@ -136,26 +190,7 @@ export class MeasurementsPage {
       },
     }
   }
-  expand(src) {
-    console.log(src);
-    console.log(src.parentNode.parentNode.parentNode.parentNode);
-    console.log(src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0].getAttribute('style'));
-    var element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
-    var mode = ''+src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0].getAttribute('style');
-    console.log(mode.search('none'));
-
-  if(mode.search('none')<0){
-      console.log('visible');
-      //this.chartGlucoVisible = 'none';
-      element.style.display = 'none';
-    }else if(mode.search('none')>0){
-      console.log('none visible');
-      //this.chartGlucoVisible = 'inline';
-      element.style.display = 'inline';
-    }
-
-  }
-  /*
+/*
   newValue() {
     this.valuesBP = [[1, 2], [2, 4], [3, 6], [4, 8], [5, 10], [6, 9], [7, 8], [8, 9], [9, 10], [10, 11]];
     this.chartBP1 = {
