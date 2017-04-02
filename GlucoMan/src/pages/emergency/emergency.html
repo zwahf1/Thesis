@@ -50,5 +50,17 @@
     <button ion-button full (click)="changeLanguage('german', 'english')">
     Deutsch
   </button>
+  <ion-footer>
+    <ion-grid>
+      <ion-row>
+        <ion-col col-8>
+          <span>Please paste this text to the emergency information of your phone</span>
+        </ion-col>
+        <ion-col col-4>
+          <button ion-button (click)="copyText('english')">Copy<br/>Text</button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </ion-footer>
   </div>
 </ion-content>
