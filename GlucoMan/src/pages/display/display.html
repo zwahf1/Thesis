@@ -30,24 +30,5 @@
   <ion-label>Gewicht</ion-label>
   <ion-toggle (ionChange)="visibleChange()" [(ngModel)]="visibleList['weight']" ></ion-toggle>
 </ion-item>
-<!--
-<ion-item *ngFor="let item of vitalRangeList">
-  <ion-label>{{item.vitalRange.title}}</ion-label>
-  <ion-toggle (ionChange)="visibleChange(item)" checked="true"></ion-toggle>
-</ion-item>
--->
-<ion-list-header>
-  Einheiten
-</ion-list-header>
-<ion-item>
-<ion-label>Glukose</ion-label>
-<ion-select [(ngModel)]="glucoseUnit" (ionChange)="unitChange(this.glucoseUnit)" interface="action-sheet">
-  <ion-option value="mmol/L" selected="true">mmol/L</ion-option>
-  <ion-option value="mg/dL">mg/dL</ion-option>
-</ion-select>
-
-</ion-item>
   </ion-list>
-  {{visibleList}}
-
 </ion-content>

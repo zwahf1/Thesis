@@ -19,7 +19,7 @@ input parameters:
     -data (any): the data to feed the chart
 **************************************************/
 
-  constructor(type: string, title: string, unit: string, data: any) {
+  constructor(type: string, title: string, unit: string, data: any, from1: number, to1: number, from2: number, to2: number){
     this.chart = {
       chart: {
         //type of the chart. spline for blood glucose, weight and pulse,
@@ -48,11 +48,20 @@ input parameters:
         },
         min: 0,
         opposite: false,
+        plotBands: [{
+          from: from1,
+          to: to1,
+          color: 'lightgreen',
+        },{
+          from: from2,
+          to: to2,
+          color: 'lightgreen',
+        }]
       },
       //the unit is also shown on the tooltip of each mark.
       //followTouchMove and followPointer has to be disabled to move the chart on touch device
       tooltip: {
-        valueSuffix: ' '+unit,
+        valueSuffix: ' ' + unit,
         followTouchMove: false,
         followPointer: false
       },
@@ -93,12 +102,14 @@ input parameters:
     //the chart is returned to the MeasurementsPage to show on the html-page
     return this.chart;
   }
+
+
   //get-method, returns the chart
-  public getChart1() {
+  getChart() {
     return this.chart;
   }
   //set-method, sets the chart. probably never used. maybe to update the data
-  public setChart1(chart) {
+  public setChart(chart) {
     this.chart = chart;
   }
 }

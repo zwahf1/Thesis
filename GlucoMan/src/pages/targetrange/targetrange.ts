@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { VitalRange } from '../../util/VitalRange';
 import { App, NavController, AlertController  } from 'ionic-angular';
-import { LoginPage } from '../login/login';
 import { Storage } from '@ionic/storage';
 
 @Component({
@@ -15,27 +14,39 @@ export class TargetrangePage {
   dateWeight: any;
   dateHb: any;
   glucoseRange: any;
-  vitalRangeList: VitalRange[];// = [new VitalRange('Diastolischer BD', 70,89, new Date)];
+  vitalRangeList = [];
 
-  levelNum: number;
-
-  constructor(public navCtrl: NavController,public storage: Storage, public appCtrl: App, private alertCtrl: AlertController) {
-  this.vitalRangeList = [new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date, 'true'), new VitalRange('Diastolischer BD', 70,89, 'mmHg', new Date, 'true')];
-  this.vitalRangeList.push(new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date, true));
-  this.vitalRangeList.push(new VitalRange('Gewicht',75, 85, 'kg', new Date, true));
-  this.vitalRangeList.push(new VitalRange('HbA1C', 4.5, 7.5, '%', new Date, true));
+  constructor(public navCtrl: NavController, public storage: Storage, public appCtrl: App, private alertCtrl: AlertController) {
+    this.vitalRangeList.push( new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date));
+    this.vitalRangeList.push(new VitalRange('Diastolischer BD', 70, 89, 'mmHg', new Date));
+    this.vitalRangeList.push( new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date));
+    this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
+    this.vitalRangeList.push( new VitalRange('Gewicht', 65, 85, 'kg', new Date));
 
     this.storage.ready().then(() => {
-      this.storage.set('VitalRangeList', this.vitalRangeList);
+      this.storage.get('VitalRangeList').then((val) => {
+        if (val) {
+          this.vitalRangeList = val;
+        }
+      })
     });
-
+  }
+  ionViewDidEnter() {
+    this.storage.ready().then(() => {
+      this.storage.get('VitalRangeList').then((val) => {
+        if (val) {
+          this.vitalRangeList = val;
+        }
+      })
+    });
   }
   inputChange(element, item) {
+
+    element.parentElement.parentElement.style.background = 'whitesmoke';
+    var d = new Date;
+    item.date = d;
     console.log(this.vitalRangeList);
     console.log(item);
-    element.parentElement.parentElement.style.background =  'whitesmoke';
-    var d = new Date;
-
   }
 
   presentConfirm() {
@@ -53,6 +64,9 @@ export class TargetrangePage {
         {
           text: 'Speichern',
           handler: () => {
+            this.storage.ready().then(() => {
+              this.storage.set('VitalRangeList', this.vitalRangeList);
+            });
             console.log('gespeichert');
           }
         }

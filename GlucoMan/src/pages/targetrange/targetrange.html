@@ -1,3 +1,4 @@
+.
 <ion-header>
   <ion-navbar>
     <ion-title>Zielbereich</ion-title>
@@ -11,7 +12,7 @@
         <tr style="width: inherit">
           <th colspan="4">
             <ion-item-divider>
-              {{ item.vitalRange.title }}
+              {{ item.title }}
             </ion-item-divider>
           </th>
           <td>
@@ -21,117 +22,24 @@
         <tr>
           <td>
             <ion-item>
-              <ion-input (input)='inputChange($event.srcElement, item)' type="number"  [(ngModel)]="item.lowerLimit" ></ion-input>
+              <ion-input (input)='inputChange($event.srcElement, item)' type="number" [(ngModel)]="item.lowerLimit"></ion-input>
             </ion-item>
           </td>
-          <td style="max-width: 1em">-</td>
+          <td style="min-width: 10px">-</td>
           <td>
             <ion-item>
               <ion-input (input)='inputChange($event.srcElement, item)' type="number" [(ngModel)]="item.upperLimit"></ion-input>
             </ion-item>
           </td>
           <td style="min-width: 4em;">
-            {{item.vitalRange.unit}}
+            {{item.unit}}
           </td>
           <td class="date">
-            {{item.vitalRange.date | date:'dd.MM.yyyy'}}
+            {{item.date | date:'dd.MM.yyyy'}}
           </td>
         </tr>
       </table>
     </ion-item-group>
     <button ion-button full (click)='presentConfirm()'>Speichern</button>
   </ion-list>
-
-
-  <ion-list>
-    <ion-item>
-      <table>
-        <tbody>
-          <tr>
-            <th colspan="4">Zielbereich</th>
-            <th>Einheit</th>
-            <th>Datum</th>
-          </tr>
-          <tr id="glucoseRow">
-            <td>Glukose</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>-</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>
-              <select>
-                <option selected>mmol/L</option>
-                <option>mg/dL</option>
-              </select> </td>
-            <td>
-              <p class='date'>{{dateGlucose}}</p>
-            </td>
-          </tr>
-          <tr id="bloodpressureRow">
-            <td>Blutdruck</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>-</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>mmHg</td>
-            <td>
-              {{dateBloodPressure}}
-            </td>
-          </tr>
-          <tr id="weightRow">
-            <td>Gewicht</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>-</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>kg</td>
-            <td>
-              {{dateWeight}}
-            </td>
-          </tr>
-          <tr id="hbRow">
-            <td>HbA1c</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>-</td>
-            <td>
-              <ion-item>
-                <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder=""></ion-input>
-              </ion-item>
-            </td>
-            <td>%</td>
-            <td>
-              {{dateHb}}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </ion-item>
-    <button ion-button full (click)='presentConfirm()'>Speichern</button>
-  </ion-list>
-
 </ion-content>
