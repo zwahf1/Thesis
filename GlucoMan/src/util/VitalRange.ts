@@ -9,23 +9,24 @@ creates the single charts of the MeasurementsPage, called by measurements.ts
 
 export class VitalRange {
 
-  vitalRange: any;
+  //vitalRange: any;
   title: any;
-  lowerLimit: any;
-  upperLimit: any;
+  lowerLimit: number;
+  upperLimit: number;
   unit: any;
   date: any;
   visible: any;
-  constructor(title: any, lower: any, upper: any, unit: any, date: any, visible: any) {
-    this.vitalRange = {
-      title: title,
-      lowerLimit: lower,
-      upperLimit: upper,
-      unit: unit,
-      date: date,
-      visible: visible,
-    }
+  constructor(title: any, lower: number, upper: number, unit: any, date: any, visible: any) {
+//    this.vitalRange = {
+      this.title = title;
+      this.lowerLimit = lower;
+      this.upperLimit = upper;
+      this.unit = unit;
+      this.date = date;
+      this.visible = visible;
+  //  }
   }
+  /*
   //get-method
   public getTitle() {
     return this.title;
@@ -39,7 +40,7 @@ export class VitalRange {
     return this.lowerLimit;
   }
   //set-method
-  public setLowerLimit(lowerLimit) {
+  public setLowerLimit(lowerLimit: number) {
     this.lowerLimit = lowerLimit;
   }
   //get-method
@@ -47,7 +48,7 @@ export class VitalRange {
       return this.upperLimit;
     }
     //set-method
-    public setUpperLimit(upperLimit) {
+    public setUpperLimit(upperLimit: number) {
       this.upperLimit = upperLimit;
     }
     //get-method
@@ -58,4 +59,5 @@ export class VitalRange {
     public setDate(date) {
       this.date = date;
     }
+    */
 }

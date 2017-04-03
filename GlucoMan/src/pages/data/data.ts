@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, NavParams, PopoverController } from 'ionic-angular';
+import { App, NavController, NavParams, PopoverController, AlertController } from 'ionic-angular';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
 import { LoginPage } from '../login/login';
 import { Storage } from '@ionic/storage';
@@ -20,24 +20,45 @@ export class DataPage {
 
   private mp = MidataPersistence.getInstance();
 
-  constructor(public navCtrl: NavController, public appCtrl: App, public navParams: NavParams, public popoverCtrl: PopoverController, public storage: Storage) { }
-  //constructor(public popoverCtrl: PopoverController, ) { }
+  constructor(public navCtrl: NavController, public appCtrl: App, public navParams: NavParams, public popoverCtrl: PopoverController, public alertCtrl: AlertController, public storage: Storage) { }
+
 
   ionViewDidLoad() {
     console.log('ionViewDidLoad DataPage');
   }
 
+  //PopoverController to present the DisclaimerPage
   presentPopover() {
     let popover = this.popoverCtrl.create(DisclaimerPage);
     popover.present();
   }
 
   deleteAllData() {
-    this.storage.ready().then(() => {
-      this.storage.clear();
-      localStorage.clear();
+    //Alert to confirm the deletion of the data
+    let confirm = this.alertCtrl.create({
+      title: 'Alle Daten löschen?',
+      message: 'Wollen Sie wirklich alle Daten unwiderruflich löschen?',
+      buttons: [
+        {
+          text: 'Abbrechen',
+          role: 'cancel',
+          handler: () => { }
+        },
+        {
+          text: 'Löschen',
+          //After the confirmation, the storage will
+          //be cleared and the user is logged out
+          handler: () => {
+            this.storage.ready().then(() => {
+              this.storage.clear();
+              localStorage.clear();
+            });
+            this.logout();
+          }
+        }
+      ]
     });
-    this.logout();
+    confirm.present();
   }
 
   logout() {

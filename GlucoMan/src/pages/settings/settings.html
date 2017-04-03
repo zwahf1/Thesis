@@ -6,29 +6,30 @@
 
 <ion-content>
   <ion-list>
-    <!-- Button item with an icon on the left -->
+
+    <!-- Button as item for Target Range Page-->
     <button ion-item (click)="goTo('TargetrangePage')">
       <ion-icon name="disc" item-left ></ion-icon>
       Zielbereiche
     </button>
 
-      <!-- Button item with an icon on the left -->
-      <button ion-item (click)="goTo('DisplayPage')">
-        <ion-icon name="apps" item-left ></ion-icon>
-        Darstellung
-      </button>
+    <!-- Button as item for Display Setting Page -->
+    <button ion-item (click)="goTo('DisplayPage')">
+      <ion-icon name="apps" item-left ></ion-icon>
+      Darstellung
+    </button>
 
-      <!-- Button item with an icon on the left -->
-      <button ion-item (click)="goTo('DataPage')">
-        <ion-icon name="lock" item-left ></ion-icon>
-        Datensicherheit
-      </button>
+    <!-- Button as item for Data Setting Page -->
+    <button ion-item (click)="goTo('DataPage')">
+      <ion-icon name="lock" item-left ></ion-icon>
+      Datensicherheit
+    </button>
 
-      <!-- Button item with an icon on the left -->
-      <button ion-item (click)="logout()">
-        <ion-icon name="log-out" item-left ></ion-icon>
-        Logout
-      </button>
+    <!-- Button as item to log out -->
+    <button ion-item (click)="logout()">
+      <ion-icon name="log-out" item-left ></ion-icon>
+      Logout
+    </button>
 
   </ion-list>
 </ion-content>

@@ -68,7 +68,7 @@ export class MeasurementsPage {
 
     //the charts are created by the Chart-class
     this.generateAllChart(valuesGlucose, valuesBP, valuesPulse, valuesWeight);
-    this.chartGluco = new Chart('spline', 'Blutzucker', ''+this.glucoseUnit, valuesGlucose);
+    this.chartGluco = new Chart('spline', 'Blutzucker', '' + this.glucoseUnit, valuesGlucose);
     this.chartGlucoVisible = 'inline';
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', valuesBP);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', valuesPulse);
@@ -118,7 +118,6 @@ export class MeasurementsPage {
         x.style.display = 'none';
       }
     }
-
   }
   generateAllChart(valuesGlucose, valuesBP, valuesPulse, valuesWeight) {
     this.chartAll = {
@@ -190,15 +189,15 @@ export class MeasurementsPage {
       },
     }
   }
-/*
-  newValue() {
-    this.valuesBP = [[1, 2], [2, 4], [3, 6], [4, 8], [5, 10], [6, 9], [7, 8], [8, 9], [9, 10], [10, 11]];
-    this.chartBP1 = {
-      series: [{
-        data: this.valuesBP,
-      }]
+  /*
+    newValue() {
+      this.valuesBP = [[1, 2], [2, 4], [3, 6], [4, 8], [5, 10], [6, 9], [7, 8], [8, 9], [9, 10], [10, 11]];
+      this.chartBP1 = {
+        series: [{
+          data: this.valuesBP,
+        }]
+      }
     }
-  }
-*/
+  */
 
 }

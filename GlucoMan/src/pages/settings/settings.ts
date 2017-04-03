@@ -20,7 +20,6 @@ export class SettingsPage {
 
   }
   goTo(target) {
-    console.log(''+target);
     switch(target){
       case 'TargetrangePage':
         this.navCtrl.push(TargetrangePage);

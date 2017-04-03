@@ -17,6 +17,8 @@ export class TargetrangePage {
   glucoseRange: any;
   vitalRangeList: VitalRange[];// = [new VitalRange('Diastolischer BD', 70,89, new Date)];
 
+  levelNum: number;
+
   constructor(public navCtrl: NavController,public storage: Storage, public appCtrl: App, private alertCtrl: AlertController) {
   this.vitalRangeList = [new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date, 'true'), new VitalRange('Diastolischer BD', 70,89, 'mmHg', new Date, 'true')];
   this.vitalRangeList.push(new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date, true));
@@ -28,26 +30,14 @@ export class TargetrangePage {
     });
 
   }
-  inputChange(element) {
-    console.log(element);
+  inputChange(element, item) {
+    console.log(this.vitalRangeList);
+    console.log(item);
     element.parentElement.parentElement.style.background =  'whitesmoke';
     var d = new Date;
-    var row = element.parentElement.parentElement.parentElement.parentElement.parentElement.parentElement.id;
-    switch (row) {
-      case 'glucoseRow':
-    //    this.vitalRangeList.glucose.setDate = d;
-        break;
-      case 'bloodpressureRow':
-        this.dateBloodPressure = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
-        break;
-      case 'weightRow':
-        this.dateWeight = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
-        break;
-      case 'hbRow':
-        this.dateHb = d.getDate() + '.' + (d.getMonth() + 1) + '.' + d.getFullYear();
-        break;
-    }
+
   }
+
   presentConfirm() {
     let alert = this.alertCtrl.create({
       title: 'Speichern',

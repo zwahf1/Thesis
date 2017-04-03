@@ -21,13 +21,13 @@
         <tr>
           <td>
             <ion-item>
-              <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.lowerLimit}}"></ion-input>
+              <ion-input (input)='inputChange($event.srcElement, item)' type="number"  [(ngModel)]="item.lowerLimit" ></ion-input>
             </ion-item>
           </td>
           <td style="max-width: 1em">-</td>
           <td>
             <ion-item>
-              <ion-input (input)='inputChange($event.srcElement)' type="number" placeholder="{{item.vitalRange.upperLimit}}"></ion-input>
+              <ion-input (input)='inputChange($event.srcElement, item)' type="number" [(ngModel)]="item.upperLimit"></ion-input>
             </ion-item>
           </td>
           <td style="min-width: 4em;">

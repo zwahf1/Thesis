@@ -9,7 +9,17 @@
     "installed_plugins": {
         "cordova-plugin-clipboard-x": {
             "PACKAGE_NAME": "com.ionicframework.glucoman595729"
+        },
+        "cordova-plugin-bluetooth-serial": {
+            "PACKAGE_NAME": "com.ionicframework.glucoman595729"
+        },
+        "cordova-plugin-ble-central": {
+            "PACKAGE_NAME": "com.ionicframework.glucoman595729"
         }
     },
-    "dependent_plugins": {}
+    "dependent_plugins": {
+        "cordova-plugin-compat": {
+            "PACKAGE_NAME": "com.ionicframework.glucoman595729"
+        }
+    }
 }

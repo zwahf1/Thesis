@@ -19,6 +19,7 @@ import { EmergencyPage } from '../pages/emergency/emergency';
 import { CheckupsPage } from '../pages/checkups/checkups';
 import { MedicationDetailPage } from '../pages/medicationDetail/medicationDetail';
 import { DisclaimerPage } from '../pages/disclaimer/disclaimer';
+import { BluetoothPage } from '../pages/bluetooth/bluetooth';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
