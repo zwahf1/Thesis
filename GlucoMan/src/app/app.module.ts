@@ -23,6 +23,7 @@ import { DisclaimerPage } from '../pages/disclaimer/disclaimer';
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
 import { Storage } from '@ionic/storage';
+import { BLE } from '@ionic-native/ble';
 
 import { HttpModule, JsonpModule } from '@angular/http';
 
@@ -104,7 +105,8 @@ export { Highcharts };
   ],
   providers: [
     Storage,
-    { provide: ErrorHandler, useClass: IonicErrorHandler }
+    { provide: ErrorHandler, useClass: IonicErrorHandler },
+    BLE
   ]
 })
 

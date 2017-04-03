@@ -6,6 +6,8 @@ import { Http, Headers, RequestOptions } from '@angular/http';
 import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/toPromise';
 
+import { BLE } from '@ionic-native/ble';
+
 import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
 
 import { MidataPersistence } from '../../util/midataPersistence';
@@ -45,7 +47,7 @@ storage SET:
   - insulin: all insulin
   - intolerances: all medication intolerances
 ***************************************************/
-  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
+  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage, public ble: BLE,
                 public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     // refresh page (load list)
     this.refreshPage();
@@ -190,32 +192,37 @@ storage SET:
   scanTest() {
     // get the medication data from the hospINDEX request
     var HCIData = this.getHCI('7680504110875');
-
-    console.log(HCIData);
   }
 
   getHCI(barcode) {
+    //set credentials for a basic authentication (Base64)
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
-
     let reqHeader = 'Basic '+btoa(email+':'+password);
-
+    //create XMLHttp request for get the medication data form the
+    //HCI Solutions db with given barcode
     var xhr = new XMLHttpRequest();
     var method = "GET";
-    var url = "https://index.hcisolutions.ch/index/current/get.aspx?schema=ARTICLE&keytype=ARTBAR&key="+barcode+"&index=hospINDEX";
-
+    var url = "https://index.hcisolutions.ch/index/current/get.aspx?schema=ARTICLE&keytype=ARTBAR&key="+
+                barcode+"&index=hospINDEX";
+    //open the request for import
     xhr.open(method, url);
-
+    //set the request header with coded credentials
     xhr.setRequestHeader('Authorization',reqHeader);
-
+    //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        //save in localstorage
+        this.storage.ready().then(() => {
+          this.storage.set('HCIMedication', xhr.responseText);
+        });
         console.log(xhr.responseText);
+      //if bad authorization
       } else {
         console.log("Error!");
       }
     };
-
+    //send the request
     xhr.send();
   }
 
@@ -480,5 +487,14 @@ storage GET:
     });
     // present the alert popup
     alert.present();
+  }
+
+  connectBLE() {
+    var result = this.ble.startScan([]);
+    console.log(result);
+    this.ble.stopScan().then(function(response) {
+      console.log(response);
+    });
+
   }
 }
