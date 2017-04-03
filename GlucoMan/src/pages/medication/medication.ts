@@ -490,11 +490,17 @@ storage GET:
   }
 
   connectBLE() {
-    var result = this.ble.startScan([]);
-    console.log(result);
-    this.ble.stopScan().then(function(response) {
-      console.log(response);
+    var result = this.ble.startScan([]).subscribe(device => {
+      console.log(JSON.stringify(device));
+      this.ble.connect(device.id);
     });
+    setTimeout(() => {
+      this.ble.stopScan().then(() => {
+        console.log("stopped is stopped");
+      });
+    }, 3000);
+
+
 
   }
 }
