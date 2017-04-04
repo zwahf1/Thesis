@@ -11,6 +11,7 @@ import { BLE } from '@ionic-native/ble';
 import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
 
 import { MidataPersistence } from '../../util/midataPersistence';
+import { BlePersistence } from '../../util/blePersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
 declare var cordova: any;
@@ -23,6 +24,7 @@ declare var cordova: any;
 export class MedicationPage {
 
   private mp = MidataPersistence.getInstance();
+  private bp = BlePersistence.getInstance();
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
@@ -47,7 +49,7 @@ storage SET:
   - insulin: all insulin
   - intolerances: all medication intolerances
 ***************************************************/
-  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage, public ble: BLE,
+  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
                 public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     // refresh page (load list)
     this.refreshPage();
@@ -70,36 +72,39 @@ storage GET:
 
     loading.present();
 
-    setTimeout(() => {
-      this.storage.ready().then(() => {
+    this.storage.ready().then(() => {
 
-        if((this.chronicMedis == undefined) &&
-            (this.selfMedis == undefined) &&
-            (this.insulin == undefined) &&
-            (this.intolerances == undefined)) {
-          // import all medication from MIDATA
+      this.storage.get('chronicMedis').then((val) => {
+        this.chronicMedis = val;
+        if(this.chronicMedis == undefined) {
+          console.log("MIDATA chronicMedis");
           this.storage.set('chronicMedis', []);
+        }
+      });
+      this.storage.get('selfMedis').then((val) => {
+        this.selfMedis = val;
+        if(this.selfMedis == undefined) {
+          console.log("MIDATA selfMedis");
           this.storage.set('selfMedis', []);
+        }
+      });
+      this.storage.get('insulin').then((val) => {
+        this.insulin = val;
+        if(this.insulin == undefined) {
+          console.log("MIDATA insulin");
           this.storage.set('insulin', []);
+        }
+      });
+      this.storage.get('intolerances').then((val) => {
+        this.intolerances = val;
+        if(this.intolerances == undefined) {
+          console.log("MIDATA intolerances");
           this.storage.set('intolerances', []);
         }
-
-        this.storage.get('chronicMedis').then((val) => {
-          this.chronicMedis = val;
-        });
-        this.storage.get('selfMedis').then((val) => {
-          this.selfMedis = val;
-        });
-        this.storage.get('insulin').then((val) => {
-          this.insulin = val;
-        });
-        this.storage.get('intolerances').then((val) => {
-          this.intolerances = val;
-        });
       });
+    });
 
-      loading.dismiss();
-    }, );
+    loading.dismiss();
 
   }
 
@@ -130,7 +135,7 @@ storage SET:
   scan() {
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
-
+        // call function with barcode from scanner
         this.saveMedicationFromHCI(result.text);
       });
     });
@@ -141,7 +146,7 @@ storage SET:
   }
 
   getMIDATAMedications() {
-    var m =this.mp.search("MedicationStatement");
+    var m = this.mp.search("MedicationStatement");
     console.log(m);
     return m;
   }
@@ -174,6 +179,12 @@ storage SET:
 
   saveMedicationFromHCI(barcode) {
     var result: TYPES.LOCAL_MedicationStatementRes;
+    var gtin: string;
+    var dscrd: string;
+    var phar: string;
+    var prdno: string;
+    var img: string;
+    var title: string;
     //set credentials for a basic authentication (Base64)
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
@@ -191,31 +202,47 @@ storage SET:
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-        //save in localstorage -------------------------------------------------------------
+
+        //save in localstorage as LOCAL medi res
         this.storage.ready().then(() => {
           var xml =  xhr.responseXML;
           var art = xml.getElementsByTagName("ART");
           console.log("ART = ");
           console.log(art);
-          if(art[0].children[29].innerHTML === "true")
+          // for each children (xml tag) in the article
+          for(var i = 0; i < art[0].children.length; i++) {
+            if(art[0].children[i].nodeName === "GTIN")
+              gtin = art[0].children[i].innerHTML;
+            if(art[0].children[i].nodeName === "DSCRD")
+              dscrd = art[0].children[i].innerHTML;
+            if(art[0].children[i].nodeName === "PHAR")
+              phar = art[0].children[i].innerHTML;
+            if(art[0].children[i].nodeName === "PRDNO")
+              prdno = art[0].children[i].innerHTML;
+            if(art[0].children[i].nodeName === "IMG2")
+              img = art[0].children[i].innerHTML;
+          };
+          title = dscrd.split(" ")[0];
+
+          if(img === "true")
             result = {
-              gtni: art[0].children[2].innerHTML,
-              description: art[0].children[20].innerHTML,
-              pharma: art[0].children[1].innerHTML,
-              img: art[0].children[29].innerHTML,
-              title: art[0].children[20].innerHTML.split(" ")[0],
-              imgFrontPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[1].innerHTML+"/Pharmacode/PA/Front/F",
-              imgBackPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[1].innerHTML+"/Pharmacode/PA/Back/F",
-              imgFrontDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[6].innerHTML+"/ProductNr/PI/Front/F",
-              imgBackDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[6].innerHTML+"/ProductNr/PI/Back/F"
+              gtni: gtin,
+              description: dscrd,
+              pharma: phar,
+              img: img,
+              title: title,
+              imgFrontPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Front/F",
+              imgBackPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Back/F",
+              imgFrontDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F",
+              imgBackDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F"
             };
           else {
             result = {
-              gtni: art[0].children[2].innerHTML,
-              description: art[0].children[20].innerHTML,
-              pharma: art[0].children[1].innerHTML,
-              img: art[0].children[29].innerHTML,
-              title: art[0].children[20].innerHTML.split(" ")[0]
+              gtni: gtin,
+              description: dscrd,
+              pharma: phar,
+              img: img,
+              title: title
             };
           }
           console.log("Result = ");
@@ -389,7 +416,7 @@ storage GET:
               medis.push(medication);
               // save the current medication to the storage
               this.storage.set(data, medis);
-
+              // save the medication in MIDATA
               this.saveMIDATAMedication(data,medication);
 
               navTransition.then(() => {
@@ -409,15 +436,15 @@ storage GET:
 
 
   connectBLE() {
-    var result = this.ble.startScan([]).subscribe(device => {
+    this.bp.enable();
+    var result = this.bp.startScan([]).subscribe(device => {
       console.log(JSON.stringify(device));
-      this.ble.connect(device.id);
     });
     setTimeout(() => {
-      this.ble.stopScan().then(() => {
+      this.bp.stopScan().then(() => {
         console.log("stopped is stopped");
       });
-    }, 5000);
+    }, 15000);
 
 
 
