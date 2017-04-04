@@ -26,10 +26,10 @@ export class MedicationPage {
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
-  chronicMedis: [TYPES.FHIR_MedicationStatementRes];
-  selfMedis: [TYPES.FHIR_MedicationStatementRes];
-  insulin: [TYPES.FHIR_MedicationStatementRes];
-  intolerances: [TYPES.FHIR_MedicationStatementRes];
+  chronicMedis: [TYPES.LOCAL_MedicationStatementRes];
+  selfMedis: [TYPES.LOCAL_MedicationStatementRes];
+  insulin: [TYPES.LOCAL_MedicationStatementRes];
+  intolerances: [TYPES.LOCAL_MedicationStatementRes];
 
 /**************************************************
                   constructor
@@ -111,7 +111,7 @@ shows the page to the given medication with details
 params:
   - medi: medication for detail page
 ***************************************************/
-  detailMedi(medi) {
+  detailMedi(medi:TYPES.LOCAL_MedicationStatementRes) {
     this.navCtrl.push(MedicationDetailPage, {
       medi: medi
     });
@@ -131,53 +131,31 @@ storage SET:
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
 
-        var HCIData = this.getHCIData(result.text);
-        var mediData = this.getJSONData(HCIData);
-
-        this.storage.ready().then(() => {
-          this.storage.set('MedicationData', mediData);
-        });
-        this.showRadio(mediData);
+        this.saveMedicationFromHCI(result.text);
       });
     });
   }
 
-  saveMedication() {
-    this.mp.save(this.getMedicationStatementRes());
+  saveMIDATAMedication(category, medi:TYPES.LOCAL_MedicationStatementRes) {
+    this.mp.save(this.getMedicationStatementRes(category, medi));
   }
 
-  getMedication() {
+  getMIDATAMedications() {
     var m =this.mp.search("MedicationStatement");
     console.log(m);
     return m;
   }
 
 
-  saveWeight(v,d) {
+  saveMIDATAWeight(v,d) {
     this.mp.save(this.getWeightRes(55.1,new Date()));
   }
 
-  getObservations() {
+  getMIDATAObservations() {
     var o =this.mp.search("Observation");
     console.log(o);
     return o;
   }
-
-
-
-
-
-/*******************************************************************************
-
-    -------------   -------------   -------------   -------------
-          |        |               |                      |
-         |        |               |                      |
-        |        |------------    -------------         |
-       |        |                            |         |
-      |        |                            |         |
-     |         -------------   -------------         |
-
-/*******************************************************************************
 
 /**************************************************
               test for HCI hospINDEX
@@ -190,11 +168,12 @@ storage SET:
   - MedicationData: the last scanned medication
 ***************************************************/
   scanTest() {
-    // get the medication data from the hospINDEX request
-    var HCIData = this.getHCI('7680504110875');
+    // save the medication data from the hospINDEX request
+    this.saveMedicationFromHCI('7680504110875');
   }
 
-  getHCI(barcode) {
+  saveMedicationFromHCI(barcode) {
+    var result: TYPES.LOCAL_MedicationStatementRes;
     //set credentials for a basic authentication (Base64)
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
@@ -212,11 +191,38 @@ storage SET:
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-        //save in localstorage
+        //save in localstorage -------------------------------------------------------------
         this.storage.ready().then(() => {
-          this.storage.set('HCIMedication', xhr.responseText);
+          var xml =  xhr.responseXML;
+          var art = xml.getElementsByTagName("ART");
+          console.log("ART = ");
+          console.log(art);
+          if(art[0].children[29].innerHTML === "true")
+            result = {
+              gtni: art[0].children[2].innerHTML,
+              description: art[0].children[20].innerHTML,
+              pharma: art[0].children[1].innerHTML,
+              img: art[0].children[29].innerHTML,
+              title: art[0].children[20].innerHTML.split(" ")[0],
+              imgFrontPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[1].innerHTML+"/Pharmacode/PA/Front/F",
+              imgBackPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[1].innerHTML+"/Pharmacode/PA/Back/F",
+              imgFrontDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[6].innerHTML+"/ProductNr/PI/Front/F",
+              imgBackDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+art[0].children[6].innerHTML+"/ProductNr/PI/Back/F"
+            };
+          else {
+            result = {
+              gtni: art[0].children[2].innerHTML,
+              description: art[0].children[20].innerHTML,
+              pharma: art[0].children[1].innerHTML,
+              img: art[0].children[29].innerHTML,
+              title: art[0].children[20].innerHTML.split(" ")[0]
+            };
+          }
+          console.log("Result = ");
+          console.log(result);
+          this.storage.set('MedicationData', result);
+          this.showMedicationCategory(result);
         });
-        console.log(xhr.responseText);
       //if bad authorization
       } else {
         console.log("Error!");
@@ -225,38 +231,6 @@ storage SET:
     //send the request
     xhr.send();
   }
-
-/**************************************************
-            Get medication from hospINDEX
-
-Function to get the medication data from the webserver
-hospINDEX over http request.
-
-params:
-  - artbar: barcode number from medication
-
-return:
-  returns JSON object with all information about the barcode number
-**************************************************/
-  getHCIData(artbar) {
-    // preparing variables
-    var api = 'http://www.laettere.ch/carole/mina/getArticle.php';
-    //console.log(api);
-    var keytype = 'ARTBAR';
-    //console.log(keytype);
-    var key = artbar;
-    //console.log(key);
-    var index = 'hospINDEX';
-    //console.log(index);
-
-    // concat uri
-    var uri = api + '?keytype=' + keytype + '&key=' + key + '&index=' + index;
-
-    return this.http.get(uri).toPromise().then(function(response){
-      return response;
-    });
-  }
-
 
   //*******************************************************************************
 
@@ -292,7 +266,7 @@ return:
   }
 
 
-  getMedicationStatementRes() {
+  getMedicationStatementRes(category, medi:TYPES.LOCAL_MedicationStatementRes) {
     var mediRes:TYPES.FHIR_MedicationStatementRes;
     mediRes = {
       resourceType: "MedicationStatement",
@@ -307,7 +281,7 @@ return:
       effectiveDateTime:new Date(),
       taken:"y",
       note: [{
-        text:"chronicMedis"
+        text: category
       }],
       dosage:[{
         text:"one capsule three times daily",
@@ -332,60 +306,6 @@ return:
     return mediRes;
   }
 
-/***************************************************
-            Get the data in JSON format
-
-Function to get the necessary medication data in JSON
-
-params:
-  - art: article from http request
-
-return:
-  return JSON with
-  - gtni: barcode number
-  - descrd: description of mdeication
-  - phar: pharma number
-  - imgBackPack: img from the package (back)
-  - imgFrontPack: img from the package (front)
-  - imgBackDrug: img from the drug (back)
-  - imgFrontDrug: img from the drug (front)
-
-****************************************************/
-  getJSONData(art) {
-
-    return art.then(function(response) {
-      // JSON result from the http request
-      var result = JSON.parse(response._body);
-      // create JSON for specific medication data
-      var mediData = {};
-      // Get parameters of description
-      var desc = result.article[0].dscrd;
-      var title = desc.split(" ")[0];
-
-      // if result have an image save with image and drug
-      if(result.article[0].img2 = true) {
-        mediData = {gtni: result.article[0].gtni,
-                        description: result.article[0].dscrd,
-                        pharma: result.article[0].phar,
-                        img: result.article[0].img2,
-                        imgFrontPack: result.article[0].url_packfront,
-                        imgBackPack: result.article[0].url_packback,
-                        imgFrontDrug: result.article[0].url_drugfront,
-                        imgBackDrug: result.article[0].url_drugback,
-                        title: title};
-
-      // otherwise without images
-      } else {
-        mediData = {gtni: result.article[0].gtni,
-                        description: result.article[0].dscrd,
-                        pharma: result.article[0].phar,
-                        img: result.article[0].img2,
-                        title: title};
-      }
-      // return the new medication
-      return mediData;
-    });
-  }
 
 /***************************************************
         show the diffrent medication categories
@@ -414,7 +334,7 @@ storage GET:
   - insulin: all insulin
   - intolerances: all medication intolerances
 ****************************************************/
-  showRadio(medication) {
+  showMedicationCategory(medication:TYPES.LOCAL_MedicationStatementRes) {
     // create empty array for medication
     var medis = [];
     //create alert for choosing a category
@@ -465,15 +385,12 @@ storage GET:
             this.storage.get(data).then((val) => {
               // save medis in local variable (array)
               medis = val;
-              // get the JSON of the medication
-              medication.then(function(response) {
-                // add the new medication to the current medication
-                medis.push(response);
-              });
+              // add the new medication to the current medication
+              medis.push(medication);
               // save the current medication to the storage
               this.storage.set(data, medis);
 
-              this.saveMedication();
+              this.saveMIDATAMedication(data,medication);
 
               navTransition.then(() => {
                 // refresh page
@@ -489,6 +406,8 @@ storage GET:
     alert.present();
   }
 
+
+
   connectBLE() {
     var result = this.ble.startScan([]).subscribe(device => {
       console.log(JSON.stringify(device));
@@ -498,7 +417,7 @@ storage GET:
       this.ble.stopScan().then(() => {
         console.log("stopped is stopped");
       });
-    }, 3000);
+    }, 5000);
 
 
 

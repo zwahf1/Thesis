@@ -43,6 +43,18 @@ export interface DateToValue
      unit: string;
  }
 
+ export interface LOCAL_MedicationStatementRes {
+   gtni: string,
+   description: string,
+   pharma: string,
+   img: string,
+   imgFrontPack?: string,
+   imgBackPack?: string,
+   imgFrontDrug?: string,
+   imgBackDrug?: string,
+   title: string
+ }
+
  export interface FHIR_MedicationStatementRes {
    resourceType:string;
    identifier?:Array<any>;
