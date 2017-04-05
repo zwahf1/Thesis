@@ -27,6 +27,7 @@ input parameters:
         type: type,
         //the height is fixed because of the rotation of the smartphone
         height: 300,
+        width: null,
       },
       //credits are disabled, default is enabled
       credtis: {
@@ -105,7 +106,7 @@ input parameters:
 
 
   //get-method, returns the chart
-  getChart() {
+  public getChart() {
     return this.chart;
   }
   //set-method, sets the chart. probably never used. maybe to update the data

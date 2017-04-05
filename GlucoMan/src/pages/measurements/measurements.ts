@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
+import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { VitalRange } from '../../util/VitalRange';
-import { NavController } from 'ionic-angular';
+import { NavController, Platform } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
 import { Storage } from '@ionic/storage';
+
 
 @Component({
   selector: 'page-measurements',
@@ -11,13 +13,14 @@ import { Storage } from '@ionic/storage';
 export class MeasurementsPage {
 
   chartAll: any;
-  chartGluco: any;
+  chartGluco: Chart;
   chartBP: any;
   chartPulse: any;
   chartWeight: any;
   visibleList = [];
   vitalRangeList = [];
   glucoseUnit: string = 'mmol/L';
+
   /**************************************************
   sample data for glucose, blood pressure, pulse and weight
   **************************************************/
@@ -51,7 +54,11 @@ export class MeasurementsPage {
     -pulseValues: the measurements of the pulse
     -weightValues: the measurements of the scale
 **************************************************/
-  constructor(public navCtrl: NavController, public storage: Storage) {
+  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform) {
+    window.addEventListener("orientationchange", function() {
+    //    alert(window.innerHeight);
+
+    }, false);
 
     //the sample data are stored in the device storage
     this.storage.ready().then(() => {
@@ -83,9 +90,9 @@ export class MeasurementsPage {
     this.createAllChart();
   }
   ionViewDidEnter() {
-    console.log(this.chartGluco.series[0].data);
     this.storage.ready().then(() => {
       this.storage.get('VisibleList').then((val) => {
+        console.log(val);
         if (val) {
           this.visibleList = val;
           this.hideCharts();
@@ -101,15 +108,11 @@ export class MeasurementsPage {
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, 0, 0, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
+    this.createAllChart();
   }
+
   test() {
-    this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
-      [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
-      [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11], [Date.UTC(2016, 4, 2), 6.5]];
-    //  this.chartGluco = new Chart('spline', 'Blutzucker', '' + 'mmol/L', this.valuesGlucose);
-    console.log(this.chartGluco.series[0].data);
-    this.chartGluco.series[0].data.push([Date.UTC(2016, 4, 2), 6.5]);
-    console.log(this.chartGluco.series[0].data);
+    console.log(this.platform);
   }
 
   /*    newValue() {
@@ -149,10 +152,10 @@ export class MeasurementsPage {
       chart: {
         // Edit chart spacing
         spacingLeft: 0,
-        spacingRight: 0,
+        spacingRight: 10,
 
         // Explicitly tell the width and height of a chart
-        width: null,
+        width: window.innerWidth,
         height: 300,
         zoomType: 'x',
         resetZoomButton: {
@@ -214,7 +217,7 @@ export class MeasurementsPage {
       },
     }
   }
-  createGlucoseChart() {
+/*  createGlucoseChart() {
     this.chartGluco = {
       chart: {
         //type of the chart. spline for blood glucose, weight and pulse,
@@ -224,9 +227,11 @@ export class MeasurementsPage {
         height: 300,
       },
       //credits are disabled, default is enabled
+
       credtis: {
         enabled: false,
       },
+
       //title isn't set, it's set directly in html with <h2>-tag
       title: {
         text: null,
@@ -286,7 +291,7 @@ export class MeasurementsPage {
       }]
     };
   }
-  createBPChart() {
+*/  createBPChart() {
     this.chartBP = {
       chart: {
         //type of the chart. spline for blood glucose, weight and pulse,

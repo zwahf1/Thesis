@@ -1,11 +1,9 @@
 page-medication {
+  .mediList {
+    padding: 0px;
+  }
 
-}
-
-.mediList {
-  padding: 0px;
-}
-
-.medi {
-  background-color: color($colors, primaryLight);
+  .medi {
+    background-color: color($colors, primaryLight);
+  }
 }

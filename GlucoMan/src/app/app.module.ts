@@ -20,6 +20,7 @@ import { CheckupsPage } from '../pages/checkups/checkups';
 import { MedicationDetailPage } from '../pages/medicationDetail/medicationDetail';
 import { DisclaimerPage } from '../pages/disclaimer/disclaimer';
 import { BluetoothPage } from '../pages/bluetooth/bluetooth';
+import { InformationDetailsPage } from '../pages/information-details/information-details';
 
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
@@ -63,6 +64,7 @@ export { Highcharts };
     DataPage,
     MeasureplanPage,
     InformationPage,
+    InformationDetailsPage,
     EmergencyPage,
     MIDATAPage,
     CheckupsPage,
@@ -96,6 +98,7 @@ export { Highcharts };
     DataPage,
     MeasureplanPage,
     InformationPage,
+    InformationDetailsPage,
     EmergencyPage,
     CheckupsPage,
     MIDATAPage,

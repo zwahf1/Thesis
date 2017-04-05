@@ -1,29 +1,29 @@
 page-settings {
   font-size: 14px !important;
-}
-table{
-  width: 100%;
-}
-th {
-  text-align: left;
-}
-td, th {
-    padding: 0px 2px;
-}
-ion-input{
-  min-width: 30px;
-  //max-width: 100px;
-}
-input{
-  width: auto;
-  //max-width: 7em;
-}
-.item-md{
-  padding-left: 2px;
-  padding-right: 0px;
-  font-size: inherit;
-}
-.text-input-md{
-  margin: auto;
-  width: inherit;
+  table{
+    width: 100%;
+  }
+  th {
+    text-align: left;
+  }
+  td, th {
+      padding: 0px 2px;
+  }
+  ion-input{
+    min-width: 30px;
+    //max-width: 100px;
+  }
+  input{
+    width: auto;
+    //max-width: 7em;
+  }
+  .item-md{
+    padding-left: 2px;
+    padding-right: 0px;
+    font-size: inherit;
+  }
+  .text-input-md{
+    margin: auto;
+    width: inherit;
+  }
 }

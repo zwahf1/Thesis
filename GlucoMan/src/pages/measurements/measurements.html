@@ -10,7 +10,7 @@
 <ion-content padding>
   <div id="all" >
   <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
-  <chart type="StockChart" [options]="chartAll"></chart>
+  <chart class='c' type="StockChart" [options]="chartAll"></chart>
 </div>
   <!--
     Chart for blood glucose, provided by Highcharts.com
@@ -18,7 +18,7 @@
   -->
   <div id="glucose">
     <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-    <chart type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
+    <chart class='c' type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
   </div>
   <!--
     Chart for blood pressure, provided by Highcharts.com
@@ -26,7 +26,7 @@
   -->
   <div id="bloodpressure">
     <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
-    <chart type="StockChart" [options]="chartBP"></chart>
+    <chart class='c' type="StockChart" [options]="chartBP"></chart>
   </div>
   <!--
     Chart for pulse, provided by Highcharts.com
@@ -34,7 +34,7 @@
   -->
   <div id="pulse">
     <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
-    <chart type="StockChart" [options]="chartPulse"></chart>
+    <chart class='c' type="StockChart" [options]="chartPulse"></chart>
   </div>
   <!--
     Chart for weight, provided by Highcharts.com
@@ -42,6 +42,6 @@
   -->
   <div id="weight">
     <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
-    <chart type="StockChart" [options]="chartWeight"></chart>
+    <chart class='c' type="StockChart" [options]="chartWeight"></chart>
   </div>
 </ion-content>
