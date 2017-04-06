@@ -14,6 +14,8 @@ import { MidataPersistence } from '../../util/midataPersistence';
 import { BlePersistence } from '../../util/blePersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
+
 declare var cordova: any;
 
 @Component({
@@ -50,7 +52,7 @@ storage SET:
   - intolerances: all medication intolerances
 ***************************************************/
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
-                public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+                public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController, public bls: BluetoothSerial) {
     // refresh page (load list)
     this.refreshPage();
   }
@@ -250,9 +252,12 @@ storage SET:
           this.storage.set('MedicationData', result);
           this.showMedicationCategory(result);
         });
+      //if not ready
+      } else if(xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log("XMLHTTPRequest not ready");
       //if bad authorization
       } else {
-        console.log("Error!");
+        console.log("Error from XMLHTTPRequest: NOT Status = 200");
       }
     };
     //send the request
@@ -433,7 +438,30 @@ storage GET:
     alert.present();
   }
 
-
+  connectBLS() {
+    var data1 = new Uint8Array(1);
+    data1[0] = 0x00;
+    data1[0] = 0x01;
+    var data2 = new Uint8Array(1);
+    this.bls.enable().then(() => {
+      this.bls.connect("00:13:7B:59:C5:A8").subscribe(val => {
+        console.log(val);
+        if(val === "OK") {
+          this.bls.write(data1.buffer).then(val => {
+            console.log(val);
+            // if(val === "OK") {
+                // this.bls.disconnect().then(() => {
+                //   console.log("disconnect");
+                // });
+                // }
+          });
+          // this.bls.write(data2).then(val => {
+          //   console.log(val);
+          // });
+        }
+      });
+    });
+  }
 
   connectBLE() {
     this.bp.enable();
@@ -444,9 +472,10 @@ storage GET:
       this.bp.stopScan().then(() => {
         console.log("stopped is stopped");
       });
-    }, 15000);
-
-
-
+    }, 10000);
+    console.log("connect to device");
+    this.bp.connect("00:13:7B:59:C5:A8").subscribe(val => {
+      console.log(val);
+    });
   }
 }

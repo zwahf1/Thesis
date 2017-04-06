@@ -35,6 +35,14 @@ export class BlePersistence {
   }
 
   connect(id: string): Observable<any> {
+//     BLE.connect(deviceID).subscribe(peripheralData => {
+// console.log(peripheralData.characteristics);
+// this.characteristics = peripheralData.characteristics;
+// this.connecting = false;
+// },
+// peripheralData => {
+// console.log(‘disconnected’);
+// });
     return this.ble.connect(id);
   }
 

@@ -7,6 +7,8 @@ import { TabsPage} from '../tabs/tabs';
 
 import { MidataPersistence } from '../../util/midataPersistence';
 
+import { Storage } from '@ionic/storage';
+
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -19,33 +21,36 @@ export class LoginPage {
 
   private input = {username: 'mia.egger@mail.com', password : 'PW4mia17'};
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController) {
-    if(this.mp.loggedIn()) {
-      console.log("Logged in");
-      this.navCtrl.setRoot(TabsPage);
-    } else {
-      console.log("Logged out");
-    }
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage) {
+    this.storage.ready().then(() => {
+      this.storage.get('UserAuthentication').then((val) => {
+        if(this.mp.loggedIn() && val != undefined) {
+          console.log("Logged in");
+          this.mp.login(val[0], val[1]);
+          this.navCtrl.setRoot(TabsPage);
+        } else {
+          console.log("Logged out");
+        }
+      });
+    });
   }
 
   login() {
     this.mp.login(this.input.username, this.input.password).then((res) => {
       if(this.mp.loggedIn() == true){
+        this.storage.ready().then(() => {
+          this.storage.set('UserAuthentication', [this.input.username, this.input.password, res]);
+        });
         this.navCtrl.setRoot(TabsPage);
       }
     }).catch((ex) => {
-    console.error('Error fetching users', ex);
-    let alert = this.alertCtrl.create({
-      title: 'false login',
-      subTitle: 'the entered username or password is incorrect',
-      buttons: ['OK']
+      console.error('Error fetching users', ex);
+      let alert = this.alertCtrl.create({
+        title: 'false login',
+        subTitle: 'the entered username or password is incorrect',
+        buttons: ['OK']
+      });
+      alert.present();
     });
-    alert.present();
-});;
   }
-  
-  backdoor() {
-    this.navCtrl.setRoot(TabsPage)
-  }
-
 }

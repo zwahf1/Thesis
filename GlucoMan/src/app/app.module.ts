@@ -26,6 +26,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
 import { Storage } from '@ionic/storage';
 import { BLE } from '@ionic-native/ble';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
 import { HttpModule, JsonpModule } from '@angular/http';
 
@@ -110,7 +111,8 @@ export { Highcharts };
   providers: [
     Storage,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    BLE
+    BLE,
+    BluetoothSerial
   ]
 })
 
