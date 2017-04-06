@@ -46,9 +46,10 @@ input parameters:
       yAxis: {
         title: {
           text: unit,
+          //rotation: -90,
         },
         min: 0,
-        opposite: false,
+        opposite: true,
         plotBands: [{
           from: from1,
           to: to1,

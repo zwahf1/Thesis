@@ -7,17 +7,19 @@
 <ion-content padding>
   <h2>Welcome to Ionic!</h2>
   <p>
-Hier wird das Essen dokumentiert! :-)
+    Hier wird das Essen dokumentiert! :-)
   </p>
   <p>
-    Take a look at the <code>src/pages/</code> directory to add or change tabs,
-    update any existing page or create new pages.
+    Take a look at the <code>src/pages/</code> directory to add or change tabs, update any existing page or create new pages.
   </p>
-  <button ion-button  primary >Scan</button>
+  <button ion-button primary (click)="getJSONfromOpenFood('12345')">Scan</button>
   <button ion-button (click)="scan()">
   <div>
     <ion-icon name="barcode"></ion-icon>
     <p>Scan</p>
   </div>
 </button>
+  <div>
+    Carbo: {{carboValues}}
+  </div>
 </ion-content>
