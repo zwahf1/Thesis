@@ -56,9 +56,13 @@ export class MeasurementsPage {
 **************************************************/
   constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform) {
     window.addEventListener("orientationchange", function() {
-    //    alert(window.innerHeight);
+      //    alert(window.innerHeight);
 
     }, false);
+    /*  screen.orientation.addEventListener('change', function(){
+      console.log(screen.orientation.type); // e.g. portrait
+  });
+      */
 
     //the sample data are stored in the device storage
     this.storage.ready().then(() => {

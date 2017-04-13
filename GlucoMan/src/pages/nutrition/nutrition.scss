@@ -1,3 +1,19 @@
 page-nutrition {
-
+  .rotate {
+    transform: rotate(-90.0deg);
+  }
+  .head {
+    height: 5em;
+  }
+}
+.dataDetails {
+  .alert-input-wrapper:nth-child(2):before{
+    content: "Portion in Gramm";
+  }
+  .alert-input-wrapper:nth-child(3):before{
+      content: "Kohlenhydrate in Gramm";
+    }
+.swiper-slide{
+  font-size: $font-size-base !important;
+}
 }

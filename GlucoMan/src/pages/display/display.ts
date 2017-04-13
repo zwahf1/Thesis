@@ -2,8 +2,6 @@ import { Component } from '@angular/core';
 import { App, NavController, LoadingController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
-import { VitalRange } from '../../util/VitalRange';
-
 
 @Component({
   selector: 'page-display',

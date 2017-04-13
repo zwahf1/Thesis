@@ -8,6 +8,8 @@
 </ion-header>
 
 <ion-content padding>
+  <ion-slides pager>
+  <ion-slide class="charts">
   <div id="all" >
   <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
   <chart class='c' type="StockChart" [options]="chartAll"></chart>
@@ -44,4 +46,9 @@
     <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
     <chart class='c' type="StockChart" [options]="chartWeight"></chart>
   </div>
+</ion-slide>
+<ion-slide class="values">
+  <h2>second Slide</h2>
+</ion-slide>
+</ion-slides>
 </ion-content>

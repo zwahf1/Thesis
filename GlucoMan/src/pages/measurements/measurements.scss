@@ -3,6 +3,13 @@ page-measurements {
   .scroll-content {
       padding: 0px !important;
   }
+  .swiper-container {
+    height: auto;
+    display: block;
+  }
+  .values {
+    height: 500px;
+  }
 }
 chart{
   width: 100%;

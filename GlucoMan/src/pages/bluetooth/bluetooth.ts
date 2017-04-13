@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { NavController, NavParams } from 'ionic-angular';
 
 /*
@@ -14,7 +13,7 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class BluetoothPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, private bluetoothSerial: BluetoothSerial) {
+  constructor(public navCtrl: NavController, public navParams: NavParams) {
 
   }
 

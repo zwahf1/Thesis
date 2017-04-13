@@ -83,7 +83,6 @@ export { Highcharts };
       require('highcharts/highstock'),
       require('highcharts/highcharts-more')
     ),
-
   ],
   bootstrap: [IonicApp],
   entryComponents: [
