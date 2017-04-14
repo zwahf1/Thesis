@@ -22,14 +22,14 @@ export class NutritionPage {
 
   constructor(public navCtrl: NavController, public platform: Platform,
     public storage: Storage, public alertCtrl: AlertController) {
-       this.storage.ready().then(() => {
-          this.storage.get('NutritionDetailList').then((val) => {
-            if (val) {
-              this.nutritionDetailList = val;
-              this.createNutritionList();
-            }
-          })
-        });
+    this.storage.ready().then(() => {
+      this.storage.get('NutritionDetailList').then((val) => {
+        if (val) {
+          this.nutritionDetailList = val;
+          this.createNutritionList();
+        }
+      })
+    });
   }
   ionViewDidEnter() {
     this.createNutritionList();
@@ -37,7 +37,7 @@ export class NutritionPage {
   slideChanged() {
     this.createNutritionList();
   }
-  saveDetailList(){
+  saveDetailList() {
     this.storage.ready().then(() => {
       this.storage.set('NutritionDetailList', this.nutritionDetailList);
     });
@@ -47,18 +47,22 @@ export class NutritionPage {
     this.valuePort = null;
     this.valueCarbo = null;
     this.platform.ready().then(() => {
-      cordova.plugins.barcodeScanner.scan((result) => {
-        if (result.text) {
-          try {
-            this.getDataFromOpenFoodFacts(result.text);
-          } catch (Error) {
-            alert("no data found");
-          } finally {
+      cordova.plugins.barcodeScanner.scan(
+        function(result) {
+          if (result.text) {
+            try {
+              this.getDataFromOpenFoodFacts(result.text);
+            } catch (Error) {
+              alert("no data found");
+            } finally {
 
+            }
           }
-        }
-      }, {
-          resultDisplayDuration: 0,
+        },
+        function(error) {
+          alert("Scanning failed: " + error);
+        }, {
+          resultDisplayDuration: 50,
           orientation: "portrait",
         });
     });
