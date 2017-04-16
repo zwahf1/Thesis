@@ -13,20 +13,43 @@ export class NutritionPage {
   //  resultBarcode: any;
 
   nutritionList: DayNutrition[] = [];
+  nutritionDailyList = [];
   nutritionDetailList: DetailNutrition[] = [];
   carboValuesPort: number[] = [];
   carboValues100: number[] = [];
   valuePort: any;
   valueCarbo: any;
   desc: any;
+  chartCarbo: any;
+
+  /**************************************************
+  sample data for glucose, blood pressure, pulse and weight
+  **************************************************/
+  valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
+    [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
+    [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+
+
+  valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
+    [Date.UTC(2016, 3, 9), 65, 110], [Date.UTC(2016, 3, 11), 66, 119], [Date.UTC(2016, 3, 12), 57, 128], [Date.UTC(2016, 3, 14), 68, 129],
+    [Date.UTC(2016, 3, 17), 79, 130], [Date.UTC(2016, 3, 18), 60, 121]];
+
+  valuesPulse = [[Date.UTC(2016, 3, 4), 66], [Date.UTC(2016, 3, 5), 77], [Date.UTC(2016, 3, 7), 65], [Date.UTC(2016, 3, 8), 61],
+    [Date.UTC(2016, 3, 9), 62], [Date.UTC(2016, 3, 11), 75], [Date.UTC(2016, 3, 12), 83], [Date.UTC(2016, 3, 14), 59],
+    [Date.UTC(2016, 3, 17), 65], [Date.UTC(2016, 3, 18), 73]];
+
+  valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
+    [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
+    [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
+
 
   constructor(public navCtrl: NavController, public platform: Platform,
     public storage: Storage, public alertCtrl: AlertController) {
+      this.createNutritionChart();
     this.storage.ready().then(() => {
       this.storage.get('NutritionDetailList').then((val) => {
         if (val) {
           this.nutritionDetailList = val;
-          this.createNutritionList();
         }
       })
     });
@@ -40,6 +63,7 @@ export class NutritionPage {
   saveDetailList() {
     this.storage.ready().then(() => {
       this.storage.set('NutritionDetailList', this.nutritionDetailList);
+      console.log('saved in storage as NutritionDetailList');
     });
   }
 
@@ -127,34 +151,6 @@ export class NutritionPage {
     alert.present();
   }
 
-  getDayTime() {
-    let d = new Date();
-    let h = d.getHours();
-
-    if (h < 4) {
-      //wenn Nacht
-      return 6;
-    } else if (h < 9) {
-      //wenn Morgen
-      return 1;
-    } else if (h < 11) {
-      //wenn Znüni
-      return 2;
-    } else if (h < 14) {
-      //wenn Mittag
-      return 3;
-    } else if (h < 17) {
-      //wenn Zvieri
-      return 4;
-    } else if (h < 22) {
-      //wenn Abend
-      return 5;
-    } else {
-      //wenn Nacht
-      return 6;
-    }
-  }
-
   showDataDetails() {
     //create alert for choosing a category
     let alert = this.alertCtrl.create({});
@@ -210,6 +206,7 @@ export class NutritionPage {
   createNutritionList() {
     this.nutritionList = [];
     for (let entry of this.nutritionDetailList) {
+      console.log(entry);
       //  let entry = this.nutritionDetailList[this.nutritionDetailList.length-1];
       let dateEntry = entry.date;
       let dateLastInList = new Date(0);
@@ -220,20 +217,25 @@ export class NutritionPage {
       }
       let diffDate = dateEntry.getTime() - dateLastInList.getTime();
       let timeOfDay = 86400000;
-      if (!this.nutritionList[0] || (Math.abs(diffDate) > timeOfDay) || ((dateEntry.getDate != dateLastInList.getDate) && (Math.abs(diffDate) > timeOfDay))) {
+
+      //if the different of the two dates are bigger than 24h
+      if ((Math.abs(diffDate) > timeOfDay)) {
         this.nutritionList.push(new DayNutrition);
-        this.nutritionList[0][0] = entry.date;
-        console.log('did if condition');
+        this.nutritionList[this.nutritionList.length - 1][0] = entry.date;
+      }
+      //if the two dates don't have the same day and different is lower than 24h
+      else if (dateEntry.getDate() != dateLastInList.getDate() && Math.abs(diffDate) < timeOfDay) {
+        this.nutritionList.push(new DayNutrition);
+        this.nutritionList[this.nutritionList.length - 1][0] = entry.date;
       }
       let tempCarb: number = 0
-      tempCarb = this.nutritionList[this.nutritionList.length - 1][this.getDayTime()];
+      tempCarb = this.nutritionList[this.nutritionList.length - 1][this.getDayTime(entry.date)];
       /*      if (!(tempCarb > 0)) {
               tempCarb = 0;
             }
             */
-      this.nutritionList[this.nutritionList.length - 1][this.getDayTime()] = (parseInt('' + entry.carb) + parseInt('' + tempCarb));
-      console.log(entry);
-      console.log(this.nutritionList);
+      this.nutritionList[this.nutritionList.length - 1][this.getDayTime(entry.date)] = (parseInt('' + entry.carb) + parseInt('' + tempCarb));
+      this.createNutritionChart();
     }
   }
   getDataFromFDDB(barcode) {
@@ -385,5 +387,143 @@ export class NutritionPage {
       }
     }
     xhr.send();
+  }
+
+  createNutritionChart() {
+    this.chartCarbo = {
+      chart: {
+        //type of the chart. spline for blood glucose, weight and pulse,
+        //columnrange for blood pressure
+        type: 'column',
+        //the height is fixed because of the rotation of the smartphone
+        height: 300,
+        width: null,
+      },
+      //credits are disabled, default is enabled
+      credtis: {
+        enabled: false,
+      },
+      //title isn't set, it's set directly in html with <h2>-tag
+      title: {
+        text: null,
+      },
+      //the lables in the x-axis are the dates of the measurements
+      xAxis: {
+        type: 'datetime'
+      },
+      //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
+      //the y-axis is on the right side
+      yAxis: {
+        title: {
+          text: 'g',
+          //rotation: -90,
+        },
+        min: 0,
+        opposite: true,
+        /*
+        plotBands: [{
+          from: 0,
+          to: 0,
+          color: 'lightgreen',
+        },{
+          from: 0,
+          to: 0,
+          color: 'lightgreen',
+        }]
+        */
+      },
+      //the unit is also shown on the tooltip of each mark.
+      //followTouchMove and followPointer has to be disabled to move the chart on touch device
+      tooltip: {
+        valueSuffix: ' g',
+        followTouchMove: false,
+        followPointer: false
+      },
+      plotOptions: {
+        column: {
+          stacking: 'normal',
+        }
+      },
+      //navigator, range selector and scrollbar aren't visible - reason of usability
+      navigator: {
+        enabled: false
+      },
+      rangeSelector: {
+        selected: 1,
+        enabled: false,
+      },
+      scrollbar: {
+        enabled: false,
+        liveRedraw: false
+      },
+      //the legend isn't visible, so the user can't disable e serie of data
+      legend: {
+        enabled: false
+      },
+      //the title of the serie is given from MeasurementsPage, also the data
+      series: [{
+        name: 'Blutdruck',
+        data: this.valuesBP,
+      },{
+        name: 'Puls',
+        data: this.valuesPulse,
+      },{
+        name: 'Gewicht',
+        data: this.valuesWeight,
+      }]
+    };
+  }
+
+  expand(src) {
+    //source navigate to the chart tag and store it to 'element'
+    let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+    //mode is the style attribute of the chart element
+    let mode = element.getAttribute('style');
+    //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+    if (mode.search('none') < 0) {
+      //the attribute 'display' is set to none to hide the chart
+      element.style.display = 'none';
+    } else if (mode.search('none') > 0) {
+      //the attribute 'display' is set to inline to show the chart
+      element.style.display = 'inline';
+    }
+  }
+  /************************************************************
+  this method returns the index of the daytime of a given date.
+
+  index 0 for nigth: 22:00-03:59
+  index 1 for morning: 4:00-08:59
+  index 2 for forenoon: 9:00-10:59
+  index 3 for midday: 11:00-13:59
+  index 4 for afternoon: 14:00-16:59
+  index 5 for evening: 17:00-21:59
+  ************************************************************/
+  getDayTime(date: Date) {
+    let d = date;
+
+    let h = d.getHours();
+
+    if (h < 4) {
+      //if at night
+      return 6;
+    } else if (h < 9) {
+      //if in the morning
+      return 1;
+    } else if (h < 11) {
+      //if ante meridiem
+      return 2;
+    } else if (h < 14) {
+      //if at midday
+      return 3;
+    } else if (h < 17) {
+      //if in the afternoon
+      return 4;
+    } else if (h < 22) {
+      //if in the evening
+      return 5;
+    } else {
+      //if at night
+      return 6;
+    }
   }
 }
