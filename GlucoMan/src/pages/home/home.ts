@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
 import { App, NavController } from 'ionic-angular';
-import { ContactsPage } from '../contacts/contacts';
 import { SettingsPage } from '../settings/settings';
 import { InformationPage } from '../information/information';
 import { EmergencyPage } from '../emergency/emergency';
@@ -27,9 +26,6 @@ export class HomePage {
     switch(target){
       case 'Settings':
         this.navCtrl.push(SettingsPage);
-        break;
-      case 'Contacts':
-        this.navCtrl.push(ContactsPage);
         break;
       case 'Emergency':
         this.navCtrl.push(EmergencyPage);

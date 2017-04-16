@@ -14,5 +14,50 @@
 
 
 <ion-content padding>
+  <ion-slides>
+    <ion-slide>
+      <button ion-button full (click)="openEntryCheckup()">
+      Neue Kontrolluntersuchung
+      </button>
+      <ion-grid>
+        <ion-row class="RowHeader">
+          <ion-col col-2>
+            Datum
+          </ion-col>
+          <ion-col col-md-1>
+            HbA1c-Wert
+          </ion-col>
+          <ion-col col-md-1>
+            Blutdruck-Wert
+          </ion-col>
+          <ion-col col-md-1>
+            Gewicht
+          </ion-col>
+          <ion-col col-md-1>
+            Anzahl Hypo-glykämien
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let entry of arrayCheckups">
+          <ion-col col-2>
+            {{entry[0]}}
+          </ion-col>
+          <ion-col col-md-1>
+            {{entry[1]}}
+          </ion-col>
+          <ion-col col-md-1>
+            {{entry[2]}}
+          </ion-col>
+          <ion-col col-md-1>
+            {{entry[3]}}
+          </ion-col>
+          <ion-col col-md-1>
+            {{entry[4]}}
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </ion-slide>
+    <ion-slide>
 
+    </ion-slide>
+  </ion-slides>
 </ion-content>

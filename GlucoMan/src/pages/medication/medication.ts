@@ -439,29 +439,57 @@ storage GET:
   }
 
   connectBLS() {
-    var data1 = new Uint8Array(1);
+    var data = new Uint8Array(2);
+    data[0] = 0x00;
+    data[1] = 0x01;
+    console.log(data);
+    var data1 = new Uint16Array(2);
     data1[0] = 0x00;
-    data1[0] = 0x01;
-    var data2 = new Uint8Array(1);
+    data1[1] = 0x01;
+    console.log(data1);
     this.bls.enable().then(() => {
       this.bls.connect("00:13:7B:59:C5:A8").subscribe(val => {
         console.log(val);
-        if(val === "OK") {
-          this.bls.write(data1.buffer).then(val => {
-            console.log(val);
+      });
+      this.bls.subscribeRawData().subscribe((val) => {
+        console.log("subscribeRaw2");
+        console.log(val);
+        var bytes = new Uint8Array(val);
+        if (bytes.length == 25) {
+            console.log("bytes length is 25");
+        }
+      }, (err) => {
+        console.log(err);
+      }, () => {
+        console.log("completed");
+      });
+
+      this.bls.clear().then((success) => {
+        console.log("clear2");
+        console.log(success);
+        this.bls.write(data).then(function(succ) {
+          console.log("write2");
+          console.log(succ);
+        }, (err) => {
+          console.log("ERR WRITE");
+          console.log(err);
+        });
+      });
+    });
+  }
+
+          // this.bls.write(data1.buffer).then(val => {
+          //   console.log(val);
             // if(val === "OK") {
                 // this.bls.disconnect().then(() => {
                 //   console.log("disconnect");
                 // });
                 // }
-          });
+          // });
           // this.bls.write(data2).then(val => {
           //   console.log(val);
           // });
-        }
-      });
-    });
-  }
+
 
   connectBLE() {
     this.bp.enable();
