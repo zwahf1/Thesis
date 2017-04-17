@@ -13,7 +13,7 @@ export class NutritionPage {
   //  resultBarcode: any;
 
   nutritionList: DayNutrition[] = [];
-  nutritionDailyList = [];
+  nutritionDaytimeList: any[][];
   nutritionDetailList: DetailNutrition[] = [];
   carboValuesPort: number[] = [];
   carboValues100: number[] = [];
@@ -25,9 +25,9 @@ export class NutritionPage {
   /**************************************************
   sample data for glucose, blood pressure, pulse and weight
   **************************************************/
-  valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
-    [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
-    [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+  valuesGlucose = [{ 4: Date.UTC(2016, 3, 4), 1: 2 }, { 0: Date.UTC(2016, 3, 5), 1: 4 }, { 0: Date.UTC(2016, 3, 7), 1: 6 }, { 0: Date.UTC(2016, 3, 8), 1: 8 },
+    { 0: Date.UTC(2016, 3, 9), 1: 10 }, { 0: Date.UTC(2016, 3, 11), 1: 9 }, { 0: Date.UTC(2016, 3, 12), 1: 8 }, { 0: Date.UTC(2016, 3, 14), 1: 9 },
+    { 0: Date.UTC(2016, 3, 17), 1: 10 }, { 0: Date.UTC(2016, 3, 18), 1: 11 }];
 
 
   valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
@@ -45,7 +45,6 @@ export class NutritionPage {
 
   constructor(public navCtrl: NavController, public platform: Platform,
     public storage: Storage, public alertCtrl: AlertController) {
-      this.createNutritionChart();
     this.storage.ready().then(() => {
       this.storage.get('NutritionDetailList').then((val) => {
         if (val) {
@@ -60,6 +59,29 @@ export class NutritionPage {
   slideChanged() {
     this.createNutritionList();
   }
+
+  createDaytimeList() {
+    this.nutritionDaytimeList = [[], [], [], [], [], []];
+    for (let entry of this.nutritionList) {
+
+      let date = new Date(entry[0].getTime());
+      //.setTime(entry[0].getTime());
+      date.setHours(2);
+      date.setMinutes(0);
+      date.setSeconds(0);
+      date.setMilliseconds(0);
+      for (let i = 0; i < 6; i++) {
+        if (entry[(i + 1)] > 0) {
+          this.nutritionDaytimeList[i].push([date.getTime(), entry[(i + 1)]]);
+        }
+      }
+    }
+    console.log('created Datime List');
+    console.log(this.nutritionDaytimeList[2]);
+    console.log(this.valuesWeight);
+    this.createNutritionChart();
+  }
+
   saveDetailList() {
     this.storage.ready().then(() => {
       this.storage.set('NutritionDetailList', this.nutritionDetailList);
@@ -235,7 +257,7 @@ export class NutritionPage {
             }
             */
       this.nutritionList[this.nutritionList.length - 1][this.getDayTime(entry.date)] = (parseInt('' + entry.carb) + parseInt('' + tempCarb));
-      this.createNutritionChart();
+      this.createDaytimeList();
     }
   }
   getDataFromFDDB(barcode) {
@@ -398,6 +420,7 @@ export class NutritionPage {
         //the height is fixed because of the rotation of the smartphone
         height: 300,
         width: null,
+        marginRight: 70
       },
       //credits are disabled, default is enabled
       credtis: {
@@ -432,6 +455,7 @@ export class NutritionPage {
         }]
         */
       },
+
       //the unit is also shown on the tooltip of each mark.
       //followTouchMove and followPointer has to be disabled to move the chart on touch device
       tooltip: {
@@ -462,24 +486,35 @@ export class NutritionPage {
       },
       //the title of the serie is given from MeasurementsPage, also the data
       series: [{
-        name: 'Blutdruck',
-        data: this.valuesBP,
-      },{
-        name: 'Puls',
-        data: this.valuesPulse,
-      },{
-        name: 'Gewicht',
-        data: this.valuesWeight,
-      }]
+        name: 'Morgen',
+        data: this.nutritionDaytimeList[0],
+      }, {
+          name: 'Znüni',
+          data: this.nutritionDaytimeList[1],
+        }, {
+          name: 'Mittag',
+          data: this.nutritionDaytimeList[2],
+        }, {
+          name: 'Zvieri',
+          data: this.nutritionDaytimeList[3],
+        }, {
+          name: 'Abend',
+          data: this.nutritionDaytimeList[4],
+        }, {
+          name: 'Nacht',
+          data: this.nutritionDaytimeList[5],
+        }]
     };
   }
 
   expand(src) {
+
     //source navigate to the chart tag and store it to 'element'
     let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
     //mode is the style attribute of the chart element
-    let mode = element.getAttribute('style');
+    let mode = ''+element.getAttribute('style');
     //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+
     if (mode.search('none') < 0) {
       //the attribute 'display' is set to none to hide the chart
       element.style.display = 'none';
