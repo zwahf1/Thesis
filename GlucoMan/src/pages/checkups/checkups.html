@@ -8,6 +8,11 @@
 
   <ion-navbar>
     <ion-title>Kontrollen</ion-title>
+    <ion-buttons end>
+      <button ion-button primary (click)="openEntryCheckup()">
+        <ion-icon name="add-circle"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 
 </ion-header>
@@ -16,9 +21,6 @@
 <ion-content padding>
   <ion-slides>
     <ion-slide>
-      <button ion-button full (click)="openEntryCheckup()">
-      Neue Kontrolluntersuchung
-      </button>
       <ion-grid>
         <ion-row class="RowHeader">
           <ion-col col-2>
@@ -57,7 +59,34 @@
       </ion-grid>
     </ion-slide>
     <ion-slide>
-
+      <ion-grid>
+        <ion-row class="RowHeader">
+          <ion-col col-5>
+            Untersuchung
+          </ion-col>
+          <ion-col col-3>
+            Datum
+          </ion-col>
+          <ion-col col-4>
+            Bemerkung
+          </ion-col>
+        </ion-row>
+        <ion-row *ngFor="let control of arrayControls">
+          <ion-col col-1>
+            <ion-checkbox (click)="clickCheckBox(control)" [(ngModel)]="control[0]">
+            </ion-checkbox>
+          </ion-col>
+          <ion-col col-4>
+            {{control[1]}}
+          </ion-col>
+          <ion-col col-3>
+            {{control[2] | date:'dd.MM.yyyy'}}
+          </ion-col>
+          <ion-col col-4>
+            {{control[3]}}
+          </ion-col>
+        </ion-row>
+      </ion-grid>
     </ion-slide>
   </ion-slides>
 </ion-content>

@@ -1,9 +1,12 @@
 import { Component } from '@angular/core';
 import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { VitalRange } from '../../util/VitalRange';
-import { NavController, Platform } from 'ionic-angular';
+import { NavController, LoadingController, AlertController, ActionSheetController, Platform } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
 import { Storage } from '@ionic/storage';
+
+import { MidataPersistence } from '../../util/midataPersistence';
+import * as  TYPES from '../../util/typings/MIDATA_Types';
 
 
 @Component({
@@ -11,6 +14,8 @@ import { Storage } from '@ionic/storage';
   templateUrl: 'measurements.html'
 })
 export class MeasurementsPage {
+
+  private mp = MidataPersistence.getInstance();
 
   chartAll: any;
   chartGluco: Chart;
@@ -24,22 +29,14 @@ export class MeasurementsPage {
   /**************************************************
   sample data for glucose, blood pressure, pulse and weight
   **************************************************/
-  valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
-    [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
-    [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+  valuesGlucose = [[]];
 
 
-  valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
-    [Date.UTC(2016, 3, 9), 65, 110], [Date.UTC(2016, 3, 11), 66, 119], [Date.UTC(2016, 3, 12), 57, 128], [Date.UTC(2016, 3, 14), 68, 129],
-    [Date.UTC(2016, 3, 17), 79, 130], [Date.UTC(2016, 3, 18), 60, 121]];
+  valuesBP = [[]];
 
-  valuesPulse = [[Date.UTC(2016, 3, 4), 66], [Date.UTC(2016, 3, 5), 77], [Date.UTC(2016, 3, 7), 65], [Date.UTC(2016, 3, 8), 61],
-    [Date.UTC(2016, 3, 9), 62], [Date.UTC(2016, 3, 11), 75], [Date.UTC(2016, 3, 12), 83], [Date.UTC(2016, 3, 14), 59],
-    [Date.UTC(2016, 3, 17), 65], [Date.UTC(2016, 3, 18), 73]];
+  valuesPulse = [[]];
 
-  valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
-    [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
-    [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
+  valuesWeight = [[]];
 
   /**************************************************
                     constructor
@@ -54,80 +51,91 @@ export class MeasurementsPage {
     -pulseValues: the measurements of the pulse
     -weightValues: the measurements of the scale
 **************************************************/
-  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform) {
-    window.addEventListener("orientationchange", function() {
-      //    alert(window.innerHeight);
+  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
+                public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
 
-    }, false);
-    /*  screen.orientation.addEventListener('change', function(){
-      console.log(screen.orientation.type); // e.g. portrait
-  });
-      */
-
-    //the sample data are stored in the device storage
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose);
-      this.storage.set('bpValues', this.valuesBP);
-      this.storage.set('pulseValues', this.valuesPulse);
-      this.storage.set('weightValues', this.valuesWeight);
+      this.storage.get('glucoseValues').then((val) => {
+        if(val) {
+          this.valuesGlucose = val;
+        } else {
+          this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
+            [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
+            [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+          this.storage.set('glucoseValues', this.valuesGlucose);
+        }
+      });
+      this.storage.get('bpValues').then((val) => {
+        if(val) {
+          this.valuesBP = val;
+        } else {
+          this.valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
+            [Date.UTC(2016, 3, 9), 65, 110], [Date.UTC(2016, 3, 11), 66, 119], [Date.UTC(2016, 3, 12), 57, 128], [Date.UTC(2016, 3, 14), 68, 129],
+            [Date.UTC(2016, 3, 17), 79, 130], [Date.UTC(2016, 3, 18), 60, 121]];
+          this.storage.set('bpValues', this.valuesBP);
+        }
+      });
+      this.storage.get('pulseValues').then((val) => {
+        if(val) {
+          this.valuesPulse = val;
+        } else {
+          this.valuesPulse = [[Date.UTC(2016, 3, 4), 66], [Date.UTC(2016, 3, 5), 77], [Date.UTC(2016, 3, 7), 65], [Date.UTC(2016, 3, 8), 61],
+            [Date.UTC(2016, 3, 9), 62], [Date.UTC(2016, 3, 11), 75], [Date.UTC(2016, 3, 12), 83], [Date.UTC(2016, 3, 14), 59],
+            [Date.UTC(2016, 3, 17), 65], [Date.UTC(2016, 3, 18), 73]];
+          this.storage.set('pulseValues', this.valuesPulse);
+        }
+      });
+      this.storage.get('weightValues').then((val) => {
+        if(val) {
+          this.valuesWeight = val;
+        } else {
+          this.valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
+            [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
+            [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
+          this.storage.set('weightValues', this.valuesWeight);
+        }
+      });
     });
+  }
 
-    this.vitalRangeList.push(new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date));
-    this.vitalRangeList.push(new VitalRange('Diastolischer BD', 70, 89, 'mmHg', new Date));
-    this.vitalRangeList.push(new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date));
-    this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
-    this.vitalRangeList.push(new VitalRange('Gewicht', 75, 85, 'kg', new Date));
-
+  ionViewDidEnter() {
     this.storage.ready().then(() => {
+      this.storage.get('VisibleList').then((val) => {
+        if (val) {
+          this.visibleList = val;
+          this.hideCharts();
+        }
+      });
       this.storage.get('VitalRangeList').then((val) => {
         if (val) {
           this.vitalRangeList = val;
+        } else {
+          this.vitalRangeList.push(new VitalRange('Glukose', 0, 0, 'mmol/L', new Date));
+          this.vitalRangeList.push(new VitalRange('Diastolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
+          this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
+          this.storage.set('VitalRangeList',this.vitalRangeList);
         }
-      })
+        this.refreshPage();
+      });
     });
+  }
 
+  refreshPage() {
+    let loading = this.loadingCtrl.create();
+
+    loading.present();
     //the charts are created by the Chart-class
     this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucose, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, 0, 0, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
     this.createAllChart();
-  }
-  ionViewDidEnter() {
-    this.storage.ready().then(() => {
-      this.storage.get('VisibleList').then((val) => {
-        console.log(val);
-        if (val) {
-          this.visibleList = val;
-          this.hideCharts();
-        }
-      })
-      this.storage.get('VitalRangeList').then((val) => {
-        if (val) {
-          this.vitalRangeList = val;
-        }
-      })
-    });
-    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucose, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
-    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, 0, 0, 0, 0);
-    this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
-    this.createAllChart();
+
+    loading.dismiss();
   }
 
-  test() {
-    console.log(this.platform);
-  }
-
-  /*    newValue() {
-        this.valuesBP = [[1, 2], [2, 4], [3, 6], [4, 8], [5, 10], [6, 9], [7, 8], [8, 9], [9, 10], [10, 11]];
-        this.chartBP1 = {
-          series: [{
-            data: this.valuesBP,
-          }]
-        }
-      }
-      */
   expand(src) {
     var element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
     var mode = '' + src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0].getAttribute('style');
@@ -221,294 +229,280 @@ export class MeasurementsPage {
       },
     }
   }
-/*  createGlucoseChart() {
-    this.chartGluco = {
-      chart: {
-        //type of the chart. spline for blood glucose, weight and pulse,
-        //columnrange for blood pressure
-        type: 'spline',
-        //the height is fixed because of the rotation of the smartphone
-        height: 300,
-      },
-      //credits are disabled, default is enabled
 
-      credtis: {
-        enabled: false,
-      },
-
-      //title isn't set, it's set directly in html with <h2>-tag
-      title: {
-        text: null,
-      },
-      //the lables in the x-axis are the dates of the measurements
-      xAxis: {
-        type: 'datetime'
-      },
-      //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
-      //the y-axis is on the right side
-      yAxis: {
-        title: {
-          text: 'mmol/L',
-        },
-        min: 0,
-        opposite: false,
-      },
-      //the unit is also shown on the tooltip of each mark.
-      //followTouchMove and followPointer has to be disabled to move the chart on touch device
-      tooltip: {
-        valueSuffix: ' ' + 'mmol/L',
-        followTouchMove: false,
-        followPointer: false
-      },
-      //navigator, range selector and scrollbar aren't visible - reason of usability
-
-      navigator: {
-        enabled: false
-      },
-      rangeSelector: {
-        selected: 1,
-        enabled: false,
-      },
-      scrollbar: {
-        enabled: false,
-        liveRedraw: false
-      },
-      //the legend isn't visible, so the user can't disable e serie of data
-      legend: {
-        enabled: false
-      },
-      //the title of the serie is given from MeasurementsPage, also the data
-      series: [{
-        name: 'Blutzucker',
-        data: this.valuesGlucose,
-        lineWidth: 0,
-        marker: {
-          enabled: true,
-          radius: 5,
-        },
-        //if a mark is selected, a thin line is visible
-        states: {
-          hover: {
-            lineWidthPlus: 1
-          }
-        }
-      }]
-    };
+  test() {
+    this.addWeight(999,new Date());
+    this.addPulse(999,new Date());
+    this.addBloodPressure(998,999,new Date());
+    this.addGlucose(999,new Date());
   }
-*/  createBPChart() {
-    this.chartBP = {
-      chart: {
-        //type of the chart. spline for blood glucose, weight and pulse,
-        //columnrange for blood pressure
-        type: 'columnrange',
-        //the height is fixed because of the rotation of the smartphone
-        height: 300,
-      },
-      //credits are disabled, default is enabled
-      credtis: {
-        enabled: false,
-      },
-      //title isn't set, it's set directly in html with <h2>-tag
-      title: {
-        text: null,
-      },
-      //the lables in the x-axis are the dates of the measurements
-      xAxis: {
-        type: 'datetime'
-      },
-      //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
-      //the y-axis is on the right side
-      yAxis: {
-        title: {
-          text: 'mmHg',
-        },
-        min: 0,
-        opposite: false,
-      },
-      //the unit is also shown on the tooltip of each mark.
-      //followTouchMove and followPointer has to be disabled to move the chart on touch device
-      tooltip: {
-        valueSuffix: ' ',
-        followTouchMove: false,
-        followPointer: false
-      },
-      //navigator, range selector and scrollbar aren't visible - reason of usability
 
-      navigator: {
-        enabled: false
-      },
-      rangeSelector: {
-        selected: 1,
-        enabled: false,
-      },
-      scrollbar: {
-        enabled: false,
-        liveRedraw: false
-      },
-      //the legend isn't visible, so the user can't disable e serie of data
-      legend: {
-        enabled: false
-      },
-      //the title of the serie is given from MeasurementsPage, also the data
-      series: [{
-        name: 'Blutdruck',
-        data: '',
-        lineWidth: 0,
-        marker: {
-          enabled: true,
-          radius: 5,
-        },
-        //if a mark is selected, a thin line is visible
-        states: {
-          hover: {
-            lineWidthPlus: 1
-          }
-        }
-      }]
-    };
+  openActionSheet() {
+    let actionSheet = this.actionCtrl.create({});
+    actionSheet.setTitle('Neuer Messwert hinzufügen');
+    actionSheet.addButton({
+      text: 'Blutdruck',
+      icon: 'heart',
+      handler: () => {
+        this.openAddAlert("bp");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Puls',
+      icon: 'pulse',
+      handler: () => {
+        this.openAddAlert("pulse");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Gewicht',
+      icon: 'speedometer',
+      handler: () => {
+        this.openAddAlert("weight");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Glukose',
+      icon: 'water',
+      handler: () => {
+        this.openAddAlert("glucose");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Cancel',
+      icon: 'close',
+      role: 'destructive',
+      handler: () => {
+
+      }
+    });
+
+    // present the alert popup
+    actionSheet.present();
   }
-  createPulseChart() {
-    this.chartPulse = {
-      chart: {
-        //type of the chart. spline for blood glucose, weight and pulse,
-        //columnrange for blood pressure
-        type: 'spline',
-        //the height is fixed because of the rotation of the smartphone
-        height: 300,
-      },
-      //credits are disabled, default is enabled
-      credtis: {
-        enabled: false,
-      },
-      //title isn't set, it's set directly in html with <h2>-tag
-      title: {
-        text: null,
-      },
-      //the lables in the x-axis are the dates of the measurements
-      xAxis: {
-        type: 'datetime'
-      },
-      //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
-      //the y-axis is on the right side
-      yAxis: {
-        title: {
-          text: '/min',
-        },
-        min: 0,
-        opposite: false,
-      },
-      //the unit is also shown on the tooltip of each mark.
-      //followTouchMove and followPointer has to be disabled to move the chart on touch device
-      tooltip: {
-        valueSuffix: ' /min',
-        followTouchMove: false,
-        followPointer: false
-      },
-      //navigator, range selector and scrollbar aren't visible - reason of usability
 
-      navigator: {
-        enabled: false
-      },
-      rangeSelector: {
-        selected: 1,
-        enabled: false,
-      },
-      scrollbar: {
-        enabled: false,
-        liveRedraw: false
-      },
-      //the legend isn't visible, so the user can't disable e serie of data
-      legend: {
-        enabled: false
-      },
-      //the title of the serie is given from MeasurementsPage, also the data
-      series: [{
-        name: 'Puls',
-        data: this.valuesPulse,
-        lineWidth: 0,
-        marker: {
-          enabled: true,
-          radius: 5,
-        },
-        //if a mark is selected, a thin line is visible
-        states: {
-          hover: {
-            lineWidthPlus: 1
-          }
-        }
-      }]
-    };
+  openAddAlert(typ) {
+
   }
-  createWeightChart() {
-    this.chartWeight = {
-      chart: {
-        //type of the chart. spline for blood glucose, weight and pulse,
-        //columnrange for blood pressure
-        type: 'spline',
-        //the height is fixed because of the rotation of the smartphone
-        height: 300,
-      },
-      //credits are disabled, default is enabled
-      credtis: {
-        enabled: false,
-      },
-      //title isn't set, it's set directly in html with <h2>-tag
-      title: {
-        text: null,
-      },
-      //the lables in the x-axis are the dates of the measurements
-      xAxis: {
-        type: 'datetime'
-      },
-      //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
-      //the y-axis is on the right side
-      yAxis: {
-        title: {
-          text: 'kg',
-        },
-        min: 0,
-        opposite: false,
-      },
-      //the unit is also shown on the tooltip of each mark.
-      //followTouchMove and followPointer has to be disabled to move the chart on touch device
-      tooltip: {
-        valueSuffix: ' kg',
-        followTouchMove: false,
-        followPointer: false
-      },
-      //navigator, range selector and scrollbar aren't visible - reason of usability
 
-      navigator: {
-        enabled: false
+  addWeight(v,d) {
+    this.valuesWeight.push([d.getTime(),v]);
+    this.storage.ready().then(() => {
+      this.storage.set('weightValues',this.valuesWeight);
+      this.saveMIDATAWeight(v,d);
+    });
+    this.refreshPage();
+  }
+
+  addPulse(v,d) {
+    this.valuesPulse.push([d.getTime(),v]);
+    this.storage.ready().then(() => {
+      this.storage.set('pulseValues',this.valuesPulse);
+      this.saveMIDATAPulse(v,d);
+    });
+    this.refreshPage();
+  }
+
+  addBloodPressure(v1,v2,d) {
+    this.valuesBP.push([d.getTime(),v1,v2]);
+    this.storage.ready().then(() => {
+      this.storage.set('bpValues',this.valuesBP);
+      this.saveMIDATABloodPressure(v1,v2,d);
+    });
+    this.refreshPage();
+  }
+
+  addGlucose(v,d) {
+    this.valuesGlucose.push([d.getTime(),v]);
+    this.storage.ready().then(() => {
+      this.storage.set('glucoseValues',this.valuesGlucose);
+      this.saveMIDATAGlucose(v,d);
+    });
+    this.refreshPage();
+  }
+
+  saveMIDATAWeight(v,d) {
+    this.mp.save(this.getWeightRes(v,d));
+  }
+
+  saveMIDATAPulse(v,d) {
+    this.mp.save(this.getPulseRes(v,d));
+  }
+
+  saveMIDATABloodPressure(v1,v2,d) {
+    this.mp.save(this.getBloodPressureRes(v1,v2,d));
+  }
+
+  saveMIDATAGlucose(v,d) {
+    this.mp.save(this.getGlucoseRes(v,d));
+  }
+
+  getMIDATAObservations() {
+    var o =this.mp.search("Observation");
+    console.log(o);
+    return o;
+  }
+
+  getMIDATAWeight() {
+
+  }
+
+  getMIDATAPulse() {
+
+  }
+
+  getMIDATABloodPressure() {
+
+  }
+
+  getMIDATAGlucose() {
+
+  }
+
+  getWeightRes(v,d) {
+    var weight: TYPES.FHIR_ObservationRes_1Value;
+    weight = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding:  [{
+            system: "http://hl7.org/fhir/observation-category",
+            code: "vital-signs",
+            display: "Vital-Signs"
+        }]
       },
-      rangeSelector: {
-        selected: 1,
-        enabled: false,
+      code: {
+        text: "Gewicht",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '3141-9',
+          display: 'Weight Measured'
+        }]
       },
-      scrollbar: {
-        enabled: false,
-        liveRedraw: false
+      valueQuantity: {
+        value: v,
+        unit: 'kg',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return weight;
+  }
+
+  getPulseRes(v,d) {
+    var pulse: TYPES.FHIR_ObservationRes_1Value;
+    pulse = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding:  [{
+            system: "http://hl7.org/fhir/observation-category",
+            code: "vital-signs",
+            display: "Vital-Signs"
+        }]
       },
-      //the legend isn't visible, so the user can't disable e serie of data
-      legend: {
-        enabled: false
+      code: {
+        text: "Herzfrequenz",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '8867-4',
+          display: 'Herzfrequenz'
+        }]
       },
-      //the title of the serie is given from MeasurementsPage, also the data
-      series: [{
-        name: 'Gewicht',
-        data: this.valuesWeight,
-        lineWidth: 0,
-        marker: {
-          enabled: true,
-          radius: 5,
+      valueQuantity: {
+        value: v,
+        unit: 'bpm',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return pulse;
+  }
+
+  getBloodPressureRes(v1,v2,d) {
+    var bp: TYPES.FHIR_ObservationRes_2Value;
+    bp = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding:  [{
+            system: "http://hl7.org/fhir/observation-category",
+            code: "vital-signs",
+            display: "Vital-Signs"
+        }]
+      },
+      code: {
+        text: "Blutdruck",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '55417-0',
+          display: 'Blood Pressure'
+        }]
+      },
+      component: [
+        {
+          code: {
+            text: 'Systolic blood pressure',
+            coding: [	{
+                system: 'http://loinc.org',
+                display: 'Systolic blood pressure',
+                code: '8480-6'
+            }	]
+          },
+          valueQuantity: {
+            value: v2,
+            unit: 'mmHg',
+            system: 'http://unitsofmeasure.org'
+          }
         },
-        //if a mark is selected, a thin line is visible
-        states: {
-          hover: {
-            lineWidthPlus: 1
+        {
+          code: {
+            text: 'Diastolic blood pressure',
+            coding: [ {
+                system: 'http://loinc.org',
+                display: 'Diastolic blood pressure',
+                code: '8462-4'
+            } ]
+          },
+          valueQuantity: {
+            value: v1,
+            unit: 'mmHg',
+            system: 'http://unitsofmeasure.org'
           }
         }
-      }]
-    };
+      ]
+    } as TYPES.FHIR_ObservationRes_2Value;
+    return bp;
+  }
+
+  getGlucoseRes(v,d) {
+    var glucose: TYPES.FHIR_ObservationRes_1Value;
+    glucose = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding:  [{
+            system: "http://hl7.org/fhir/observation-category",
+            code: "laboratory",
+            display: "Laboratory"
+        }]
+      },
+      code: {
+        text: "Glukose",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '15074-8',
+          display: 'Glucose [Moles/volume] in blood'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'mmol/l',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return glucose;
   }
 }

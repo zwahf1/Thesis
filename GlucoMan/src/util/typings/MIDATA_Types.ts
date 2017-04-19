@@ -91,9 +91,9 @@ export interface DateToValue
  export interface FHIR_ObservationRes_2Value {
    resourceType: string,
    status: string,
-   code: CodeableConcept,
    effectiveDateTime: any,
    category: CodeableConcept,
+   code: CodeableConcept,
    component: Array<Component>
  }
 
@@ -116,7 +116,7 @@ export interface DateToValue
 
  export interface Component {
    code: CodeableConcept,
-   valueQuantity: CodeableConcept
+   valueQuantity: Value
  }
 
  export interface MedicationIngredient {

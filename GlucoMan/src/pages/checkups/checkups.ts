@@ -15,7 +15,7 @@ import { Storage } from '@ionic/storage';
 export class CheckupsPage {
 
   arrayCheckups: [[string]];
-  arrayControls: [[string]];
+  arrayControls: [[any]];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public alertCtrl: AlertController) {
     this.storage.ready().then(() => {
@@ -29,7 +29,104 @@ export class CheckupsPage {
           this.arrayCheckups = val;
         }
       });
+
+      this.storage.get('arrayControls').then((val) => {
+        if(val == undefined) {
+          console.log("undefined values");
+          this.arrayControls = [[false,"Hautbild","",""],
+                                [true,"Sensibilität","",""],
+                                [false,"Durchblutung","",""],
+                                [false,"Deformitäten","",""],
+                                [false,"Schuhe","",""],
+                                [false,"Serumkreatinin","",""],
+                                [false,"Mikroalbuminurie","",""],
+                                [false,"TC/HDL","",""],
+                                [true,"LDL","",""],
+                                [false,"Triglyceride","",""],
+                                [false,"Retinopathie","",""],
+                                [false,"Tabak","",""],
+                                [false,"Bewegung","",""]];
+          this.storage.set('arrayControls',this.arrayControls);
+        } else {
+          console.log("defined values");
+          this.arrayControls = val;
+        }
+      });
     });
+  }
+
+  clickCheckBox(control) {
+    if(control[0]) {
+      this.openClearAlert(control);
+
+    } else {
+      control[0] = true;
+      control[2] = ""+ new Date();
+      this.openEntryNote(control);
+    }
+
+    this.storage.ready().then(() => {
+      this.storage.set('arrayControls',this.arrayControls);
+    });
+  }
+
+  openClearAlert(control) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle('Löschen');
+    alert.setMessage('Wollen sie den Eintrag wirklich löschen?');
+    // button to cancel
+    alert.addButton({
+      text: 'Cancel',
+      handler: () => {
+        control[0] = true;//_______________________________________________BUG
+      }
+    });
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      handler: (data) => {
+        // user has clicked the new medication button
+        // begin the alert's dismiss transition
+        let navTransition = alert.dismiss();
+        control[0] = false;
+        control[2] = "";
+        control[3] = "";
+        return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
+  }
+
+  openEntryNote(control) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle('Bemerkung hinzufügen');
+
+    alert.addInput({
+      type: 'text',
+      name: 'note',
+      placeholder: 'Bemerkung'
+    });
+    // button to cancel
+    alert.addButton('Cancel');
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      handler: (data) => {
+        // user has clicked the new medication button
+        // begin the alert's dismiss transition
+        let navTransition = alert.dismiss();
+        console.log(data.note);
+        control[3] = data.note;
+        return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
   }
 
   openEntryCheckup() {

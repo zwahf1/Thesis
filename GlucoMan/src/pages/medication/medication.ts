@@ -11,7 +11,6 @@ import { BLE } from '@ionic-native/ble';
 import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
 
 import { MidataPersistence } from '../../util/midataPersistence';
-import { BlePersistence } from '../../util/blePersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
@@ -26,7 +25,6 @@ declare var cordova: any;
 export class MedicationPage {
 
   private mp = MidataPersistence.getInstance();
-  private bp = BlePersistence.getInstance();
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
@@ -82,6 +80,7 @@ storage GET:
           console.log("MIDATA chronicMedis");
           this.storage.set('chronicMedis', []);
         }
+        console.log(this.chronicMedis);
       });
       this.storage.get('selfMedis').then((val) => {
         this.selfMedis = val;
@@ -89,6 +88,7 @@ storage GET:
           console.log("MIDATA selfMedis");
           this.storage.set('selfMedis', []);
         }
+        console.log(this.selfMedis);
       });
       this.storage.get('insulin').then((val) => {
         this.insulin = val;
@@ -96,6 +96,7 @@ storage GET:
           console.log("MIDATA insulin");
           this.storage.set('insulin', []);
         }
+        console.log(this.insulin);
       });
       this.storage.get('intolerances').then((val) => {
         this.intolerances = val;
@@ -103,6 +104,7 @@ storage GET:
           console.log("MIDATA intolerances");
           this.storage.set('intolerances', []);
         }
+        console.log(this.intolerances);
       });
     });
 
@@ -151,17 +153,6 @@ storage SET:
     var m = this.mp.search("MedicationStatement");
     console.log(m);
     return m;
-  }
-
-
-  saveMIDATAWeight(v,d) {
-    this.mp.save(this.getWeightRes(55.1,new Date()));
-  }
-
-  getMIDATAObservations() {
-    var o =this.mp.search("Observation");
-    console.log(o);
-    return o;
   }
 
 /**************************************************
@@ -265,37 +256,6 @@ storage SET:
   }
 
   //*******************************************************************************
-
-
-  getWeightRes(v,d) {
-    var weight: TYPES.FHIR_ObservationRes_1Value;
-    var weight = {
-      resourceType: 'Observation',
-      status: "preliminary",
-      effectiveDateTime: d,
-      category: {
-        coding:  [{
-            system: "http://hl7.org/fhir/observation-category",
-            code: "vital-signs",
-            display: "Vital-Signs"
-        }]
-      },
-      code: {
-        text: "Gewicht",
-        coding: [{
-          system: 'http://loinc.org',
-          code: '3141-9',
-          display: 'Weight Measured'
-        }]
-      },
-      valueQuantity: {
-        value: v,
-        unit: 'kg',
-        system: 'http://unitsofmeasure.org'
-      }
-    } as TYPES.FHIR_ObservationRes_1Value;
-    return weight;
-  }
 
 
   getMedicationStatementRes(category, medi:TYPES.LOCAL_MedicationStatementRes) {
@@ -438,44 +398,70 @@ storage GET:
     alert.present();
   }
 
-  connectBLS() {
-    var data = new Uint8Array(2);
-    data[0] = 0x00;
-    data[1] = 0x01;
-    console.log(data);
-    var data1 = new Uint16Array(2);
-    data1[0] = 0x00;
-    data1[1] = 0x01;
-    console.log(data1);
-    this.bls.enable().then(() => {
-      this.bls.connect("00:13:7B:59:C5:A8").subscribe(val => {
+  registerNewDevice() {
+    this.bls.list().then((val) => {
+      // If stroage is ready to use
+      this.storage.ready().then(() => {
+        this.storage.set('deviceId',val);
         console.log(val);
-      });
-      this.bls.subscribeRawData().subscribe((val) => {
-        console.log("subscribeRaw2");
-        console.log(val);
-        var bytes = new Uint8Array(val);
-        if (bytes.length == 25) {
-            console.log("bytes length is 25");
-        }
-      }, (err) => {
-        console.log(err);
-      }, () => {
-        console.log("completed");
       });
 
-      this.bls.clear().then((success) => {
-        console.log("clear2");
-        console.log(success);
-        this.bls.write(data).then(function(succ) {
-          console.log("write2");
+    })
+  }
+
+  connectBLS() {
+
+    var data1 = new Uint8Array(6);
+    data1[0] = 0x80;
+    data1[1] = 0x01;
+    data1[2] = 0xFE;
+    data1[3] = 0x00;
+    data1[4] = 0x81;
+    data1[5] = 0xFE;
+    var data2 = new Uint8Array(6);
+    data2[0] = 0x80;
+    data2[1] = 0x01;
+    data2[2] = 0xFE;
+    data2[3] = 0x01;
+    data2[4] = 0x81;
+    data2[5] = 0xFF;
+    var data3 = new Uint8Array(7);
+    data3[0] = 0x80;
+    data3[1] = 0x02;
+    data3[2] = 0xFD;
+    data3[3] = 0x01;
+    data3[4] = 0x00;
+    data3[5] = 0x82;
+    data3[6] = 0xFC;
+    console.log(data1);
+    console.log(data2);
+    this.bls.enable().then(() => {
+      this.bls.connect("00:13:7B:59:C5:A8").subscribe(val => {
+        console.log("connected");
+        this.bls.write(data1).then((succ) => {
+          console.log("write data1");
           console.log(succ);
-        }, (err) => {
-          console.log("ERR WRITE");
-          console.log(err);
+          this.bls.subscribeRawData().subscribe((val) => {
+            this.bls.read().then((val) => {
+              console.log('read rawData1');
+              let y = encodeURIComponent(val);
+              console.log(val);
+              console.log(y);
+            });
+          });
+        });
+        this.bls.write(data3).then((succ) => {
+          this.bls.subscribeRawData().subscribe((val) => {
+            this.bls.read().then((val) => {
+              let y = encodeURIComponent(val);
+              console.log(y);
+            });
+          });
         });
       });
+
     });
+
   }
 
           // this.bls.write(data1.buffer).then(val => {
@@ -489,21 +475,4 @@ storage GET:
           // this.bls.write(data2).then(val => {
           //   console.log(val);
           // });
-
-
-  connectBLE() {
-    this.bp.enable();
-    var result = this.bp.startScan([]).subscribe(device => {
-      console.log(JSON.stringify(device));
-    });
-    setTimeout(() => {
-      this.bp.stopScan().then(() => {
-        console.log("stopped is stopped");
-      });
-    }, 10000);
-    console.log("connect to device");
-    this.bp.connect("00:13:7B:59:C5:A8").subscribe(val => {
-      console.log(val);
-    });
-  }
 }
