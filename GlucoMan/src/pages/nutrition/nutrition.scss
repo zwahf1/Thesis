@@ -5,6 +5,10 @@ page-nutrition {
   .head {
     height: 5em;
   }
+  .swiper-container {
+    height: auto;
+    display: block;
+  }
 }
 .dataDetails {
   .alert-input-wrapper:nth-child(2):before{
@@ -16,4 +20,14 @@ page-nutrition {
 .swiper-slide{
   font-size: $font-size-base !important;
 }
+}
+.alert-wrapper {
+    overflow-y: scroll;
+}
+.alert-button-group {
+    min-height: 3.5em;
+}
+.alert-md .alert-message,
+.alert-md .alert-input-group {
+  padding: 0 24px 5px 24px;
 }

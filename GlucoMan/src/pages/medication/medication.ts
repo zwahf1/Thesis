@@ -37,7 +37,7 @@ export class MedicationPage {
                   constructor
 
 create the medication page with parameters
-  - nacCtrl: navigation controller to navigate between pages
+  - navCtrl: navigation controller to navigate between pages
   - platform: platform for using plugins
   - storage: local storage
   - http: for http requests

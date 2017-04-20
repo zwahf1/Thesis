@@ -137,14 +137,16 @@ export class MeasurementsPage {
   }
 
   expand(src) {
-    var element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
-    var mode = '' + src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0].getAttribute('style');
-
+    //source navigate to the chart tag and store it to 'element'
+    let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+    //mode is the style attribute of the chart element
+    let mode = ''+element.getAttribute('style');
+    //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
     if (mode.search('none') < 0) {
-      //this.chartGlucoVisible = 'none';
+      //the attribute 'display' is set to none to hide the chart
       element.style.display = 'none';
     } else if (mode.search('none') > 0) {
-      //this.chartGlucoVisible = 'inline';
+      //the attribute 'display' is set to inline to show the chart
       element.style.display = 'inline';
     }
   }

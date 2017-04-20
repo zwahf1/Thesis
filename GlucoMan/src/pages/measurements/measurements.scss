@@ -3,12 +3,14 @@ page-measurements {
   .scroll-content {
       padding: 0px !important;
   }
+
+
+  .values {
+    height: 500px;
+  }
   .swiper-container {
     height: auto;
     display: block;
-  }
-  .values {
-    height: 500px;
   }
 }
 

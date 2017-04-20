@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, LoadingController } from 'ionic-angular';
+import { App, NavController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 
@@ -9,16 +9,18 @@ import { Storage } from '@ionic/storage';
 })
 export class DisplayPage {
 
-  glucoseUnit = 'mmol/L';
   visibleList = [];
+  schemaList = ['Individuell', 'Tief', 'Mittel', 'Hoch'];
+  schema = this.schemaList[0];
 
 
-  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage, public loadingCtrl: LoadingController) {
+  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage) {
     this.visibleList['all'] = true;
     this.visibleList['glucose'] = true;
     this.visibleList['bloodpressure'] = true;
     this.visibleList['pulse'] = true;
     this.visibleList['weight'] = true;
+
 
     this.storage.ready().then(() => {
       this.storage.get('VisibleList').then((val) => {
@@ -26,20 +28,12 @@ export class DisplayPage {
           this.visibleList = val;
         }
       })
-      this.storage.get('GlucoseUnit').then((val) => {
+      this.storage.get('Schema').then((val) => {
         if (val) {
-          this.glucoseUnit = val;
+          this.schema = val;
         }
       })
     });
-  }
-
-  ionViewDidEnter() {
-    /*
-    let loading = this.loadingCtrl.create();
-    loading.present();
-    loading.dismiss();
-    */
   }
 
   visibleChange() {
@@ -47,13 +41,9 @@ export class DisplayPage {
       this.storage.set('VisibleList', this.visibleList);
     });
   }
-  unitChange(unit) {
-    console.log(unit);
-    this.glucoseUnit = unit;
-    console.log(this.glucoseUnit);
+  schemaChange(entry){
     this.storage.ready().then(() => {
-      this.storage.set('GlucoseUnit', this.glucoseUnit);
+      this.storage.set('Schema', this.schema);
     });
   }
-
 }

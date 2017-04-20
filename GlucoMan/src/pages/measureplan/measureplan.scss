@@ -1,16 +1,17 @@
 page-measureplan {
+  .RowHeader {
+    background-color: color($colors, primary);
+  }
 
-}
+  .RowDay {
+    background-color: color($colors, primaryLight);
+  }
 
-.RowHeader {
-  background-color: color($colors, primary);
-}
+  .ColDay {
+    border: 1px solid;
+  }
 
-.RowDay {
-  background-color: color($colors, primaryLight);
-}
-
-.ColDay {
-  text-align: center;
-  border: 1px solid;
+  .col {
+    text-align: center;
+  }
 }

@@ -15,10 +15,9 @@
   <ion-slides pager (ionSlideDidChange)="slideChanged()">
     <ion-slide>
       <div id="nutrition">
-        <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
+        <ion-item-divider class="divider" (click)="expand($event.srcElement)">Kohlenhydrate</ion-item-divider>
         <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
       </div>
-
       <table>
         <thead>
           <th>Datum</th>

@@ -23,6 +23,7 @@
     "@ionic-native/bluetooth-serial": "^3.4.4",
     "@ionic-native/clipboard": "^3.4.4",
     "@ionic-native/core": "^3.4.4",
+    "@ionic-native/screen-orientation": "^3.4.4",
     "@ionic/storage": "1.1.7",
     "angular2-highcharts": "^0.5.5",
     "highcharts": "^5.0.7",
