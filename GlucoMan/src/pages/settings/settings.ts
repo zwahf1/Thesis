@@ -5,6 +5,7 @@ import { TargetrangePage } from '../targetrange/targetrange';
 import { DisplayPage } from '../display/display';
 import { DataPage } from '../data/data';
 import { MIDATAPage } from '../midata/midata';
+import { BluetoothPage } from '../bluetooth/bluetooth';
 
 import { MidataPersistence } from '../../util/midataPersistence';
 
@@ -29,6 +30,9 @@ export class SettingsPage {
         break;
       case 'DataPage':
         this.navCtrl.push(DataPage);
+        break;
+      case 'BluetoothPage':
+        this.navCtrl.push(BluetoothPage);
         break;
       case 'MIDATAPage':
         this.navCtrl.push(MIDATAPage);

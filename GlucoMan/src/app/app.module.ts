@@ -72,7 +72,8 @@ export { Highcharts };
     TabsPage,
     ContactsPage,
     MedicationDetailPage,
-    DisclaimerPage
+    DisclaimerPage,
+    BluetoothPage
   ],
   imports: [
     IonicModule.forRoot(MyApp),
@@ -105,7 +106,8 @@ export { Highcharts };
     TabsPage,
     ContactsPage,
     MedicationDetailPage,
-    DisclaimerPage
+    DisclaimerPage,
+    BluetoothPage
   ],
   providers: [
     Storage,
