@@ -23,25 +23,25 @@
 
     <ion-item-divider class="divider"> Regelmässige Medikamente </ion-item-divider>
 
-    <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(m,'chronicMedis')" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Selbstgekaufte Medikamente </ion-item-divider>
 
-    <ion-item *ngFor="let m of selfMedis" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of selfMedis" (click)="detailMedi(m,'selfMedis')" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Insulin </ion-item-divider>
 
-    <ion-item *ngFor="let m of insulin" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of insulin" (click)="detailMedi(m,'insulin')" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 
     <ion-item-divider class="divider"> Unverträglichkeiten </ion-item-divider>
 
-    <ion-item *ngFor="let m of intolerances" (click)="detailMedi(m)" text-wrap class="medi">
+    <ion-item *ngFor="let m of intolerances" (click)="detailMedi(m,'intolerances')" text-wrap class="medi">
       {{m.title}}
     </ion-item>
 

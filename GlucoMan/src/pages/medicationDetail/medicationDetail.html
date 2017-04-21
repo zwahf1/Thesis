@@ -1,6 +1,11 @@
 <ion-header>
   <ion-navbar>
     <ion-title>{{medication.title}}</ion-title>
+    <ion-buttons end>
+      <button ion-button primary (click)="deleteMedi()">
+        <ion-icon name="trash"></ion-icon>
+      </button>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 

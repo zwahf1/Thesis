@@ -22,20 +22,14 @@ export class MeasurementsPage {
   chartBP: any;
   chartPulse: any;
   chartWeight: any;
-  visibleList = [];
-  vitalRangeList = [];
   glucoseUnit: string = 'mmol/L';
 
-  /**************************************************
-  sample data for glucose, blood pressure, pulse and weight
-  **************************************************/
+  visibleList = [];
+  vitalRangeList = [];
+
   valuesGlucose = [[]];
-
-
   valuesBP = [[]];
-
   valuesPulse = [[]];
-
   valuesWeight = [[]];
 
   /**************************************************
@@ -246,37 +240,34 @@ export class MeasurementsPage {
       text: 'Blutdruck',
       icon: 'heart',
       handler: () => {
-        this.openAddAlert("bp");
+        this.openAddAlert("Blutdruck");
       }
     });
     actionSheet.addButton({
       text: 'Puls',
       icon: 'pulse',
       handler: () => {
-        this.openAddAlert("pulse");
+        this.openAddAlert("Puls");
       }
     });
     actionSheet.addButton({
       text: 'Gewicht',
       icon: 'speedometer',
       handler: () => {
-        this.openAddAlert("weight");
+        this.openAddAlert("Gewicht");
       }
     });
     actionSheet.addButton({
       text: 'Glukose',
       icon: 'water',
       handler: () => {
-        this.openAddAlert("glucose");
+        this.openAddAlert("Glukose");
       }
     });
     actionSheet.addButton({
       text: 'Cancel',
       icon: 'close',
-      role: 'destructive',
-      handler: () => {
-
-      }
+      role: 'destructive'
     });
 
     // present the alert popup
@@ -284,6 +275,92 @@ export class MeasurementsPage {
   }
 
   openAddAlert(typ) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle(typ);
+
+    if(typ === "Blutdruck") {
+      alert.addInput({
+        type: 'number',
+        name: 'dia',
+        placeholder: 'Diastolischer Blutdruck'
+      });
+      alert.addInput({
+        type: 'number',
+        name: 'sys',
+        placeholder: 'Systolischer Blutdruck'
+      });
+    } else if(typ === "Glukose") {
+      alert.addInput({
+        type: 'radio',
+        label: 'Import von Gerät',
+        value: 'Import'
+      });
+      // radio button (category)
+      alert.addInput({
+        type: 'radio',
+        label: 'Tastatureingabe',
+        value: 'Blutzucker'
+      });
+    } else {
+      alert.addInput({
+        type: 'number',
+        name: 'data',
+        placeholder: typ
+      });
+    }
+    // button to cancel
+    alert.addButton('Cancel');
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      // data: choosen category
+      handler: (data) => {
+        // user has clicked the new medication button
+        // begin the alert's dismiss transition
+        let navTransition = alert.dismiss();
+        // If stroage is ready to use
+        this.storage.ready().then(() => {
+          navTransition.then(() => {
+
+            switch(typ) {
+              case "Blutdruck": {
+                this.addBloodPressure(data.dia,data.sys,new Date());
+                break;
+              }
+              case "Puls": {
+                this.addPulse(data.data,new Date());
+                break;
+              }
+              case "Gewicht": {
+                console.log(new Date());
+                this.addWeight(data.data,new Date());
+                break;
+              }
+              case "Glukose": {
+                if(data === "Import") {
+                  this.importFromDevice();
+                } else {
+                  this.openAddAlert(data);
+                }
+                break;
+              }
+              case "Blutzucker": {
+                this.addGlucose(data.data,new Date());
+                break;
+              }
+            }
+          });
+        });
+        return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
+  }
+
+  importFromDevice() {
 
   }
 

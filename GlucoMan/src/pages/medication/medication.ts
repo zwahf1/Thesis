@@ -120,9 +120,10 @@ shows the page to the given medication with details
 params:
   - medi: medication for detail page
 ***************************************************/
-  detailMedi(medi:TYPES.LOCAL_MedicationStatementRes) {
+  detailMedi(medi:TYPES.LOCAL_MedicationStatementRes, category:string) {
     this.navCtrl.push(MedicationDetailPage, {
-      medi: medi
+      medi: medi,
+      category: category
     });
   }
 
@@ -410,58 +411,123 @@ storage GET:
   }
 
   connectBLS() {
+    var s = "";
+    var all = "";
+    var allval = "";
+    var z = 0;
 
-    var data1 = new Uint8Array(6);
+    var dataresult = new Uint8Array(100);
+    var data1 = new Uint8Array(48);
     data1[0] = 0x80;
     data1[1] = 0x01;
     data1[2] = 0xFE;
     data1[3] = 0x00;
     data1[4] = 0x81;
     data1[5] = 0xFE;
-    var data2 = new Uint8Array(6);
-    data2[0] = 0x80;
-    data2[1] = 0x01;
-    data2[2] = 0xFE;
-    data2[3] = 0x01;
-    data2[4] = 0x81;
-    data2[5] = 0xFF;
-    var data3 = new Uint8Array(7);
-    data3[0] = 0x80;
-    data3[1] = 0x02;
-    data3[2] = 0xFD;
-    data3[3] = 0x01;
-    data3[4] = 0x00;
-    data3[5] = 0x82;
-    data3[6] = 0xFC;
-    console.log(data1);
-    console.log(data2);
+
+    data1[6] = 0x80;
+    data1[7] = 0x02;
+    data1[8] = 0xFD;
+    data1[9] = 0x01;
+    data1[10] = 0x00;
+    data1[11] = 0x82;
+    data1[12] = 0xFC;
+
+    data1[13] = 0x80;
+    data1[14] = 0x02;
+    data1[15] = 0xFD;
+    data1[16] = 0x01;
+    data1[17] = 0x01;
+    data1[18] = 0x83;
+    data1[19] = 0xFC;
+
+    data1[20] = 0x80;
+    data1[21] = 0x02;
+    data1[22] = 0xFD;
+    data1[23] = 0x01;
+    data1[24] = 0x02;
+    data1[25] = 0x80;
+    data1[26] = 0xFC;
+
+    data1[27] = 0x80;
+    data1[28] = 0x02;
+    data1[29] = 0xFD;
+    data1[30] = 0x01;
+    data1[31] = 0x03;
+    data1[32] = 0x81;
+    data1[33] = 0xFC;
+
+    data1[34] = 0x80;
+    data1[35] = 0x02;
+    data1[36] = 0xFD;
+    data1[37] = 0x01;
+    data1[38] = 0x04;
+    data1[39] = 0x86;
+    data1[40] = 0xFC;
+
+    data1[41] = 0x80;
+    data1[42] = 0x02;
+    data1[43] = 0xFD;
+    data1[44] = 0x01;
+    data1[45] = 0x05; // change
+    data1[46] = 0x87; // change
+    data1[47] = 0xFC;
+
     this.bls.enable().then(() => {
-      this.bls.connect("00:13:7B:59:C5:A8").subscribe(val => {
+      this.bls.connect("00:13:7B:59:C5:A8").subscribe(() => {
         console.log("connected");
-        this.bls.write(data1).then((succ) => {
-          console.log("write data1");
-          console.log(succ);
-          this.bls.subscribeRawData().subscribe((val) => {
-            this.bls.read().then((val) => {
-              console.log('read rawData1');
-              let y = encodeURIComponent(val);
-              console.log(val);
-              console.log(y);
-            });
-          });
+        this.bls.write(data1).then(() => {
         });
-        this.bls.write(data3).then((succ) => {
-          this.bls.subscribeRawData().subscribe((val) => {
-            this.bls.read().then((val) => {
-              let y = encodeURIComponent(val);
-              console.log(y);
-            });
-          });
+        this.bls.subscribeRawData().subscribe((subs) => {
+          console.log("**********************************");
+          var a = new Uint8Array(subs);
+          console.log(a);
+          // this.bls.read().then((val) => {
+          //   dataresult[z] = val;
+          //   console.log("------- "+z+" -------");
+          //   allval += val;
+          //   s = this.hexDecode(val);
+          //   all += s;
+          //   console.log(s);
+          //   z++;
+          // });
         });
       });
 
     });
 
+  }
+
+  hexDecode(s: string){
+    var i;
+    var hex: string;
+
+    var result = "";
+    for (i=0; i<s.length; i++) {
+        hex = s.charCodeAt(i).toString(16);
+        // if(hex.length < 2) {
+        //   hex += '0'+hex;
+        // }
+        result +=' | '+ hex;
+    }
+
+    return result;
+  }
+
+  binDecode(s: string){
+    var i;
+    var hex: string;
+
+    var result = "";
+    for (i=0; i<s.length; i++) {
+        hex = s.charCodeAt(i).toString(2);
+        // if(hex.length < 2) {
+        //   hex += '0'+hex;
+        // }
+        result +=' | '+ hex;
+    }
+
+    return result;
   }
 
           // this.bls.write(data1.buffer).then(val => {
