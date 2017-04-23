@@ -29,3 +29,24 @@ ion-header{
     font-size: 3em;
   }
 }
+.swiper-container{
+	overflow: visible;
+  height: inherit;
+}
+.swiper-slide{
+	display: block;
+  height: inherit;
+}
+.swiper-wrapper{
+  height: inherit;
+}
+.tabs-md .tab-button {
+	max-height: 5.6rem
+}
+ion-slide.swiper-slide.swiper-slide-active{
+  height: inherit;
+}
+.swiper-pagination.swiper-pagination-clickable.swiper-pagination-bullets{
+  bottom: 5.7rem;
+  position: fixed;
+}

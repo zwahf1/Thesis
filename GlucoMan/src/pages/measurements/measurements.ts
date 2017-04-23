@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { ScreenOrientation } from '@ionic-native/screen-orientation';
 import { VitalRange } from '../../util/VitalRange';
 import { NavController, LoadingController, AlertController, ActionSheetController, Platform } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
@@ -46,11 +45,11 @@ export class MeasurementsPage {
     -weightValues: the measurements of the scale
 **************************************************/
   constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
-                public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
-
+    public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
+    console.log('start constructor');
     this.storage.ready().then(() => {
       this.storage.get('glucoseValues').then((val) => {
-        if(val) {
+        if (val) {
           this.valuesGlucose = val;
         } else {
           this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
@@ -60,7 +59,7 @@ export class MeasurementsPage {
         }
       });
       this.storage.get('bpValues').then((val) => {
-        if(val) {
+        if (val) {
           this.valuesBP = val;
         } else {
           this.valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
@@ -70,7 +69,7 @@ export class MeasurementsPage {
         }
       });
       this.storage.get('pulseValues').then((val) => {
-        if(val) {
+        if (val) {
           this.valuesPulse = val;
         } else {
           this.valuesPulse = [[Date.UTC(2016, 3, 4), 66], [Date.UTC(2016, 3, 5), 77], [Date.UTC(2016, 3, 7), 65], [Date.UTC(2016, 3, 8), 61],
@@ -80,7 +79,7 @@ export class MeasurementsPage {
         }
       });
       this.storage.get('weightValues').then((val) => {
-        if(val) {
+        if (val) {
           this.valuesWeight = val;
         } else {
           this.valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
@@ -90,6 +89,7 @@ export class MeasurementsPage {
         }
       });
     });
+    console.log('end constructor');
   }
 
   ionViewDidEnter() {
@@ -109,7 +109,7 @@ export class MeasurementsPage {
           this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
           this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
           this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
-          this.storage.set('VitalRangeList',this.vitalRangeList);
+          this.storage.set('VitalRangeList', this.vitalRangeList);
         }
         this.refreshPage();
       });
@@ -123,10 +123,10 @@ export class MeasurementsPage {
     //the charts are created by the Chart-class
     this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucose, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, 0, 0, 0, 0);
+    this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
     this.createAllChart();
-
+    console.log('did refreshPage()');
     loading.dismiss();
   }
 
@@ -134,7 +134,7 @@ export class MeasurementsPage {
     //source navigate to the chart tag and store it to 'element'
     let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
     //mode is the style attribute of the chart element
-    let mode = ''+element.getAttribute('style');
+    let mode = '' + element.getAttribute('style');
     //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
     if (mode.search('none') < 0) {
       //the attribute 'display' is set to none to hide the chart
@@ -165,7 +165,7 @@ export class MeasurementsPage {
         // Explicitly tell the width and height of a chart
         width: window.innerWidth,
         height: 300,
-        zoomType: 'x',
+        //      zoomType: 'x',
         resetZoomButton: {
           position: {
             verticalAlign: 'bottom', // by default
@@ -183,30 +183,41 @@ export class MeasurementsPage {
         min: 0,
         opposite: false,
       }, {
-          title: { text: 'Blutzucker' },
-          min: 0,
-          opposite: true,
-
+        title: { text: 'Blutzucker' },
+        min: 0,
+        opposite: true,
         }], series: [{
           type: 'spline',
           name: 'Blutzucker',
           yAxis: 1,
           data: this.valuesGlucose,
+          tooltip: {
+            valueSuffix: ' mmol/L'
+          }
         }, {
             type: 'columnrange',
             name: 'Blutdruck',
             yAxis: 0,
             data: this.valuesBP,
+            tooltip: {
+              valueSuffix: ' mmHg'
+            }
           }, {
             type: 'spline',
             name: 'Puls',
             yAxis: 0,
             data: this.valuesPulse,
+            tooltip: {
+              valueSuffix: ' pro Min'
+            }
           }, {
             type: 'spline',
             name: 'Gewicht',
             yAxis: 0,
-            data: this.valuesWeight
+            data: this.valuesWeight,
+            tooltip: {
+              valueSuffix: ' kg'
+            }
           }],
       //the legend isn't visible, so the user can't disable e serie of data
       legend: {
@@ -214,6 +225,14 @@ export class MeasurementsPage {
       },
       navigator: {
         enabled: false
+      },
+      //the unit is also shown on the tooltip of each mark.
+      //followTouchMove and followPointer has to be disabled to move the chart on touch device
+      tooltip: {
+        shared: true,
+        xDateFormat: '%d.%m.%Y %H:%M',
+        followTouchMove: false,
+        followPointer: false
       },
       rangeSelector: {
         selected: 1,
@@ -224,13 +243,6 @@ export class MeasurementsPage {
         liveRedraw: false
       },
     }
-  }
-
-  test() {
-    this.addWeight(999,new Date());
-    this.addPulse(999,new Date());
-    this.addBloodPressure(998,999,new Date());
-    this.addGlucose(999,new Date());
   }
 
   openActionSheet() {
@@ -279,18 +291,18 @@ export class MeasurementsPage {
     // set title of popup
     alert.setTitle(typ);
 
-    if(typ === "Blutdruck") {
-      alert.addInput({
-        type: 'number',
-        name: 'dia',
-        placeholder: 'Diastolischer Blutdruck'
-      });
+    if (typ === "Blutdruck") {
       alert.addInput({
         type: 'number',
         name: 'sys',
         placeholder: 'Systolischer Blutdruck'
       });
-    } else if(typ === "Glukose") {
+      alert.addInput({
+        type: 'number',
+        name: 'dia',
+        placeholder: 'Diastolischer Blutdruck'
+      });
+    } else if (typ === "Glukose") {
       alert.addInput({
         type: 'radio',
         label: 'Import von Gerät',
@@ -323,23 +335,26 @@ export class MeasurementsPage {
         // If stroage is ready to use
         this.storage.ready().then(() => {
           navTransition.then(() => {
-
-            switch(typ) {
+            //parse the data into numbers to add to the chart
+            let v1: number = parseInt(data.sys);
+            let v2: number = parseInt(data.dia);
+            let v: number = parseInt(data.data);
+            switch (typ) {
               case "Blutdruck": {
-                this.addBloodPressure(data.dia,data.sys,new Date());
+                this.addBloodPressure(v1, v2, new Date());
                 break;
               }
               case "Puls": {
-                this.addPulse(data.data,new Date());
+                this.addPulse(v, new Date());
                 break;
               }
               case "Gewicht": {
                 console.log(new Date());
-                this.addWeight(data.data,new Date());
+                this.addWeight(v, new Date());
                 break;
               }
               case "Glukose": {
-                if(data === "Import") {
+                if (data === "Import") {
                   this.importFromDevice();
                 } else {
                   this.openAddAlert(data);
@@ -347,7 +362,7 @@ export class MeasurementsPage {
                 break;
               }
               case "Blutzucker": {
-                this.addGlucose(data.data,new Date());
+                this.addGlucose(v, new Date());
                 break;
               }
             }
@@ -364,60 +379,63 @@ export class MeasurementsPage {
 
   }
 
-  addWeight(v,d) {
-    this.valuesWeight.push([d.getTime(),v]);
+  addWeight(v, d) {
+    this.valuesWeight.push([d.getTime(), v]);
     this.storage.ready().then(() => {
-      this.storage.set('weightValues',this.valuesWeight);
-      this.saveMIDATAWeight(v,d);
+      this.storage.set('weightValues', this.valuesWeight);
+      this.saveMIDATAWeight(v, d);
     });
     this.refreshPage();
   }
 
-  addPulse(v,d) {
-    this.valuesPulse.push([d.getTime(),v]);
+  addPulse(v, d) {
+    this.valuesPulse.push([d.getTime(), v]);
     this.storage.ready().then(() => {
-      this.storage.set('pulseValues',this.valuesPulse);
-      this.saveMIDATAPulse(v,d);
+      this.storage.set('pulseValues', this.valuesPulse);
+      this.saveMIDATAPulse(v, d);
     });
     this.refreshPage();
   }
 
-  addBloodPressure(v1,v2,d) {
-    this.valuesBP.push([d.getTime(),v1,v2]);
+  addBloodPressure(v1: number, v2: number, d) {
+    this.valuesBP.push([d.getTime(), v1, v2]);
+    console.log(this.valuesBP);
+    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
+    console.log('created new BP chart');
     this.storage.ready().then(() => {
-      this.storage.set('bpValues',this.valuesBP);
-      this.saveMIDATABloodPressure(v1,v2,d);
+      this.storage.set('bpValues', this.valuesBP);
+      this.saveMIDATABloodPressure(v2, v1, d);
     });
     this.refreshPage();
   }
 
-  addGlucose(v,d) {
-    this.valuesGlucose.push([d.getTime(),v]);
+  addGlucose(v, d) {
+    this.valuesGlucose.push([d.getTime(), v]);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues',this.valuesGlucose);
-      this.saveMIDATAGlucose(v,d);
+      this.storage.set('glucoseValues', this.valuesGlucose);
+      this.saveMIDATAGlucose(v, d);
     });
     this.refreshPage();
   }
 
-  saveMIDATAWeight(v,d) {
-    this.mp.save(this.getWeightRes(v,d));
+  saveMIDATAWeight(v, d) {
+    this.mp.save(this.getWeightRes(v, d));
   }
 
-  saveMIDATAPulse(v,d) {
-    this.mp.save(this.getPulseRes(v,d));
+  saveMIDATAPulse(v, d) {
+    this.mp.save(this.getPulseRes(v, d));
   }
 
-  saveMIDATABloodPressure(v1,v2,d) {
-    this.mp.save(this.getBloodPressureRes(v1,v2,d));
+  saveMIDATABloodPressure(v1, v2, d) {
+    this.mp.save(this.getBloodPressureRes(v1, v2, d));
   }
 
-  saveMIDATAGlucose(v,d) {
-    this.mp.save(this.getGlucoseRes(v,d));
+  saveMIDATAGlucose(v, d) {
+    this.mp.save(this.getGlucoseRes(v, d));
   }
 
   getMIDATAObservations() {
-    var o =this.mp.search("Observation");
+    var o = this.mp.search("Observation");
     console.log(o);
     return o;
   }
@@ -438,17 +456,17 @@ export class MeasurementsPage {
 
   }
 
-  getWeightRes(v,d) {
+  getWeightRes(v, d) {
     var weight: TYPES.FHIR_ObservationRes_1Value;
     weight = {
       resourceType: 'Observation',
       status: "preliminary",
       effectiveDateTime: d,
       category: {
-        coding:  [{
-            system: "http://hl7.org/fhir/observation-category",
-            code: "vital-signs",
-            display: "Vital-Signs"
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
         }]
       },
       code: {
@@ -468,17 +486,17 @@ export class MeasurementsPage {
     return weight;
   }
 
-  getPulseRes(v,d) {
+  getPulseRes(v, d) {
     var pulse: TYPES.FHIR_ObservationRes_1Value;
     pulse = {
       resourceType: 'Observation',
       status: "preliminary",
       effectiveDateTime: d,
       category: {
-        coding:  [{
-            system: "http://hl7.org/fhir/observation-category",
-            code: "vital-signs",
-            display: "Vital-Signs"
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
         }]
       },
       code: {
@@ -498,17 +516,17 @@ export class MeasurementsPage {
     return pulse;
   }
 
-  getBloodPressureRes(v1,v2,d) {
+  getBloodPressureRes(v1, v2, d) {
     var bp: TYPES.FHIR_ObservationRes_2Value;
     bp = {
       resourceType: 'Observation',
       status: "preliminary",
       effectiveDateTime: d,
       category: {
-        coding:  [{
-            system: "http://hl7.org/fhir/observation-category",
-            code: "vital-signs",
-            display: "Vital-Signs"
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
         }]
       },
       code: {
@@ -523,11 +541,11 @@ export class MeasurementsPage {
         {
           code: {
             text: 'Systolic blood pressure',
-            coding: [	{
-                system: 'http://loinc.org',
-                display: 'Systolic blood pressure',
-                code: '8480-6'
-            }	]
+            coding: [{
+              system: 'http://loinc.org',
+              display: 'Systolic blood pressure',
+              code: '8480-6'
+            }]
           },
           valueQuantity: {
             value: v2,
@@ -538,11 +556,11 @@ export class MeasurementsPage {
         {
           code: {
             text: 'Diastolic blood pressure',
-            coding: [ {
-                system: 'http://loinc.org',
-                display: 'Diastolic blood pressure',
-                code: '8462-4'
-            } ]
+            coding: [{
+              system: 'http://loinc.org',
+              display: 'Diastolic blood pressure',
+              code: '8462-4'
+            }]
           },
           valueQuantity: {
             value: v1,
@@ -555,17 +573,17 @@ export class MeasurementsPage {
     return bp;
   }
 
-  getGlucoseRes(v,d) {
+  getGlucoseRes(v, d) {
     var glucose: TYPES.FHIR_ObservationRes_1Value;
     glucose = {
       resourceType: 'Observation',
       status: "preliminary",
       effectiveDateTime: d,
       category: {
-        coding:  [{
-            system: "http://hl7.org/fhir/observation-category",
-            code: "laboratory",
-            display: "Laboratory"
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "laboratory",
+          display: "Laboratory"
         }]
       },
       code: {

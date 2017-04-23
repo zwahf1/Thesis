@@ -197,8 +197,15 @@ export class NutritionPage {
         //the height is fixed because of the rotation of the smartphone
         height: 300,
         //width is null, so it fits to the window
-        width: null,
-        marginRight: 70
+        width: window.innerWidth,
+        marginRight: 70,
+        resetZoomButton: {
+          position: {
+            verticalAlign: 'bottom', // by default
+            y: -35,
+          },
+          relativeTo: 'plot'
+        },
       },
       //credits are disabled, default is enabled
       credtis: {

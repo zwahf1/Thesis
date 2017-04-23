@@ -27,7 +27,15 @@ input parameters:
         type: type,
         //the height is fixed because of the rotation of the smartphone
         height: 300,
-        width: null,
+        width: window.innerWidth,
+        spacingRight: 20,
+        resetZoomButton: {
+          position: {
+            verticalAlign: 'bottom', // by default
+            y: -35,
+          },
+          relativeTo: 'plot'
+        },
       },
       //credits are disabled, default is enabled
       credtis: {
