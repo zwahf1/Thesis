@@ -2,66 +2,67 @@
   <ion-navbar>
     <ion-title>Ernährung</ion-title>
     <ion-buttons end>
-      <button ion-button (click)="showDataDetails()">
-        <ion-icon name="add"></ion-icon>
-      </button>
-      <button ion-button (click)="scan()">
-        <ion-icon name="barcode"></ion-icon>
-      </button>
-    </ion-buttons>
+    <button ion-button end (click)='openActionSheet()'>
+      <ion-icon name="add-circle"></ion-icon>
+    </button>
+  </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content padding>
+<ion-content>
   <ion-slides pager (ionSlideDidChange)="slideChanged()">
     <ion-slide>
-      <div id="nutrition">
-        <ion-item-divider class="divider" (click)="expand($event.srcElement)">Kohlenhydrate</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
-      </div>
-      <table>
-        <thead>
-          <th>Datum</th>
-          <th colspan="6">Kohlenhydrate in Gramm</th>
-        </thead>
-        <tbody>
-          <tr class='head'>
-            <td class=''></td>
-            <td class='rotate'>Morgen</td>
-            <td class='rotate'>Znüni</td>
-            <td class='rotate'>Mittag</td>
-            <td class='rotate'>Zvieri</td>
-            <td class='rotate'>Abend</td>
-            <td class='rotate'>Nacht</td>
-          </tr>
-          <tr *ngFor="let item of nutritionList">
-            <td>{{item[0] | date:'dd.MM.yyyy'}}</td>
-            <td>{{item[1]}}</td>
-            <td>{{item[2]}}</td>
-            <td>{{item[3]}}</td>
-            <td>{{item[4]}}</td>
-            <td>{{item[5]}}</td>
-            <td>{{item[6]}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <content>
+        <div id="nutrition">
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Kohlenhydrate</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
+        </div>
+        <table>
+          <thead>
+            <th>Datum</th>
+            <th colspan="6">Kohlenhydrate in Gramm</th>
+          </thead>
+          <tbody>
+            <tr class='head'>
+              <td class=''></td>
+              <td class='rotate'>Morgen</td>
+              <td class='rotate'>Znüni</td>
+              <td class='rotate'>Mittag</td>
+              <td class='rotate'>Zvieri</td>
+              <td class='rotate'>Abend</td>
+              <td class='rotate'>Nacht</td>
+            </tr>
+            <tr *ngFor="let item of nutritionList">
+              <td>{{item[0] | date:'dd.MM.yyyy'}}</td>
+              <td>{{item[1]}}</td>
+              <td>{{item[2]}}</td>
+              <td>{{item[3]}}</td>
+              <td>{{item[4]}}</td>
+              <td>{{item[5]}}</td>
+              <td>{{item[6]}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </content>
     </ion-slide>
     <ion-slide>
-      <table>
-        <thead>
-          <th>Datum</th>
-          <th>Beschreibung</th>
-          <th>Portion in g</th>
-          <th>Kohlenhydrate in g </th>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of nutritionDetailList" (click)="edit(item)">
-            <td>{{item.date | date:'dd.MM.yyyy - HH:mm'}}</td>
-            <td>{{item.desc}}</td>
-            <td>{{item.port}}</td>
-            <td>{{item.carb}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <content>
+        <table>
+          <thead>
+            <th>Datum</th>
+            <th>Beschreibung</th>
+            <th>Portion in g</th>
+            <th>Kohlenhydrate in g </th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of nutritionDetailList" (click)="edit(item)">
+              <td>{{item.date | date:'dd.MM.yyyy - HH:mm'}}</td>
+              <td>{{item.desc}}</td>
+              <td>{{item.port}}</td>
+              <td>{{item.carb}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </content>
     </ion-slide>
   </ion-slides>
 </ion-content>

@@ -56,7 +56,7 @@ export class CheckupsPage {
   }
 
   clickCheckBox(control) {
-    if(control[0]) {
+    if(!control[0]) {
       this.openClearAlert(control);
 
     } else {
@@ -135,7 +135,7 @@ export class CheckupsPage {
     alert.setTitle('Neue Kontrolluntersuchung einfügen');
 
     alert.addInput({
-      type: 'text',
+      type: 'date',
       name: 'date',
       placeholder: 'Datum'
     });
