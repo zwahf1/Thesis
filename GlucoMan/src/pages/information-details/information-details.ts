@@ -1,12 +1,9 @@
 import { Component } from '@angular/core';
 import { NavParams } from 'ionic-angular';
 
-/*
-  Generated class for the InformationDetails page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+/**
+page to present the information about a choosen thema in the informationpage
+**/
 @Component({
   selector: 'page-information-details',
   templateUrl: 'information-details.html'
@@ -14,11 +11,10 @@ import { NavParams } from 'ionic-angular';
 
 export class InformationDetailsPage {
   item;
+  /**
+  constructor loads the navParams into loval variable.
+  **/
   constructor(public navParams: NavParams) {
     this.item = navParams.data.item;
-  }
-
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad InformationDetailsPage');
   }
 }

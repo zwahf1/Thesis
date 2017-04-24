@@ -7,7 +7,9 @@ import { Storage } from '@ionic/storage';
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as  TYPES from '../../util/typings/MIDATA_Types';
 
-
+/**
+page to present the measurements in charts
+**/
 @Component({
   selector: 'page-measurements',
   templateUrl: 'measurements.html'
@@ -31,11 +33,11 @@ export class MeasurementsPage {
   valuesPulse = [[]];
   valuesWeight = [[]];
 
-  /**************************************************
+  /**
                     constructor
 
   create the medication page with parameters
-    - nacCtrl: navigation controller to navigate between pages
+    - navCtrl: navigation controller to navigate between pages
     - storage: local storage
 
   storage SET:
@@ -43,10 +45,10 @@ export class MeasurementsPage {
     -bpValues: the measurements of the blood pressure
     -pulseValues: the measurements of the pulse
     -weightValues: the measurements of the scale
-**************************************************/
+**/
   constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
-    console.log('start constructor');
+
     this.storage.ready().then(() => {
       this.storage.get('glucoseValues').then((val) => {
         if (val) {
@@ -89,9 +91,12 @@ export class MeasurementsPage {
         }
       });
     });
-    console.log('end constructor');
   }
-
+/**
+if the view did enter, the latest stored visibleList and target range list
+loads to local variables.
+if there's no vitalRangeList available, the default values loads, they're 0.
+**/
   ionViewDidEnter() {
     this.storage.ready().then(() => {
       this.storage.get('VisibleList').then((val) => {
@@ -115,7 +120,11 @@ export class MeasurementsPage {
       });
     });
   }
+/**
+method to refresh the page and redraw the charts.
 
+while the charts are creating, the loading indicator is presented.
+**/
   refreshPage() {
     let loading = this.loadingCtrl.create();
 
@@ -126,10 +135,12 @@ export class MeasurementsPage {
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
     this.createAllChart();
-    console.log('did refreshPage()');
     loading.dismiss();
   }
-
+/**
+method to collapse and expand the charts.
+it's called by clicking on a divider between the charts
+**/
   expand(src) {
     //source navigate to the chart tag and store it to 'element'
     let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
@@ -144,10 +155,13 @@ export class MeasurementsPage {
       element.style.display = 'inline';
     }
   }
-
+/**
+method to hide and show the charts.
+it's based on the visibleList, which is editable in the settings.
+**/
   hideCharts() {
     for (var key in this.visibleList) {
-      var x = document.getElementById(key)
+      var x = document.getElementById(key);
       if (this.visibleList[key]) {
         x.style.display = 'block';
       } else {
@@ -155,20 +169,22 @@ export class MeasurementsPage {
       }
     }
   }
+  /**
+  method to create the general chart with all vital signs.
+  it's a combine chart with multiple chart types
+  **/
   createAllChart() {
     this.chartAll = {
       chart: {
-        // Edit chart spacing
+        //the size and spacing of the chart
         spacingLeft: 0,
         spacingRight: 10,
-
-        // Explicitly tell the width and height of a chart
         width: window.innerWidth,
         height: 300,
-        //      zoomType: 'x',
+        //position of the resetZoomButton
         resetZoomButton: {
           position: {
-            verticalAlign: 'bottom', // by default
+            verticalAlign: 'bottom',
             y: -35,
           },
           relativeTo: 'plot'
@@ -179,6 +195,8 @@ export class MeasurementsPage {
       }, xAxis: {
         type: 'datetime',
       }, yAxis: [{
+        //there are two yAxis, on the left and on the right side, cause the different values.
+        //on the left side there are values between 0 and 150, on the right side betweend 0 and 15
         title: { text: 'Blutdruck, Puls und Gewicht' },
         min: 0,
         opposite: false,
@@ -186,7 +204,8 @@ export class MeasurementsPage {
         title: { text: 'Blutzucker' },
         min: 0,
         opposite: true,
-        }], series: [{
+      }], series: [{
+        //series of the vital signs
           type: 'spline',
           name: 'Blutzucker',
           yAxis: 1,
@@ -244,7 +263,10 @@ export class MeasurementsPage {
       },
     }
   }
-
+/**
+method to choose the vital sign for the new measurement value.
+after the selection it calls the method openAddAlert() with the vital sign as parameter
+**/
   openActionSheet() {
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Neuer Messwert hinzufügen');
@@ -285,12 +307,13 @@ export class MeasurementsPage {
     // present the alert popup
     actionSheet.present();
   }
-
+/**
+method to entry the new value
+**/
   openAddAlert(typ) {
     let alert = this.alertCtrl.create({});
-    // set title of popup
     alert.setTitle(typ);
-
+    //two input fields for blood pressure
     if (typ === "Blutdruck") {
       alert.addInput({
         type: 'number',
@@ -303,18 +326,19 @@ export class MeasurementsPage {
         placeholder: 'Diastolischer Blutdruck'
       });
     } else if (typ === "Glukose") {
+      //choose import of a device or manually input
       alert.addInput({
         type: 'radio',
         label: 'Import von Gerät',
         value: 'Import'
       });
-      // radio button (category)
       alert.addInput({
         type: 'radio',
         label: 'Tastatureingabe',
         value: 'Blutzucker'
       });
     } else {
+      //one input field for other vital signs
       alert.addInput({
         type: 'number',
         name: 'data',
@@ -339,6 +363,7 @@ export class MeasurementsPage {
             let v1: number = parseInt(data.sys);
             let v2: number = parseInt(data.dia);
             let v: number = parseInt(data.data);
+            //switch - case to handle the different input types
             switch (typ) {
               case "Blutdruck": {
                 this.addBloodPressure(v1, v2, new Date());
@@ -378,7 +403,9 @@ export class MeasurementsPage {
   importFromDevice() {
 
   }
-
+  /**
+method to add weight value into weightlist, chart and MIDATA
+  **/
   addWeight(v, d) {
     this.valuesWeight.push([d.getTime(), v]);
     this.storage.ready().then(() => {
@@ -387,7 +414,9 @@ export class MeasurementsPage {
     });
     this.refreshPage();
   }
-
+  /**
+method to add pulse value into weightlist, chart and MIDATA
+  **/
   addPulse(v, d) {
     this.valuesPulse.push([d.getTime(), v]);
     this.storage.ready().then(() => {
@@ -396,19 +425,20 @@ export class MeasurementsPage {
     });
     this.refreshPage();
   }
-
+  /**
+method to add blood pressure values into weightlist, chart and MIDATA
+  **/
   addBloodPressure(v1: number, v2: number, d) {
     this.valuesBP.push([d.getTime(), v1, v2]);
-    console.log(this.valuesBP);
-    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    console.log('created new BP chart');
     this.storage.ready().then(() => {
       this.storage.set('bpValues', this.valuesBP);
       this.saveMIDATABloodPressure(v2, v1, d);
     });
     this.refreshPage();
   }
-
+  /**
+method to add glucose value into weightlist, chart and MIDATA
+  **/
   addGlucose(v, d) {
     this.valuesGlucose.push([d.getTime(), v]);
     this.storage.ready().then(() => {

@@ -1,18 +1,27 @@
 page-login {
-  .item-md{
-    padding-left: 0px;
+  .item-md {
+    padding-left: 0;
   }
-  .item-checkbox{
-    padding-left: 0px;
+
+  .item-checkbox {
+    padding-left: 0;
   }
-  .col{
-    padding-left: 0px;
-    padding-right: 0px;
+
+  .col {
+    padding-left: 0;
+    padding-right: 0;
   }
-  .grid{
-    padding-left: 0px;
+
+  .grid {
+    padding-left: 0;
   }
-  ion-label{
+
+  ion-label {
     font-size: 3.8vw;
+  }
+  @media screen and (min-width: 400px) {
+    ion-label {
+      font-size: 16px;
+    }
   }
 }

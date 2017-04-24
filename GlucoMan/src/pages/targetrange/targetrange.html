@@ -1,6 +1,11 @@
 .
 <ion-header>
-  <ion-navbar>
+  <ion-navbar hideBackButton>
+    <ion-buttons left>
+    <button ion-button (click)="back()">
+        <ion-icon class="customIcon" name="arrow-back"></ion-icon>
+    </button>
+</ion-buttons>
     <ion-title>Zielbereich</ion-title>
   </ion-navbar>
 </ion-header>

@@ -60,8 +60,7 @@ export class CheckupsPage {
       this.openClearAlert(control);
 
     } else {
-      control[0] = true;
-      control[2] = ""+ new Date();
+
       this.openEntryNote(control);
     }
 
@@ -79,7 +78,7 @@ export class CheckupsPage {
     alert.addButton({
       text: 'Cancel',
       handler: () => {
-        control[0] = true;//_______________________________________________BUG
+        control[0] = true;
       }
     });
     // button for save medication
@@ -111,7 +110,12 @@ export class CheckupsPage {
       placeholder: 'Bemerkung'
     });
     // button to cancel
-    alert.addButton('Cancel');
+    alert.addButton({
+      text: 'Cancel',
+      handler: () => {
+        control[0] = false;
+      }
+    });
     // button for save medication
     alert.addButton({
       text: 'Ok',
@@ -120,7 +124,8 @@ export class CheckupsPage {
         // user has clicked the new medication button
         // begin the alert's dismiss transition
         let navTransition = alert.dismiss();
-        console.log(data.note);
+        control[0] = true;
+        control[2] = ""+ new Date();
         control[3] = data.note;
         return false;
       }

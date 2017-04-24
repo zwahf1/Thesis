@@ -8,7 +8,10 @@ import { MIDATAPage } from '../midata/midata';
 import { BluetoothPage } from '../bluetooth/bluetooth';
 
 import { MidataPersistence } from '../../util/midataPersistence';
-
+/**
+SettingsPage
+it shows a menu to navigate into 2nd level to edit the settings
+**/
 @Component({
   selector: 'page-settings',
   templateUrl: 'settings.html'
@@ -20,6 +23,9 @@ export class SettingsPage {
   constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController) {
 
   }
+  /**
+  method to navigate to the next page
+  **/
   goTo(target) {
     switch(target){
       case 'TargetrangePage':
@@ -39,6 +45,9 @@ export class SettingsPage {
         break;
     }
   }
+  /**
+method to log out from the midata account and navigate to the LoginPage
+  **/
   logout() {
     this.mp.logout();
     this.appCtrl.getRootNav().setRoot(LoginPage);

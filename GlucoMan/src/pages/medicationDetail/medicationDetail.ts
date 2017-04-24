@@ -33,10 +33,6 @@ create the detail page for the given medication
         if (index !== -1) {
           values.splice(index, 1);
         }
-        console.log(index);
-        console.log(this.medication);
-        console.log(val);
-        console.log(values);
         this.storage.set(this.category,values);
         this.navCtrl.pop();
       });

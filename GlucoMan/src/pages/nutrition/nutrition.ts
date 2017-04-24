@@ -5,6 +5,13 @@ import { Platform, NavController, AlertController, ActionSheetController} from '
 import { Storage } from '@ionic/storage';
 
 declare var cordova: any;
+
+/**
+NutritionPage
+to manage the daily nutrition and their carbohydrates.
+it shows a chart with the categories of the six times of a day.
+it's possible to import data with the barcode of a product or to make an entry manually
+**/
 @Component({
   selector: 'page-nutrition',
   templateUrl: 'nutrition.html'

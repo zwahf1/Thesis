@@ -25,7 +25,10 @@ export class DataPage {
     let popover = this.popoverCtrl.create(DisclaimerPage);
     popover.present();
   }
-
+  /**
+  an alet is presented to confirm the deletion of the storage.
+  after the confirm, the storage wil lbe cleared
+  */
   deleteAllData() {
     //Alert to confirm the deletion of the data
     let confirm = this.alertCtrl.create({
@@ -53,7 +56,9 @@ export class DataPage {
     });
     confirm.present();
   }
-
+  /**
+  log ou and navigate to the LoginPage
+  */
   logout() {
     this.mp.logout();
     this.appCtrl.getRootNav().setRoot(LoginPage);

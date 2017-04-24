@@ -12,6 +12,9 @@ export class DisclaimerPage {
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public viewCtrl: ViewController) { }
 
+  /**
+  method to close the popover of the data privacy statement
+  */
   close() {
     this.viewCtrl.dismiss();
   }

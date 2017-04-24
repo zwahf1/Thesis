@@ -23,7 +23,6 @@ export class MIDATAPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public alertCtrl: AlertController) {}
 
   ionViewDidLoad() {
-    console.log('ionViewDidLoad MIDATAPage');
   }
 
   login() {
