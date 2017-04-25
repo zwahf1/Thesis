@@ -117,8 +117,9 @@ shows the page to the given medication with details
 params:
   - medi: medication for detail page
 ***************************************************/
-  detailMedi(medi:TYPES.LOCAL_MedicationStatementRes) {
+  detailMedi(medis, medi:TYPES.LOCAL_MedicationStatementRes) {
     this.navCtrl.push(MedicationDetailPage, {
+      array: medis,
       medi: medi
     });
   }
@@ -158,21 +159,6 @@ storage SET:
     // }
     console.log(result);
     return result;
-  }
-
-/**************************************************
-              test for HCI hospINDEX
-
-get the information about the medication Algifor
-for testing on the web,because the cordova plugin
-only runs on the builded app.
-
-storage SET:
-  - MedicationData: the last scanned medication
-***************************************************/
-  scanTest() {
-    // save the medication data from the hospINDEX request
-    this.saveMedicationFromHCI('7680504110875');
   }
 
   saveMedicationFromHCI(barcode) {
@@ -220,90 +206,55 @@ storage SET:
           };
           title = dscrd.split(" ")[0];
 
-          if(img === "true")
-            result = {
-              resourceType: "MedicationStatement",
-              status: "active",
-              medicationCodeableConcept: {
-                coding: [{
-                  system: "hospINDEX",
-                  code: gtin,
-                  display: title
-                }]
-              },
-              effectiveDateTime:new Date(),
-              note:[],
-              dosage:[{
-                text:"one capsule three times daily",
-                timing: {
-                  repeat: {
-                    frequency:3,
-                    period:1,
-                    periodUnit:"d"
-                  }
-                },
-                route: {
-                  coding: [{
-                    system:"http://snomed.info/sct",
-                    code:"260548002",
-                    display:"Oral"
-                  }]
+          result = {
+            resourceType: "MedicationStatement",
+            status: "active",
+            medicationCodeableConcept: {
+              coding: [{
+                system: "hospINDEX",
+                code: gtin,
+                display: title
+              }]
+            },
+            effectiveDateTime:new Date(),
+            note:[],
+            dosage:[{
+              timing: {
+                repeat: {
+                  frequency:0,
+                  period:0,
+                  periodUnit:"d"
                 }
-              }],
-              article: {
-                gtin: gtin,
-                pharmaCode: phar,
-                prodNo: prdno,
-                description: dscrd,
-                img: img,
-                title: title,
-                imgFrontPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Front/F",
-                imgBackPack: "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Back/F",
-                imgFrontDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F",
-                imgBackDrug: "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F"
-              }
-            };
-          else {
-            result = {
-              resourceType: "MedicationStatement",
-              status: "active",
-              medicationCodeableConcept: {
-                coding: [{
-                  system: "http://hospINDEX",
-                  code: gtin,
-                  display: title
-                }]
               },
-              effectiveDateTime:new Date(),
-              note: [],
-              dosage:[{
-                text:"one capsule three times daily",
-                timing: {
-                  repeat: {
-                    frequency:3,
-                    period:1,
-                    periodUnit:"d"
-                  }
-                },
-                route: {
-                  coding: [{
-                    system:"http://snomed.info/sct",
-                    code:"260548002",
-                    display:"Oral"
-                  }]
-                }
-              }],
-              article: {
-                gtin: gtin,
-                pharmaCode: phar,
-                prodNo: prdno,
-                description: dscrd,
-                img: img,
-                title: title
+              route: {
+                coding: [{
+                  system:"http://snomed.info/sct",
+                  code:"",
+                  display:""
+                }]
               }
-            };
+            }],
+            article: {
+              gtin: gtin,
+              pharmaCode: phar,
+              prodNo: prdno,
+              description: dscrd,
+              img: img,
+              title: title,
+              imgFrontPack: "",
+              imgBackPack: "",
+              imgFrontDrug: "",
+              imgBackDrug: ""
+            }
+          };
+
+          if(img === "true") {
+            result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Front/F";
+            result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Back/F";
+            result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F";
+            result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F";
           }
-          this.showMedicationCategory(result);
+          this.showTakingMedication(result);
         }).catch(() => {
           console.log("Artikel nicht gefunden");
         });
@@ -318,10 +269,6 @@ storage SET:
     //send the request
     xhr.send();
   }
-
-  //*******************************************************************************
-
-
 
 /***************************************************
         show the diffrent medication categories
@@ -415,6 +362,104 @@ storage GET:
                 this.refreshPage();
               });
             });
+          });
+        });
+        return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
+  }
+
+  showTakingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle('Kategorie für Einnahme-Art auswählen');
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Oral',
+      value: 'Oral',
+      checked: true
+    });
+    alert.addInput({
+      type: 'radio',
+      label: 'Anal',
+      value: 'Anal'
+    });
+    alert.addInput({
+      type: 'radio',
+      label: 'Auftragen',
+      value: 'Topic'
+    });
+    // button to cancel
+    alert.addButton('Cancel');
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      // data: choosen category
+      handler: (data) => {
+        // user has clicked the new medication button
+        // begin the alert's dismiss transition
+        let navTransition = alert.dismiss();
+          // if the category is choosed
+        navTransition.then(() => {
+          let coding = "";
+          if(data === "Oral") {
+            coding = "26643006";
+          } else if(data === "Anal") {
+            coding = "37161004";
+          } else if(data === "Topic") {
+            coding = "6064005";
+          }
+          result.dosage[0].route.coding[0].code = coding;
+          result.dosage[0].route.coding[0].display = data;
+
+          navTransition.then(() => {
+            this.showTimingMedication(result);
+          });
+        });
+        return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
+  }
+
+  showTimingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle('Tagesdosierung eingeben');
+
+    alert.addInput({
+      type: 'number',
+      name: 'number',
+      placeholder: 'Anzahl Tabletten pro Interval'
+    });
+    alert.addInput({
+      type: 'number',
+      name: 'days',
+      placeholder: 'Interval in Tagen'
+    });
+    // button to cancel
+    alert.addButton('Cancel');
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      // data: choosen category
+      handler: (data) => {
+        // user has clicked the new medication button
+        // begin the alert's dismiss transition
+        let navTransition = alert.dismiss();
+          // if the category is choosed
+        navTransition.then(() => {
+
+          result.dosage[0].timing.repeat.frequency = data.number;
+          result.dosage[0].timing.repeat.period = data.days;
+          navTransition.then(() => {
+            this.showMedicationCategory(result);
           });
         });
         return false;

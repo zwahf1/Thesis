@@ -88,24 +88,24 @@ export interface DateToValue
    reasonCode?:Array<CodeableConcept>;
    reasonReference?:Array<any>;
    note?:Array<any>;
-   dosage?:Array<any>;
+   dosage?:Array<Dosage>;
  }
 
  export interface FHIR_ObservationRes_1Value {
-   resourceType: string,
-   status: string,
-   effectiveDateTime: any,
-   category: CodeableConcept,
-   code: CodeableConcept,
-   valueQuantity: Value
+   resourceType: string;
+   status: string;
+   effectiveDateTime: any;
+   category: CodeableConcept;
+   code: CodeableConcept;
+   valueQuantity: Value;
  }
 
  export interface FHIR_ObservationRes_2Value {
-   resourceType: string,
-   status: string,
-   effectiveDateTime: any,
-   category: CodeableConcept,
-   code: CodeableConcept,
+   resourceType: string;
+   status: string;
+   effectiveDateTime: any;
+   category: CodeableConcept;
+   code: CodeableConcept;
    component: Array<Component>
  }
 
@@ -118,6 +118,17 @@ export interface DateToValue
    system:string;
    code:string;
    display:string;
+ }
+
+ export interface Dosage {
+   timing: {
+     repeat: {
+       frequency:number;
+       period:number;
+       periodUnit:string;
+     }
+   },
+   route: CodeableConcept;
  }
 
  export interface Value {
