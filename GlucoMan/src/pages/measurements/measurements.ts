@@ -327,6 +327,7 @@ method to entry the new value
         placeholder: 'Diastolischer Blutdruck'
       });
       //choose import of a device or manually input
+    } else if(typ === "Glukose") {
       alert.addInput({
         type: 'radio',
         label: 'Import von Gerät',
