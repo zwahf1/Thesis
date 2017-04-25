@@ -58,19 +58,25 @@
         <ion-grid>
           <ion-row class="RowHeader">
             <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-            <ion-col col-6>
+            <ion-col col-5>
               Datum
             </ion-col>
-            <ion-col col-6>
+            <ion-col col-5>
+              Wert
+            </ion-col>
+            <ion-col col-2>
               Wert
             </ion-col>
           </ion-row>
           <ion-row *ngFor="let entry of valuesGlucose">
-            <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+            <ion-col col-5>
+              {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
             </ion-col>
-            <ion-col col-6>
-              {{entry[1]}}
+            <ion-col col-5>
+              {{entry[1]}} mmol/l
+            </ion-col>
+            <ion-col col-2>
+              Befor Meal
             </ion-col>
           </ion-row>
           <ion-row class="RowHeader">
@@ -84,10 +90,10 @@
           </ion-row>
           <ion-row *ngFor="let entry of valuesPulse">
             <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+              {{entry[0] | date:'dd.MM.yyyy'}}
             </ion-col>
             <ion-col col-6>
-              {{entry[1]}}
+              {{entry[1]}} / min
             </ion-col>
           </ion-row>
           <ion-row class="RowHeader">
@@ -95,22 +101,16 @@
             <ion-col col-6>
               Datum
             </ion-col>
-            <ion-col col-3>
-              Bd 1
-            </ion-col>
-            <ion-col col-3>
-              Bd 2
+            <ion-col col-6>
+              Blutdruck
             </ion-col>
           </ion-row>
           <ion-row *ngFor="let entry of valuesBP">
             <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+              {{entry[0] | date:'dd.MM.yyyy'}}
             </ion-col>
-            <ion-col col-3>
-              {{entry[1]}}
-            </ion-col>
-            <ion-col col-3>
-              {{entry[2]}}
+            <ion-col col-6>
+              {{entry[1]}} / {{entry[2]}} mmHg
             </ion-col>
           </ion-row>
           <ion-row class="RowHeader">
@@ -124,10 +124,10 @@
           </ion-row>
           <ion-row *ngFor="let entry of valuesWeight">
             <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
+              {{entry[0] | date:'dd.MM.yyyy'}}
             </ion-col>
             <ion-col col-6>
-              {{entry[1]}}
+              {{entry[1]}} kg
             </ion-col>
           </ion-row>
         </ion-grid>

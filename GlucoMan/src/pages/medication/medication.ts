@@ -75,7 +75,7 @@ storage GET:
         this.chronicMedis = val;
         if(this.chronicMedis == undefined) {
           console.log("MIDATA chronicMedis");
-          this.storage.set('chronicMedis', this.getMIDATAMedications('chronicMedis'));
+          this.storage.set('chronicMedis', []);
         }
         console.log(this.chronicMedis);
       });
@@ -83,7 +83,7 @@ storage GET:
         this.selfMedis = val;
         if(this.selfMedis == undefined) {
           console.log("MIDATA selfMedis");
-          this.storage.set('selfMedis', this.getMIDATAMedications('selfMedis'));
+          this.storage.set('selfMedis', []);
         }
         console.log(this.selfMedis);
       });
@@ -91,7 +91,7 @@ storage GET:
         this.insulin = val;
         if(this.insulin == undefined) {
           console.log("MIDATA insulin");
-          this.storage.set('insulin', this.getMIDATAMedications('insulin'));
+          this.storage.set('insulin', []);
         }
         console.log(this.insulin);
       });
@@ -99,7 +99,7 @@ storage GET:
         this.intolerances = val;
         if(this.intolerances == undefined) {
           console.log("MIDATA intolerances");
-          this.storage.set('intolerances', this.getMIDATAMedications('intolerances'));
+          this.storage.set('intolerances', []);
         }
         console.log(this.intolerances);
       });
@@ -150,11 +150,12 @@ storage SET:
     var m = this.mp.search("MedicationStatement");
     var result = [];
     console.log(m);
-    for(var i = 0; i < m.length; i++) {
-      if(m[i].note[0].text == category) {
-        result.push(m[i]);
-      }
-    }
+    // for(var i = 0; i < m.length; i++) {
+    //
+    //   if(m[i].note[0].text == category) {
+    //     result.push(m[i]);
+    //   }
+    // }
     console.log(result);
     return result;
   }
@@ -303,6 +304,8 @@ storage SET:
             };
           }
           this.showMedicationCategory(result);
+        }).catch(() => {
+          console.log("Artikel nicht gefunden");
         });
       //if not ready
       } else if(xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {

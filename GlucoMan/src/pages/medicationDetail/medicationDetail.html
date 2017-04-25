@@ -1,6 +1,6 @@
 <ion-header>
   <ion-navbar>
-    <ion-title>{{medication.title}}</ion-title>
+    <ion-title>{{medication.article.title}}</ion-title>
     <ion-buttons end>
       <button ion-button primary (click)="deleteMedi()">
         <ion-icon name="trash"></ion-icon>
@@ -11,13 +11,13 @@
 
 <ion-content padding>
   <ion-grid>
-    <ion-row *ngIf="medication.img">
+    <ion-row *ngIf="medication.article.img">
       <ion-col col-6>
         <ion-card>
-          <img src="{{medication.imgFrontPack}}"/>
-          <img src="{{medication.imgBackPack}}"/>
+          <img src="{{medication.article.imgFrontPack}}"/>
+          <img src="{{medication.article.imgBackPack}}"/>
           <ion-card-content>
-            <ion-card-title>
+            <ion-card-title style="font-size: 2vw">
               Packung
               </ion-card-title>
           </ion-card-content>
@@ -25,10 +25,10 @@
       </ion-col>
       <ion-col col-6>
         <ion-card>
-          <img src="{{medication.imgFrontDrug}}"/>
-          <img src="{{medication.imgBackDrug}}"/>
+          <img src="{{medication.article.imgFrontDrug}}"/>
+          <img src="{{medication.article.imgBackDrug}}"/>
           <ion-card-content>
-            <ion-card-title style="font-size: 2rem">
+            <ion-card-title style="font-size: 2vw">
               Medikament
               </ion-card-title>
             <p>
@@ -40,7 +40,7 @@
     <ion-row>
       <ion-col>
         <p><span>
-          Das Medikament {{medication.title}} muss in {{medication.dosage[0].timing.repeat.period}} Tag(en)
+          Das Medikament {{medication.article.title}} muss in {{medication.dosage[0].timing.repeat.period}} Tag(en)
           {{medication.dosage[0].timing.repeat.frequency}} mal eingenommen werden.
         </span>
         </p>

@@ -536,7 +536,7 @@ method to add weight value into weightlist, chart and MIDATA
   addWeight(v,d) {
     this.valuesWeight.push([d.getTime(),v]);
     this.storage.ready().then(() => {
-      this.storage.set('weightValues', this.valuesWeight);
+      this.storage.set('weightValues', this.valuesWeight.sort());
       this.saveMIDATAWeight(v, d);
       this.refreshPage();
     });
@@ -547,7 +547,7 @@ method to add pulse value into weightlist, chart and MIDATA
   addPulse(v, d) {
     this.valuesPulse.push([d.getTime(), v]);
     this.storage.ready().then(() => {
-      this.storage.set('pulseValues', this.valuesPulse);
+      this.storage.set('pulseValues', this.valuesPulse.sort());
       this.saveMIDATAPulse(v, d);
       this.refreshPage();
     });
@@ -558,7 +558,7 @@ method to add blood pressure values into weightlist, chart and MIDATA
   addBloodPressure(v1: number, v2: number, d) {
     this.valuesBP.push([d.getTime(), v1, v2]);
     this.storage.ready().then(() => {
-      this.storage.set('bpValues', this.valuesBP);
+      this.storage.set('bpValues', this.valuesBP.sort());
       this.saveMIDATABloodPressure(v2, v1, d);
       this.refreshPage();
     });
@@ -569,7 +569,7 @@ method to add glucose value into weightlist, chart and MIDATA
   addGlucose(v, d) {
     this.valuesGlucose.push([d.getTime(),v]);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose);
+      this.storage.set('glucoseValues', this.valuesGlucose.sort());
       this.saveMIDATAGlucose(v, d);
       this.refreshPage();
     });
