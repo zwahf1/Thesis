@@ -44,15 +44,27 @@ export interface DateToValue
  }
 
  export interface LOCAL_MedicationStatementRes {
-   gtni: string,
+   resourceType:string;
+   status:string;
+   medicationCodeableConcept:CodeableConcept;
+   effectiveDateTime:any;
+   subject?:any;
+   note:Array<any>;
+   dosage:Array<any>;
+   article: Article;
+ }
+
+ export interface Article {
+   gtin: string,
+   pharmaCode: string,
+   prodNo: string,
    description: string,
-   pharma: string,
+   title?: string
    img: string,
    imgFrontPack?: string,
    imgBackPack?: string,
    imgFrontDrug?: string,
    imgBackDrug?: string,
-   title: string
  }
 
  export interface FHIR_MedicationStatementRes {

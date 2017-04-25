@@ -7,9 +7,9 @@ import { Storage } from '@ionic/storage';
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as  TYPES from '../../util/typings/MIDATA_Types';
 
-/**
-page to present the measurements in charts
-**/
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
+
+
 @Component({
   selector: 'page-measurements',
   templateUrl: 'measurements.html'
@@ -47,7 +47,8 @@ export class MeasurementsPage {
     -weightValues: the measurements of the scale
 **/
   constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
-    public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
+                public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
+
 
     this.storage.ready().then(() => {
       this.storage.get('glucoseValues').then((val) => {
@@ -325,18 +326,34 @@ method to entry the new value
         name: 'dia',
         placeholder: 'Diastolischer Blutdruck'
       });
-    } else if (typ === "Glukose") {
       //choose import of a device or manually input
       alert.addInput({
         type: 'radio',
         label: 'Import von Gerät',
-        value: 'Import'
+        value: 'Import',
+        checked: true
       });
       alert.addInput({
         type: 'radio',
         label: 'Tastatureingabe',
         value: 'Blutzucker'
       });
+
+    } else if(typ === "Import") {
+      alert.setMessage("Aktivierung des Bluetooth vom Blutzucker-Messgerät");
+
+    } else if(typ === "Blutzucker") {
+      alert.addInput({
+        type: 'radio',
+        label: 'Vor dem Essen',
+        value: 'Befor'
+      });
+      alert.addInput({
+        type: 'radio',
+        label: 'Nach dem Essen',
+        value: 'After'
+      });
+
     } else {
       //one input field for other vital signs
       alert.addInput({
@@ -347,7 +364,7 @@ method to entry the new value
     }
     // button to cancel
     alert.addButton('Cancel');
-    // button for save medication
+    // button for save value
     alert.addButton({
       text: 'Ok',
       // handle the click event for the OK button
@@ -374,20 +391,25 @@ method to entry the new value
                 break;
               }
               case "Gewicht": {
-                console.log(new Date());
                 this.addWeight(v, new Date());
                 break;
               }
               case "Glukose": {
-                if (data === "Import") {
-                  this.importFromDevice();
-                } else {
-                  this.openAddAlert(data);
-                }
+                this.openAddAlert(data);
                 break;
               }
               case "Blutzucker": {
                 this.addGlucose(v, new Date());
+                break;
+              }
+              case "Import": {
+                this.storage.get('deviceId').then((val) => {
+                  for(var i = 0;i < val.length;i++) {
+                    if(val[i].name === "myglucohealth") {
+                      this.importFromDevice(val[i].id);
+                    }
+                  }
+                })
                 break;
               }
             }
@@ -400,19 +422,123 @@ method to entry the new value
     alert.present();
   }
 
-  importFromDevice() {
+  importFromDevice(id) {
+    var dataLength = new Uint8Array(6);
+    var index: number = 0;
+    var result = new Uint8Array(7);
+    dataLength[0] = 0x80;
+    dataLength[1] = 0x01;
+    dataLength[2] = 0xFE;
+    dataLength[3] = 0x00;
+    dataLength[4] = 0x81;
+    dataLength[5] = 0xFE;
 
+    let loading = this.loadingCtrl.create();
+
+    loading.present();
+
+    this.bls.enable().then(() => {
+      this.bls.connect(id).subscribe(() => {
+        console.log("connected");
+        var dataValues = new Uint8Array(7);
+        this.bls.write(dataLength).then(() => {
+        });
+
+        this.bls.subscribeRawData().subscribe((subs) => {
+          var a = new Uint8Array(subs);
+          console.log("By index: "+index);
+          console.log(a[0]);
+          result[index] = (a[0]);
+          if(index == 6) {
+            console.log("get Values");
+            console.log(result);
+            this.getBluetoothValues(result[4]);
+
+            loading.dismiss();
+          } else {
+            index++;
+          }
+        });
+      });
+    });
   }
   /**
 method to add weight value into weightlist, chart and MIDATA
   **/
-  addWeight(v, d) {
-    this.valuesWeight.push([d.getTime(), v]);
+  getBluetoothValues(num: number) {
+    var dataValues = new Uint8Array((num*7));
+    var result = new Uint8Array((num*6));
+    var dataRead = 0;
+    var byteRead = 0;
+    var firstCmd: boolean = false;
+    var secondCmd: boolean = false;
+
+    for(var i = 0; i < num;i++) {
+      dataValues[(0+(i*7))] = 0x80;
+      dataValues[(1+(i*7))] = 0x02;
+      dataValues[(2+(i*7))] = 0xFD;
+      dataValues[(3+(i*7))] = 0x01;
+      dataValues[(4+(i*7))] = i;
+      dataValues[(5+(i*7))] = (((0x80^0xFD)^i)^0xFF);
+      dataValues[(6+(i*7))] = 0xFC;
+    }
+    console.log(dataValues);
+
+    this.bls.isConnected().then(() => {
+      console.log("already connected");
+
+      this.bls.write(dataValues).then(() => {
+      });
+
+      this.bls.subscribeRawData().subscribe((subs) => {
+        var a = new Uint8Array(subs);
+
+        if((a[0] == 1) && !firstCmd && !secondCmd) {
+          firstCmd = true;
+        } else if((a[0] == dataRead) && firstCmd && !secondCmd) {
+          secondCmd = true;
+        } else if(firstCmd && secondCmd) {
+          result[((dataRead*6)+byteRead)] = a[0];
+          console.log(result);
+          byteRead++;
+          if(byteRead == 6) {
+            byteRead = 0;
+            dataRead++;
+            firstCmd = false;
+            secondCmd = false;
+          }
+        }
+
+        if(dataRead == num) {
+          dataRead = 0;
+          console.log(result);
+          this.addGlucoseValues(result);
+          this.bls.disconnect().then(() => {
+            console.log("disconnect");
+          });
+        }
+      });
+    });
+  }
+
+  registerNewDevice() {
+    this.bls.list().then((val) => {
+      // If stroage is ready to use
+      this.storage.ready().then(() => {
+        this.storage.set('deviceId',val);
+        console.log(val);
+      });
+
+    });
+  }
+
+  addWeight(v,d) {
+    this.valuesWeight.push([d.getTime(),v]);
     this.storage.ready().then(() => {
       this.storage.set('weightValues', this.valuesWeight);
       this.saveMIDATAWeight(v, d);
+      this.refreshPage();
     });
-    this.refreshPage();
   }
   /**
 method to add pulse value into weightlist, chart and MIDATA
@@ -422,8 +548,8 @@ method to add pulse value into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('pulseValues', this.valuesPulse);
       this.saveMIDATAPulse(v, d);
+      this.refreshPage();
     });
-    this.refreshPage();
   }
   /**
 method to add blood pressure values into weightlist, chart and MIDATA
@@ -433,23 +559,56 @@ method to add blood pressure values into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('bpValues', this.valuesBP);
       this.saveMIDATABloodPressure(v2, v1, d);
+      this.refreshPage();
     });
-    this.refreshPage();
   }
   /**
 method to add glucose value into weightlist, chart and MIDATA
   **/
   addGlucose(v, d) {
-    this.valuesGlucose.push([d.getTime(), v]);
+    this.valuesGlucose.push([d.getTime(),v]);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose);
       this.saveMIDATAGlucose(v, d);
+      this.refreshPage();
     });
-    this.refreshPage();
   }
 
-  saveMIDATAWeight(v, d) {
-    this.mp.save(this.getWeightRes(v, d));
+  addGlucoseValues(array: Uint8Array) {
+    var gluco: {value: any, date: any};
+    var num = array.length / 6;
+    for(var i = 0; i < num; i++) {
+      console.log("input: "+array[i]+" | "+array[(i+1)]+" | "+array[(i+2)]+" | "+array[(i+3)]+" | "+array[(i+4)]+" | "+array[(i+5)]+" | ");
+      gluco = this.getGlucoseRepresentation(array[(i*6)],array[((i*6)+1)],array[((i*6)+2)],array[((i*6)+3)],array[((i*6)+4)],array[((i*6)+5)]);
+      if(this.checkValue(gluco.value, gluco.date, this.valuesGlucose)) {
+        console.log("Value already exist");
+      } else {
+        this.addGlucose(gluco.value, gluco.date);
+        console.log("Added new Value");
+      }
+    }
+  }
+
+  checkValue(v1,d1,array: any[][]): boolean {
+    var match: boolean = true;
+    var num = array.indexOf([d1,v1]);
+    if(num == -1) {
+      match = false;
+    }
+    return match;
+  }
+
+  getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
+    var result: {value: any, date: any};
+    result = {
+      value: ((((byte3&0x03)<<8)+byte4)/18),
+      date: new Date(((byte1>>1)+2000),(((byte1&0x01)<<3)+(byte2>>5)-1),(byte2&0x1f),(((byte5&0x07)<<2)+(byte6>>6)),(byte6&0x3f))
+    }
+    return result;
+  }
+
+  saveMIDATAWeight(v,d) {
+    this.mp.save(this.getWeightRes(v,d));
   }
 
   saveMIDATAPulse(v, d) {

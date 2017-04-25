@@ -20,8 +20,6 @@
             <ion-card-title>
               Packung
               </ion-card-title>
-            <p>
-            </p>
           </ion-card-content>
         </ion-card>
       </ion-col>
@@ -30,13 +28,26 @@
           <img src="{{medication.imgFrontDrug}}"/>
           <img src="{{medication.imgBackDrug}}"/>
           <ion-card-content>
-            <ion-card-title>
+            <ion-card-title style="font-size: 2rem">
               Medikament
               </ion-card-title>
             <p>
             </p>
           </ion-card-content>
         </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <p><span>
+          Das Medikament {{medication.title}} muss in {{medication.dosage[0].timing.repeat.period}} Tag(en)
+          {{medication.dosage[0].timing.repeat.frequency}} mal eingenommen werden.
+        </span>
+        </p>
+        <p><span>
+          Einnahmeweg: {{medication.dosage[0].route.coding[0].display}}
+        </span>
+        </p>
       </ion-col>
     </ion-row>
   </ion-grid>

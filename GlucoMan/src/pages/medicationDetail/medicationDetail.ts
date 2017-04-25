@@ -20,19 +20,21 @@ create the detail page for the given medication
 ***************************************************/
   constructor(public navCtrl: NavController, public params: NavParams, public storage: Storage) {
     this.medication = params.get('medi');
-    this.category = params.get('category');
   }
 
 
 
   deleteMedi() {
     this.storage.ready().then(() => {
-      this.storage.get(this.category).then((val) => {
+      this.storage.get(this.medication.note[0].text).then((val) => {
         let values = val;
+        console.log(val);
+        console.log(this.medication);
         let index: number = values.indexOf(this.medication);
-        if (index !== -1) {
+        if (index != -1) {
           values.splice(index, 1);
         }
+        console.log(index);
         this.storage.set(this.category,values);
         this.navCtrl.pop();
       });

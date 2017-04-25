@@ -5,56 +5,133 @@
     <button ion-button end (click)='openActionSheet()'>
       <ion-icon name="add-circle"></ion-icon>
     </button>
+    <button ion-button end (click)='registerNewDevice()'>
+      <ion-icon name="tablet-portrait"></ion-icon>
+    </button>
   </ion-buttons>
   </ion-navbar>
 </ion-header>
-
 <ion-content  scroll="true">
   <ion-slides pager>
-  <ion-slide>
-    <content>
-  <div id="all" >
-  <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
-  <chart class='c' type="StockChart" [options]="chartAll"></chart>
-</div>
-  <!--
-    Chart for blood glucose, provided by Highcharts.com
-    it's zoomable and moveble
-  -->
-  <div id="glucose">
-    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-    <chart class='c' type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
-  </div>
-  <!--
-    Chart for blood pressure, provided by Highcharts.com
-    it's zoomable and moveble
-  -->
-  <div id="bloodpressure">
-    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
-    <chart class='c' type="StockChart" [options]="chartBP"></chart>
-  </div>
-  <!--
-    Chart for pulse, provided by Highcharts.com
-    it's zoomable and moveble
-  -->
-  <div id="pulse">
-    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
-    <chart class='c' type="StockChart" [options]="chartPulse"></chart>
-  </div>
-  <!--
-    Chart for weight, provided by Highcharts.com
-    it's zoomable and movable
-  -->
-  <div id="weight">
-    <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
-    <chart class='c' type="StockChart" [options]="chartWeight"></chart>
-  </div>
-</content>
-</ion-slide>
-<ion-slide>
-  <content has-header="true">
-  <h2>second Slide</h2>
-</content>
-</ion-slide>
-</ion-slides>
+    <ion-slide>
+      <content>
+        <div id="all" >
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartAll"></chart>
+        </div>
+        <!--
+          Chart for blood glucose, provided by Highcharts.com
+          it's zoomable and moveble
+        -->
+        <div id="glucose">
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
+        </div>
+        <!--
+          Chart for blood pressure, provided by Highcharts.com
+          it's zoomable and moveble
+        -->
+        <div id="bloodpressure">
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartBP"></chart>
+        </div>
+        <!--
+          Chart for pulse, provided by Highcharts.com
+          it's zoomable and moveble
+        -->
+        <div id="pulse">
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartPulse"></chart>
+        </div>
+        <!--
+          Chart for weight, provided by Highcharts.com
+          it's zoomable and movable
+        -->
+        <div id="weight">
+          <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
+          <chart class='c' type="StockChart" [options]="chartWeight"></chart>
+        </div>
+      </content>
+    </ion-slide>
+    <ion-slide>
+      <content>
+        <ion-grid>
+          <ion-row class="RowHeader">
+            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
+            <ion-col col-6>
+              Datum
+            </ion-col>
+            <ion-col col-6>
+              Wert
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let entry of valuesGlucose">
+            <ion-col col-6>
+              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+            </ion-col>
+            <ion-col col-6>
+              {{entry[1]}}
+            </ion-col>
+          </ion-row>
+          <ion-row class="RowHeader">
+            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
+            <ion-col col-6>
+              Datum
+            </ion-col>
+            <ion-col col-6>
+              Wert
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let entry of valuesPulse">
+            <ion-col col-6>
+              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+            </ion-col>
+            <ion-col col-6>
+              {{entry[1]}}
+            </ion-col>
+          </ion-row>
+          <ion-row class="RowHeader">
+            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
+            <ion-col col-6>
+              Datum
+            </ion-col>
+            <ion-col col-3>
+              Bd 1
+            </ion-col>
+            <ion-col col-3>
+              Bd 2
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let entry of valuesBP">
+            <ion-col col-6>
+              {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+            </ion-col>
+            <ion-col col-3>
+              {{entry[1]}}
+            </ion-col>
+            <ion-col col-3>
+              {{entry[2]}}
+            </ion-col>
+          </ion-row>
+          <ion-row class="RowHeader">
+            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
+            <ion-col col-6>
+              Datum
+            </ion-col>
+            <ion-col col-6>
+              Wert
+            </ion-col>
+          </ion-row>
+          <ion-row *ngFor="let entry of valuesWeight">
+            <ion-col col-6>
+              {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
+            </ion-col>
+            <ion-col col-6>
+              {{entry[1]}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+      </content>
+    </ion-slide>
+  </ion-slides>
 </ion-content>

@@ -14,7 +14,7 @@ import { Storage } from '@ionic/storage';
 })
 export class CheckupsPage {
 
-  arrayCheckups: [[string]];
+  arrayCheckups: [[any]];
   arrayControls: [[any]];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public alertCtrl: AlertController) {
@@ -179,7 +179,7 @@ export class CheckupsPage {
           // if the category is choosed
           navTransition.then(() => {
             console.log(data);
-            this.arrayCheckups.push([data.date, data.hba1c, data.bp, data.weight, data.hypo]);
+            this.arrayCheckups.push([new Date(), data.hba1c, data.bp, data.weight, data.hypo]);
             this.storage.set('arrayCheckups',this.arrayCheckups);
           });
         });
