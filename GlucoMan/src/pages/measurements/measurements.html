@@ -2,17 +2,16 @@
   <ion-navbar>
     <ion-title>Messwerte</ion-title>
     <ion-buttons end>
-    <button ion-button end (click)='openActionSheet()'>
+      <button ion-button end (click)='openActionSheet()'>
       <ion-icon name="add"></ion-icon>
     </button>
-  </ion-buttons>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content  scroll="true">
+<ion-content>
   <ion-slides pager>
     <ion-slide>
-      <content>
-        <div id="all" >
+        <div id="all">
           <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
           <chart class='c' type="StockChart" [options]="chartAll"></chart>
         </div>
@@ -48,87 +47,92 @@
           <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
           <chart class='c' type="StockChart" [options]="chartWeight"></chart>
         </div>
-      </content>
     </ion-slide>
     <ion-slide>
-      <content>
         <ion-grid>
-          <ion-row class="RowHeader">
-            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-            <ion-col col-5>
-              Datum
-            </ion-col>
-            <ion-col col-5>
-              Wert
-            </ion-col>
-            <ion-col col-2>
-              Art
-            </ion-col>
-          </ion-row>
-          <ion-row *ngFor="let entry of valuesGlucose">
-            <ion-col col-5>
-              {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
-            </ion-col>
-            <ion-col col-4>
-              {{entry[1]}} mmol/l
-            </ion-col>
-            <ion-col col-3>
-              {{entry[2]}}
-            </ion-col>
-          </ion-row>
-          <ion-row class="RowHeader">
-            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
-            <ion-col col-6>
-              Datum
-            </ion-col>
-            <ion-col col-6>
-              Wert
-            </ion-col>
-          </ion-row>
-          <ion-row *ngFor="let entry of valuesPulse">
-            <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy'}}
-            </ion-col>
-            <ion-col col-6>
-              {{entry[1]}} / min
-            </ion-col>
-          </ion-row>
-          <ion-row class="RowHeader">
-            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
-            <ion-col col-6>
-              Datum
-            </ion-col>
-            <ion-col col-6>
-              Wert
-            </ion-col>
-          </ion-row>
-          <ion-row *ngFor="let entry of valuesBP">
-            <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy'}}
-            </ion-col>
-            <ion-col col-6>
-              {{entry[1]}} / {{entry[2]}} mmHg
-            </ion-col>
-          </ion-row>
-          <ion-row class="RowHeader">
-            <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
-            <ion-col col-6>
-              Datum
-            </ion-col>
-            <ion-col col-6>
-              Wert
-            </ion-col>
-          </ion-row>
-          <ion-row *ngFor="let entry of valuesWeight">
-            <ion-col col-6>
-              {{entry[0] | date:'dd.MM.yyyy'}}
-            </ion-col>
-            <ion-col col-6>
-              {{entry[1]}} kg
-            </ion-col>
-          </ion-row>
+          <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Blutzucker</ion-item-divider>
+          <div>
+            <ion-row class="RowHeader">
+              <ion-col col-5>
+                Datum
+              </ion-col>
+              <ion-col col-5>
+                Wert
+              </ion-col>
+              <ion-col col-2>
+                Art
+              </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let entry of valuesGlucose">
+              <ion-col col-5>
+                {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
+              </ion-col>
+              <ion-col col-4>
+                {{entry[1]}} mmol/l
+              </ion-col>
+              <ion-col col-3>
+                {{entry[2]}}
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Puls</ion-item-divider>
+          <div>
+            <ion-row class="RowHeader">
+              <ion-col col-6>
+                Datum
+              </ion-col>
+              <ion-col col-6>
+                Wert
+              </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let entry of valuesPulse">
+              <ion-col col-6>
+                {{entry[0] | date:'dd.MM.yyyy'}}
+              </ion-col>
+              <ion-col col-6>
+                {{entry[1]}} / min
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Blutdruck</ion-item-divider>
+          <div>
+            <ion-row class="RowHeader">
+              <ion-col col-6>
+                Datum
+              </ion-col>
+              <ion-col col-6>
+                Wert
+              </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let entry of valuesBP">
+              <ion-col col-6>
+                {{entry[0] | date:'dd.MM.yyyy'}}
+              </ion-col>
+              <ion-col col-6>
+                {{entry[1]}} / {{entry[2]}} mmHg
+              </ion-col>
+            </ion-row>
+          </div>
+          <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Gewicht</ion-item-divider>
+          <div>
+            <ion-row class="RowHeader">
+              <ion-col col-6>
+                Datum
+              </ion-col>
+              <ion-col col-6>
+                Wert
+              </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let entry of valuesWeight">
+              <ion-col col-6>
+                {{entry[0] | date:'dd.MM.yyyy'}}
+              </ion-col>
+              <ion-col col-6>
+                {{entry[1]}} kg
+              </ion-col>
+            </ion-row>
+          </div>
         </ion-grid>
-      </content>
     </ion-slide>
   </ion-slides>
 </ion-content>

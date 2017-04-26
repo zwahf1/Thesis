@@ -1,7 +1,11 @@
 page-nutrition {
   table{
     width: 100%;
-  }
+    border-collapse: collapse;
+}
+td {
+    border: 1px solid black;
+}
   thead {
     background-color: color($colors, primary);
   }

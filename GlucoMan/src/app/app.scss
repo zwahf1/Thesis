@@ -24,6 +24,13 @@
   font-weight: bold;
   font-size: 18px;
 }
+ion-item-divider {
+  ion-label {
+    height: 100%;
+    width: 100%;
+    align-self: inherit;
+  }
+}
 ion-header{
   ion-icon{
     font-size: 2.5em;
@@ -55,4 +62,5 @@ ion-slide.swiper-slide.swiper-slide-active{
 .swiper-pagination.swiper-pagination-clickable.swiper-pagination-bullets{
   bottom: 5.7rem;
   position: fixed;
+  background-color: rgb(248,248,248)
 }

@@ -158,6 +158,24 @@ it's called by clicking on a divider between the charts
       element.style.display = 'inline';
     }
   }
+  /**
+method to collapse and expand the measurement values.
+it's called by clicking on a divider above the table
+**/
+expandValues(src){
+  let element = src.parentNode.parentNode.parentNode.nextElementSibling;
+  //mode is the style attribute of the chart element
+  let mode = '' + element.getAttribute('style');
+  //if 'style' contains the word 'none', the method 'search' returns a
+  //positive value, otherwise -1
+  if (mode.search('none') < 0) {
+    //the attribute 'display' is set to none to hide the chart
+    element.style.display = 'none';
+  } else if (mode.search('none') > 0) {
+    //the attribute 'display' is set to inline to show the chart
+    element.style.display = 'inline';
+  }
+}
 /**
 method to hide and show the charts.
 it's based on the visibleList, which is editable in the settings.

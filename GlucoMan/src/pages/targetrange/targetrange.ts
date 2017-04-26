@@ -67,12 +67,12 @@ back method for the customized back navigate.
 it calls the confirm alert to save the data, if the changeFlag is true,
 before the navCtrl pops the current view.
   **/
-  back(){
+  ionViewWillLeave(){
     if(this.changeFlag){
       this.presentConfirm();
       this.changeFlag = false;
     }
-    this.navCtrl.pop();
+    //this.navCtrl.pop();
   }
 /**
 method to confirm and save the edited values.
