@@ -370,7 +370,8 @@ method to entry the new value
         alert.addInput({
           type: 'radio',
           label: 'Nach dem Essen',
-          value: 'Nach dem Essen'
+          value: 'Nach dem Essen',
+          checked: true
         });
         alert.addInput({
           type: 'radio',
@@ -636,11 +637,17 @@ method to add glucose value into weightlist, chart and MIDATA
     var result: {value: any, date: any, event: any};
     var event: any = ((byte5&0xf8)>>3);
     if(event == 2) {
-      event = ""
+      event = "Nach dem Sport";
+    } else if(event == 4) {
+      event = "Nach Medikation";
+    } else if(event == 8) {
+      event = "Nach dem Essen";
+    } else if(event == 16) {
+      event = "Vor dem Essen";
     }
 
     result = {
-      value: ((((byte3&0x03)<<8)+byte4)/18),
+      value: ((((byte3&0x03)<<8)+byte4)/18).toFixed(1),
       date: new Date(((byte1>>1)+2000),(((byte1&0x01)<<3)+(byte2>>5)-1),(byte2&0x1f),(((byte5&0x07)<<2)+(byte6>>6)),(byte6&0x3f)),
       event: event
     }

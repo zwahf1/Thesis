@@ -14,5 +14,23 @@
 
 
 <ion-content padding>
-
+  <button ion-button full (click)='registerNewDevice()'>Geräte erkennen</button>
+  <ion-grid>
+    <ion-row class="RowHeader">
+      <ion-col col-6>
+        Geräte-Name
+      </ion-col>
+      <ion-col col-6>
+        Geräte-ID
+      </ion-col>
+    </ion-row>
+    <ion-row *ngFor="let dev of devices">
+      <ion-col col-6 class="ColGrid">
+        {{dev.name}}
+      </ion-col>
+      <ion-col col-6 class="ColGrid">
+        {{dev.id}}
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

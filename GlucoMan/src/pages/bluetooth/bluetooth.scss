@@ -1,3 +1,9 @@
 page-bluetooth {
-
+  .RowHeader {
+    background-color: color($colors, primaryLight);
+    text-align: center;
+  }
+  .ColGrid {
+    border: 1px solid;
+  }
 }

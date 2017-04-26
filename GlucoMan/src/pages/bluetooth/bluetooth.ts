@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController, AlertController } from 'ionic-angular';
 
 import { Storage } from '@ionic/storage';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
@@ -15,18 +15,28 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 })
 export class BluetoothPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public bls: BluetoothSerial, public storage: Storage) {
+  devices = [];
+
+  constructor(public navCtrl: NavController, public bls: BluetoothSerial, public storage: Storage,
+              public alertCtrl: AlertController) {
 
   }
 
   registerNewDevice() {
     this.bls.list().then((val) => {
-      if(val == undefined)
-      // If stroage is ready to use
-      this.storage.ready().then(() => {
-        this.storage.set('deviceId',val);
-        console.log(val);
-      });
+      this.devices = val;
+      if(this.devices.length == 0) {
+        let alert = this.alertCtrl.create({
+          title: 'Keine Geräte gefunden',
+          subTitle: 'Bitte stellen Sie sicher, dass Bluetooth auf dem Smartphone eingeschaltet und unter "gekoppelte Geräte" das Messgerät sichtbar ist',
+          buttons: ['OK']
+        });
+        alert.present();
+      } else {
+        this.storage.ready().then(() => {
+          this.storage.set('deviceId',this.devices);
+        });
+      }
 
     });
   }
