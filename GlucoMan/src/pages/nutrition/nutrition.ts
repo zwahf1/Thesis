@@ -16,6 +16,7 @@ it's possible to import data with the barcode of a product or to make an entry m
   selector: 'page-nutrition',
   templateUrl: 'nutrition.html'
 })
+
 export class NutritionPage {
 
   //list with all nutrition of one day with, divided per time of day
@@ -63,10 +64,6 @@ export class NutritionPage {
       })
     });
   }
-
-  /**
-  invoke createNutritionList() after view did enter
-  **/
   /**
   create nutrition list from nutritionDetailList
   **/
@@ -88,20 +85,12 @@ export class NutritionPage {
       //timeOfDay is the value of 24h in milliseconds
       let timeOfDay = 86400000;
 
-      //if the different of the two dates are bigger than 24h, so push a new entry
-      //to the list and set the date
+      //if the two dates have not the same day and the different is lower than 24h or if the different
+      //of the two dates are bigger than 24h, so push a new entry to the list and set the date
       if (dateEntry.getDate() != dateLastInList.getDate() && Math.abs(diffDate) < timeOfDay || (Math.abs(diffDate) > timeOfDay)) {
         this.nutritionList.push(new DayNutrition);
         this.nutritionList[this.nutritionList.length - 1][0] = entry.date;
       }
-      //if the two dates have not the same day and the different is lower than 24h,
-      //do the same as above
-      /*
-            else if (dateEntry.getDate() != dateLastInList.getDate() && Math.abs(diffDate) < timeOfDay) {
-              this.nutritionList.push(new DayNutrition);
-              this.nutritionList[this.nutritionList.length - 1][0] = entry.date;
-            }
-      */
       //local variable tempCarb for current carb value of the time of day of the entry, default = 0
       let tempCarb: number = 0
       tempCarb = this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)];
@@ -113,7 +102,8 @@ export class NutritionPage {
   }
 
   /**
-  this method returns the index of the time of day of a given date.
+  this method returns the index of the
+  time of day of a given date.
 
   index 0 for nigth: 22:00-03:59
   index 1 for morning: 4:00-08:59
@@ -123,10 +113,8 @@ export class NutritionPage {
   index 5 for evening: 17:00-21:59
   **/
   getTimeOfDay(date: Date) {
-
     let d = date;
     let h = d.getHours();
-
     if (h < 4) {
       //if at night
       return 6;
@@ -679,6 +667,7 @@ export class NutritionPage {
         let index: number = this.nutritionDetailList.indexOf(item);
         if (index !== -1) {
           this.nutritionDetailList.splice(index, 1);
+          this.saveDetailList();
           this.createNutritionList();
         }
       }
