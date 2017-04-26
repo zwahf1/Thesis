@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams } from 'ionic-angular';
 
+import { Storage } from '@ionic/storage';
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 /*
   Generated class for the Bluetooth page.
 
@@ -13,12 +15,20 @@ import { NavController, NavParams } from 'ionic-angular';
 })
 export class BluetoothPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public bls: BluetoothSerial, public storage: Storage) {
 
   }
 
-  ionViewDidLoad() {
-    console.log('ionViewDidLoad BluetoothPage');
+  registerNewDevice() {
+    this.bls.list().then((val) => {
+      if(val == undefined)
+      // If stroage is ready to use
+      this.storage.ready().then(() => {
+        this.storage.set('deviceId',val);
+        console.log(val);
+      });
+
+    });
   }
 
 }

@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
-import { NavController, AlertController, PopoverController } from 'ionic-angular';
+import { App, NavController, AlertController, PopoverController } from 'ionic-angular';
 import { TabsPage} from '../tabs/tabs';
 import { MidataPersistence } from '../../util/midataPersistence';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
@@ -19,7 +19,8 @@ export class LoginPage {
 
   private input = {username: 'mia.egger@mail.com', password : 'PW4mia17'};
 
-  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage, public popoverCtrl: PopoverController) {
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage,
+                public popoverCtrl: PopoverController, public appCtrl: App) {
     this.storage.ready().then(() => {
       this.storage.get('UserAuthentication').then((val) => {
         if(this.mp.loggedIn() && val != undefined) {
@@ -44,6 +45,7 @@ export class LoginPage {
         this.storage.ready().then(() => {
           this.storage.set('UserAuthentication', [this.input.username, this.input.password, res]);
         });
+        this.navCtrl.popToRoot();
         this.navCtrl.setRoot(TabsPage);
       }
     }).catch((ex) => {

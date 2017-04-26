@@ -55,9 +55,11 @@ export class MeasurementsPage {
         if (val) {
           this.valuesGlucose = val;
         } else {
-          this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2], [Date.UTC(2016, 3, 5), 4], [Date.UTC(2016, 3, 7), 6], [Date.UTC(2016, 3, 8), 8],
-            [Date.UTC(2016, 3, 9), 10], [Date.UTC(2016, 3, 11), 9], [Date.UTC(2016, 3, 12), 8], [Date.UTC(2016, 3, 14), 9],
-            [Date.UTC(2016, 3, 17), 10], [Date.UTC(2016, 3, 18), 11]];
+          this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2, "Vor dem Essen"], [Date.UTC(2016, 3, 5), 4, "Vor dem Essen"],
+            [Date.UTC(2016, 3, 7), 6, "Nach Medikation"], [Date.UTC(2016, 3, 8), 8, "Nach dem Essen"],
+            [Date.UTC(2016, 3, 9), 10, "Nach dem Essen"], [Date.UTC(2016, 3, 11), 3, "Nach dem Sport"],
+            [Date.UTC(2016, 3, 12), 8, "Nach dem Essen"], [Date.UTC(2016, 3, 14), 9, "Nach dem Essen"],
+            [Date.UTC(2016, 3, 17), 10, "Nach dem Essen"], [Date.UTC(2016, 3, 18), 11, "Nach dem Essen"]];
           this.storage.set('glucoseValues', this.valuesGlucose);
         }
       });
@@ -296,7 +298,34 @@ after the selection it calls the method openAddAlert() with the vital sign as pa
       text: 'Glukose',
       icon: 'water',
       handler: () => {
-        this.openAddAlert("Glukose");
+        this.openActionSheetGlucose();
+      }
+    });
+    actionSheet.addButton({
+      text: 'Cancel',
+      icon: 'close',
+      role: 'destructive'
+    });
+
+    // present the alert popup
+    actionSheet.present();
+  }
+
+  openActionSheetGlucose() {
+    let actionSheet = this.actionCtrl.create({});
+    actionSheet.setTitle('Glukose');
+    actionSheet.addButton({
+      text: 'Import von Gerät',
+      icon: 'download',
+      handler: () => {
+        this.openAddAlert("Import");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Manuelle Eingabe',
+      icon: 'create',
+      handler: () => {
+        this.openAddAlert("Blutzucker");
       }
     });
     actionSheet.addButton({
@@ -311,57 +340,58 @@ after the selection it calls the method openAddAlert() with the vital sign as pa
 /**
 method to entry the new value
 **/
-  openAddAlert(typ) {
+  openAddAlert(typ, glucoVal?) {
     let alert = this.alertCtrl.create({});
     alert.setTitle(typ);
-    //two input fields for blood pressure
-    if (typ === "Blutdruck") {
-      alert.addInput({
-        type: 'number',
-        name: 'sys',
-        placeholder: 'Systolischer Blutdruck'
-      });
-      alert.addInput({
-        type: 'number',
-        name: 'dia',
-        placeholder: 'Diastolischer Blutdruck'
-      });
-      //choose import of a device or manually input
-    } else if(typ === "Glukose") {
-      alert.addInput({
-        type: 'radio',
-        label: 'Import von Gerät',
-        value: 'Import',
-        checked: true
-      });
-      alert.addInput({
-        type: 'radio',
-        label: 'Tastatureingabe',
-        value: 'Blutzucker'
-      });
-
-    } else if(typ === "Import") {
-      alert.setMessage("Aktivierung des Bluetooth vom Blutzucker-Messgerät");
-
-    } else if(typ === "Blutzucker") {
-      alert.addInput({
-        type: 'radio',
-        label: 'Vor dem Essen',
-        value: 'Befor'
-      });
-      alert.addInput({
-        type: 'radio',
-        label: 'Nach dem Essen',
-        value: 'After'
-      });
-
-    } else {
-      //one input field for other vital signs
-      alert.addInput({
-        type: 'number',
-        name: 'data',
-        placeholder: typ
-      });
+    switch (typ) {
+      case "Blutdruck": {
+        alert.addInput({
+          type: 'number',
+          name: 'sys',
+          placeholder: 'Systolischer Blutdruck'
+        });
+        alert.addInput({
+          type: 'number',
+          name: 'dia',
+          placeholder: 'Diastolischer Blutdruck'
+        });
+        break;
+      }
+      case "Import": {
+        alert.setMessage("Aktivierung des Bluetooth vom Blutzucker-Messgerät");
+        break;
+      }
+      case "Mess-Art": {
+        alert.addInput({
+          type: 'radio',
+          label: 'Vor dem Essen',
+          value: 'Vor dem Essen'
+        });
+        alert.addInput({
+          type: 'radio',
+          label: 'Nach dem Essen',
+          value: 'Nach dem Essen'
+        });
+        alert.addInput({
+          type: 'radio',
+          label: 'Nach Medikation',
+          value: 'Nach Medikation'
+        });
+        alert.addInput({
+          type: 'radio',
+          label: 'Nach dem Sport',
+          value: 'Nach dem Sport'
+        });
+        break;
+      }
+      default: {
+        alert.addInput({
+          type: 'number',
+          name: 'data',
+          placeholder: typ
+        });
+        break;
+      }
     }
     // button to cancel
     alert.addButton('Cancel');
@@ -377,38 +407,49 @@ method to entry the new value
         // If stroage is ready to use
         this.storage.ready().then(() => {
           navTransition.then(() => {
-            //parse the data into numbers to add to the chart
-            let v1: number = parseInt(data.sys);
-            let v2: number = parseInt(data.dia);
-            let v: number = parseInt(data.data);
+
             //switch - case to handle the different input types
             switch (typ) {
               case "Blutdruck": {
+                let v1: number = parseInt(data.sys);
+                let v2: number = parseInt(data.dia);
                 this.addBloodPressure(v1, v2, new Date());
                 break;
               }
               case "Puls": {
+                let v: number = parseInt(data.data);
                 this.addPulse(v, new Date());
                 break;
               }
               case "Gewicht": {
+                let v: number = parseInt(data.data);
                 this.addWeight(v, new Date());
                 break;
               }
-              case "Glukose": {
-                this.openAddAlert(data);
+              case "Blutzucker": {
+                let v: number = parseInt(data.data);
+                this.openAddAlert("Mess-Art", v);
                 break;
               }
-              case "Blutzucker": {
-                this.addGlucose(v, new Date());
+              case "Mess-Art": {
+                this.addGlucose(glucoVal, new Date(), data);
                 break;
               }
               case "Import": {
                 this.storage.get('deviceId').then((val) => {
-                  for(var i = 0;i < val.length;i++) {
-                    if(val[i].name === "myglucohealth") {
-                      this.importFromDevice(val[i].id);
+                  if(val) {
+                    for(var i = 0;i < val.length;i++) {
+                      if(val[i].name === "myglucohealth") {
+                        this.importFromDevice(val[i].id);
+                      }
                     }
+                  } else {
+                    let alert = this.alertCtrl.create({
+                      title: 'Kein Gerät registriert',
+                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: Einstellungen > Bluetooth",
+                      buttons: ['OK']
+                    });
+                    alert.present();
                   }
                 })
                 break;
@@ -474,6 +515,10 @@ method to add weight value into weightlist, chart and MIDATA
     var firstCmd: boolean = false;
     var secondCmd: boolean = false;
 
+    let loading = this.loadingCtrl.create();
+
+    loading.present();
+
     for(var i = 0; i < num;i++) {
       dataValues[(0+(i*7))] = 0x80;
       dataValues[(1+(i*7))] = 0x02;
@@ -483,10 +528,8 @@ method to add weight value into weightlist, chart and MIDATA
       dataValues[(5+(i*7))] = (((0x80^0xFD)^i)^0xFF);
       dataValues[(6+(i*7))] = 0xFC;
     }
-    console.log(dataValues);
 
     this.bls.isConnected().then(() => {
-      console.log("already connected");
 
       this.bls.write(dataValues).then(() => {
       });
@@ -500,8 +543,8 @@ method to add weight value into weightlist, chart and MIDATA
           secondCmd = true;
         } else if(firstCmd && secondCmd) {
           result[((dataRead*6)+byteRead)] = a[0];
-          console.log(result);
           byteRead++;
+
           if(byteRead == 6) {
             byteRead = 0;
             dataRead++;
@@ -513,23 +556,13 @@ method to add weight value into weightlist, chart and MIDATA
         if(dataRead == num) {
           dataRead = 0;
           console.log(result);
+          loading.dismiss();
           this.addGlucoseValues(result);
           this.bls.disconnect().then(() => {
             console.log("disconnect");
           });
         }
       });
-    });
-  }
-
-  registerNewDevice() {
-    this.bls.list().then((val) => {
-      // If stroage is ready to use
-      this.storage.ready().then(() => {
-        this.storage.set('deviceId',val);
-        console.log(val);
-      });
-
     });
   }
 
@@ -566,8 +599,8 @@ method to add blood pressure values into weightlist, chart and MIDATA
   /**
 method to add glucose value into weightlist, chart and MIDATA
   **/
-  addGlucose(v, d) {
-    this.valuesGlucose.push([d.getTime(),v]);
+  addGlucose(v, d, e) {
+    this.valuesGlucose.push([d.getTime(), v, e]);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort());
       this.saveMIDATAGlucose(v, d);
@@ -576,7 +609,7 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   addGlucoseValues(array: Uint8Array) {
-    var gluco: {value: any, date: any};
+    var gluco: {value: any, date: any, event: any};
     var num = array.length / 6;
     for(var i = 0; i < num; i++) {
       console.log("input: "+array[i]+" | "+array[(i+1)]+" | "+array[(i+2)]+" | "+array[(i+3)]+" | "+array[(i+4)]+" | "+array[(i+5)]+" | ");
@@ -584,7 +617,7 @@ method to add glucose value into weightlist, chart and MIDATA
       if(this.checkValue(gluco.value, gluco.date, this.valuesGlucose)) {
         console.log("Value already exist");
       } else {
-        this.addGlucose(gluco.value, gluco.date);
+        this.addGlucose(gluco.value, gluco.date, gluco.event);
         console.log("Added new Value");
       }
     }
@@ -600,10 +633,16 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
-    var result: {value: any, date: any};
+    var result: {value: any, date: any, event: any};
+    var event: any = ((byte5&0xf8)>>3);
+    if(event == 2) {
+      event = ""
+    }
+
     result = {
       value: ((((byte3&0x03)<<8)+byte4)/18),
-      date: new Date(((byte1>>1)+2000),(((byte1&0x01)<<3)+(byte2>>5)-1),(byte2&0x1f),(((byte5&0x07)<<2)+(byte6>>6)),(byte6&0x3f))
+      date: new Date(((byte1>>1)+2000),(((byte1&0x01)<<3)+(byte2>>5)-1),(byte2&0x1f),(((byte5&0x07)<<2)+(byte6>>6)),(byte6&0x3f)),
+      event: event
     }
     return result;
   }

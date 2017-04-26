@@ -10,7 +10,7 @@
     <ion-title>Kontrollen</ion-title>
     <ion-buttons end>
       <button ion-button primary (click)="openEntryCheckup()">
-        <ion-icon name="add-circle"></ion-icon>
+        <ion-icon name="add"></ion-icon>
       </button>
     </ion-buttons>
   </ion-navbar>
@@ -73,7 +73,7 @@
         </ion-row>
         <ion-row *ngFor="let control of arrayControls">
           <ion-col col-1>
-            <ion-checkbox (click)="clickCheckBox(control)" checked="control[0]">
+            <ion-checkbox (click)="clickCheckBox(control)" [(ngModel)]="control[0]">
             </ion-checkbox>
           </ion-col>
           <ion-col col-4>

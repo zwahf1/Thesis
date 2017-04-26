@@ -11,9 +11,7 @@ import { TargetrangePage } from '../pages/targetrange/targetrange';
 import { DisplayPage } from  '../pages/display/display';
 import { DataPage } from '../pages/data/data';
 import { MeasureplanPage } from '../pages/measureplan/measureplan';
-import { MIDATAPage } from '../pages/midata/midata';
 import { TabsPage } from '../pages/tabs/tabs';
-import { ContactsPage } from '../pages/contacts/contacts';
 import { InformationPage } from '../pages/information/information';
 import { EmergencyPage } from '../pages/emergency/emergency';
 import { CheckupsPage } from '../pages/checkups/checkups';
@@ -25,7 +23,6 @@ import { InformationDetailsPage } from '../pages/information-details/information
 import { BrowserModule } from '@angular/platform-browser';
 import { ChartModule } from 'angular2-highcharts';
 import { Storage } from '@ionic/storage';
-import { BLE } from '@ionic-native/ble';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
 import { HttpModule, JsonpModule } from '@angular/http';
@@ -67,10 +64,8 @@ export { Highcharts };
     InformationPage,
     InformationDetailsPage,
     EmergencyPage,
-    MIDATAPage,
     CheckupsPage,
     TabsPage,
-    ContactsPage,
     MedicationDetailPage,
     DisclaimerPage,
     BluetoothPage
@@ -102,9 +97,7 @@ export { Highcharts };
     InformationDetailsPage,
     EmergencyPage,
     CheckupsPage,
-    MIDATAPage,
     TabsPage,
-    ContactsPage,
     MedicationDetailPage,
     DisclaimerPage,
     BluetoothPage
@@ -112,7 +105,6 @@ export { Highcharts };
   providers: [
     Storage,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
-    BLE,
     BluetoothSerial
   ]
 })
