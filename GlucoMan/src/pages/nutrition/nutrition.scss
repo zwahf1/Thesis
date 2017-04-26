@@ -1,20 +1,29 @@
 page-nutrition {
+  table{
+    width: 100%;
+  }
+  thead {
+    background-color: color($colors, primary);
+  }
   .rotate {
     transform: rotate(-90.0deg);
+    align-self: center;
   }
   .head {
     height: 5em;
   }
-  // .swiper-container {
-  //   height: auto;
-  //   display: block;
-  // }
+  .scroll-content {
+     margin-bottom: 76px !important;
+   }
 }
 .dataDetails {
-  .alert-input-wrapper:nth-child(2):before{
+  .alert-input-wrapper:nth-child(1):after{
+    content: "Produkt";
+  }
+  .alert-input-wrapper:nth-child(2):after{
     content: "Portion in Gramm";
   }
-  .alert-input-wrapper:nth-child(3):before{
+  .alert-input-wrapper:nth-child(3):after{
       content: "Kohlenhydrate in Gramm";
     }
 .swiper-slide{

@@ -72,6 +72,7 @@ input parameters:
       //followTouchMove and followPointer has to be disabled to move the chart on touch device
       tooltip: {
         valueSuffix: ' ' + unit,
+        //xDateFormat: ' %d.%m.%Y %H:%M',
         followTouchMove: false,
         followPointer: false
       },

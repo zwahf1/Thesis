@@ -26,10 +26,13 @@
 }
 ion-header{
   ion-icon{
-    font-size: 3em;
+    font-size: 2.5em;
   }
   .customIcon{
     font-size: 2.4rem;
+  }
+  .toolbar-title{
+    font-size: 1.7em !important;
   }
 }
 .swiper-container{
@@ -39,7 +42,6 @@ ion-header{
 .swiper-slide{
 	display: block;
   height: inherit;
-  margin-bottom: 30px;
 }
 .swiper-wrapper{
   height: inherit;

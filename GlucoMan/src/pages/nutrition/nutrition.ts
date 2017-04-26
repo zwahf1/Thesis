@@ -24,12 +24,6 @@ export class NutritionPage {
   nutritionTimeOfDayList: any[][];
   //list with every single nutrition
   nutritionDetailList: DetailNutrition[] = [];
-  //variable to store temporal portion quantity
-  valuePort: any;
-  //variable to store temporal carbo value
-  valueCarbo: any;
-  //variable to store temporal description of the nutrition
-  desc: any;
   //options of the carbohydrates chart of the NutritionPage
   chartCarbo: any;
 
@@ -44,6 +38,12 @@ export class NutritionPage {
 
   storage SET:
     - nutritionDetailList: list with all nutritions and dates
+
+  external tools:
+    - barcodeScanner
+    - API openFoodFacts
+    - API openFood
+    - API FDDB
 
   If there's a value in storage, create the nutritionList.
   createNutritionList() invokes createTimeOfDayList(), that creates
@@ -67,16 +67,6 @@ export class NutritionPage {
   /**
   invoke createNutritionList() after view did enter
   **/
-  ionViewDidEnter() {
-    this.createNutritionList();
-  }
-
-  /**
-  invoke createNutritionList() after slide changed
-  **/
-  slideChanged() {
-    this.createNutritionList();
-  }
   /**
   create nutrition list from nutritionDetailList
   **/
@@ -303,7 +293,7 @@ export class NutritionPage {
       text: 'Manuelle Eingabe',
       icon: 'create',
       handler: () => {
-        this.showDataDetails();
+        this.insertNewProduct();
       }
     });
     actionSheet.addButton({
@@ -314,6 +304,52 @@ export class NutritionPage {
 
     // present the alert popup
     actionSheet.present();
+  }
+  /**
+  alert to type in product information for a new nutrition.
+
+  the alert shows three input fields, for description,
+  portion quantity and carbohydrate value.
+  there are two buttons:
+  -to cancel the alert
+  -to confirm and insert the new nutrition
+  **/
+  insertNewProduct() {
+    //create alert to customize nutrition information
+    let alert = this.alertCtrl.create({});
+    // set title of the alert
+    alert.setTitle("Details eingeben");
+    alert.setCssClass("dataDetails");
+    //add input fields for the description, portion quantity and carbohydrate value
+    alert.addInput({
+      type: 'text',
+      label: 'Beschreibung',
+      name: 'desc',
+    });
+    alert.addInput({
+      type: 'number',
+      label: 'Portion',
+      name: 'port',
+    });
+    alert.addInput({
+      type: 'number',
+      label: 'Kohlenhydrate',
+      name: 'carbo',
+    });
+    // button to cancel
+    alert.addButton('Cancel');
+    // button to save nutrition
+    alert.addButton({
+      text: 'Ok',
+      //handle the click event for the OK button
+      //the typed values store into variables of NutritionPage
+      handler: (data) => {
+        //create new nutrition
+        this.newNutrition(data.desc, data.port, data.carbo);
+      }
+    });
+    // present the alert popup
+    alert.present();
   }
   /**
     scan method to import the values of a nutriiton
@@ -357,11 +393,13 @@ export class NutritionPage {
   from the database Open Food Facts.
   **/
   getDataFromOpenFoodFacts(barcode) {
-    let code = barcode;
+    let desc = null;
+    let port = null;
+    let carbo = null;
     //create XMLHttp request to get the product information
     var xhr = new XMLHttpRequest();
     var method = 'GET';
-    var url = "https://world.openfoodfacts.org/api/v0/product/" + code + ".json";
+    var url = "https://world.openfoodfacts.org/api/v0/product/" + barcode + ".json";
     //open the request for import
     xhr.open(method, url);
     //if the request is done and the authorization was successfull
@@ -373,31 +411,31 @@ export class NutritionPage {
         try {
           //if there's a description of the product, store it
           if (art.product.product_name) {
-            this.desc = art.product.product_name;
+            desc = art.product.product_name;
           }
           //if there's a german description, overwrite the description
           if (art.product.product_name_de) {
-            this.desc = art.product.product_name_de;
+            desc = art.product.product_name_de;
           }
           //store the values per 100 gram
-          this.valueCarbo = art.product.nutriments.carbohydrates_100g;
-          this.valuePort = 100;
+          carbo = art.product.nutriments.carbohydrates_100g;
+          port = 100;
           //overwrite the portion and carbohydrates values, if there are information about the serving portion
-          this.valueCarbo = art.product.nutriments.carbohydrates_serving;
-          this.valuePort = art.product.serving_quantity;
-          if (this.valueCarbo == null || this.valueCarbo == undefined || this.valueCarbo <= 0) {
-            this.getDataFromOpenFood(barcode);
+          carbo = art.product.nutriments.carbohydrates_serving;
+          port = art.product.serving_quantity;
+          if (carbo == null || carbo == undefined || carbo <= 0) {
+            this.getDataFromOpenFood(barcode, desc, port, carbo);
           } else {
             //otherwise show the details in an alert
-            this.showDataDetails();
+            this.showDataDetailsBarcode(desc, port, carbo);
           }
         } catch (Error) {
           //if it's catched before a carbohydrates value is found, try with Open Food
-          if (this.valueCarbo == null || this.valueCarbo == undefined || this.valueCarbo <= 0) {
-            this.getDataFromOpenFood(barcode);
+          if (carbo == null || carbo == undefined || carbo <= 0) {
+            this.getDataFromOpenFood(barcode, desc, port, carbo);
           } else {
             //otherwise show the details in an alert
-            this.showDataDetails();
+            this.showDataDetailsBarcode(desc, port, carbo);
           }
         }
         //if not ready
@@ -418,16 +456,18 @@ export class NutritionPage {
   the method loads the carbohydrates value and portion quantity
   from the database Open Food.
   **/
-  getDataFromOpenFood(barcode) {
+  getDataFromOpenFood(barcode, pDesc, pPort, pCarbo) {
     //set the key for the API of Open Food
     let key = 'e30f2ff2fdc37588275626f176966ea6';
-    let code = barcode;
+    let desc = pDesc;
+    let port = pPort;
+    let carbo = pCarbo;
     //create XMLHttp request to get the product information
     var xhr = new XMLHttpRequest();
     var method = "GET";
     //set the authorization header
     var reqHeaders = 'Token token="' + key + '"';
-    var url = "https://www.openfood.ch/api/v3/products?barcodes=" + code + "&api_key=" + key;
+    var url = "https://www.openfood.ch/api/v3/products?barcodes=" + barcode + "&api_key=" + key;
     //open request for import
     xhr.open(method, url);
     //set the request header with coded credentials
@@ -439,26 +479,26 @@ export class NutritionPage {
         let art = JSON.parse(xhr.responseText);
         try {
           //description of the nutrition
-          this.desc = art.data[0].display_name_translations.de;
+          desc = art.data[0].display_name_translations.de;
           //store the values of 100 gram
-          this.valueCarbo = art.data[0].nutrients.carbohydrates.per_hundred;
-          this.valuePort = 100;
+          carbo = art.data[0].nutrients.carbohydrates.per_hundred;
+          port = 100;
           //overwrite the values of 100 gram with values per portion
-          this.valueCarbo = art.data[0].nutrients.carbohydrates.per_portion;
-          this.valuePort = art.data[0].portion_quantity;
-          if (this.valueCarbo == null || this.valueCarbo == undefined || this.valueCarbo <= 0) {
-            this.getDataFromFDDB(barcode);
+          carbo = art.data[0].nutrients.carbohydrates.per_portion;
+          port = art.data[0].portion_quantity;
+          if (carbo == null || carbo == undefined || carbo <= 0) {
+            this.getDataFromFDDB(barcode, desc, port, carbo);
           } else {
             //otherwise show the details in an alert
-            this.showDataDetails();
+            this.showDataDetailsBarcode(desc, port, carbo);
           }
         } catch (Error) {
           //if it's catched before a carbohydrates value is found, try with FDDB
-          if (this.valueCarbo == null) {
-            this.getDataFromFDDB(barcode);
+          if (carbo == null) {
+            this.getDataFromFDDB(barcode, desc, port, carbo);
           } else {
             //otherwise show the details in an alert
-            this.showDataDetails();
+            this.showDataDetailsBarcode(desc, port, carbo);
           }
         }
         //if not ready
@@ -479,7 +519,10 @@ export class NutritionPage {
   the method loads the carbohydrates value and portion quantity
   from the database FDDB.
   **/
-  getDataFromFDDB(barcode) {
+  getDataFromFDDB(barcode, pDesc, pPort, pCarbo) {
+    let desc = pDesc;
+    let port = pPort;
+    let carbo = pCarbo;
     //set the API key
     let key = 'ZPAQGQY9Q75GHB2593R7V911';
     //creates XMLHttp request to get the nutrition information
@@ -498,20 +541,20 @@ export class NutritionPage {
           let result = xml.getElementsByTagName("result")[0].getElementsByTagName("items")[0].getElementsByTagName('item');
           //navigate to the value of carbohydrates of 100 gram and store it to the variable
           let kh_gram = result[0].getElementsByTagName('data')[0].getElementsByTagName('kh_gram')[0].textContent;
-          this.valueCarbo = kh_gram;
-          this.valuePort = 100;
+          carbo = kh_gram;
+          port = 100;
           //navigate to the value of a portion and store it to the variable
           let weight_gram = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
-          this.valueCarbo = (kh_gram / 100 * weight_gram);
-          this.valuePort = weight_gram;
+          carbo = (kh_gram / 100 * weight_gram);
+          port = weight_gram;
           //navigate to the description of the product and store it to the variable
           let description = result[0].getElementsByTagName('description');
           let name = description[0].getElementsByTagName('name')[0].textContent;
-          this.desc = name;
+          desc = name;
         } catch (Error) {
-          alert("no data in fddb available");
+          alert("Kein vollständiger Datensatz vorhanden");
         } finally {
-          this.showDataDetails();
+          this.showDataDetailsBarcode(desc, port, carbo);
         }
         //if not ready
       } else if (xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
@@ -526,7 +569,7 @@ export class NutritionPage {
   }
   /**
   alert with all details with the imported product information
-  or with empty fields to add a nutrition.
+  to add a nutrition.
 
   the alert shows three input fields, for description,
   portion quantity and carbohydrate value.
@@ -535,7 +578,7 @@ export class NutritionPage {
   -to cancel the alert
   -to confirm and insert the new nutrition
   **/
-  showDataDetails() {
+  showDataDetailsBarcode(desc, port, carbo) {
     //create alert to customize nutrition information
     let alert = this.alertCtrl.create({});
     // set title of the alert
@@ -546,27 +589,27 @@ export class NutritionPage {
       type: 'text',
       label: 'Beschreibung',
       name: 'desc',
-      value: this.desc
+      value: desc,
     });
     alert.addInput({
       type: 'number',
       label: 'Portion',
       name: 'port',
-      value: this.valuePort,
+      value: port,
     });
     alert.addInput({
       type: 'number',
       label: 'Kohlenhydrate',
       name: 'carbo',
-      value: this.valueCarbo
+      value: carbo
     });
     // button to calculate the carbohydrate value
     alert.addButton({
       text: 'berechnen',
       handler: (data) => {
-        this.valueCarbo = Math.round((this.valueCarbo / this.valuePort * data.port) * 100) / 100;
-        this.valuePort = data.port;
-        this.showDataDetails();
+        let valueCarbo = Math.round((carbo / port * data.port) * 100) / 100;
+      //  this.valuePort = data.port;
+        this.showDataDetailsBarcode(data.desc, data.port, valueCarbo);
       }
     });
     // button to cancel
@@ -577,11 +620,8 @@ export class NutritionPage {
       //handle the click event for the OK button
       //the typed values store into variables of NutritionPage
       handler: (data) => {
-        this.desc = data.desc;
-        this.valuePort = data.port;
-        this.valueCarbo = data.carbo;
         //create new nutrition
-        this.newNutrition();
+        this.newNutrition(data.desc, data.port, data.carbo);
       }
     });
     // present the alert popup
@@ -596,13 +636,9 @@ export class NutritionPage {
   variables of the page to null.
   afterwards store the list to the storage and create the nutrition overview.
   **/
-  newNutrition() {
-    this.nutritionDetailList.push(new DetailNutrition(this.desc, this.valuePort, this.valueCarbo));
-    //the variables desc for description, valuePort for the portion and
-    //valueCarbo for carbohydrates are set to null.
-    this.desc = null;
-    this.valuePort = null;
-    this.valueCarbo = null;
+  newNutrition(desc, port, carbo) {
+    this.nutritionDetailList.push(new DetailNutrition(desc, port, carbo));
+    //save the updated list and create the new nutrition list
     this.saveDetailList();
     this.createNutritionList();
   }
@@ -643,6 +679,7 @@ export class NutritionPage {
         let index: number = this.nutritionDetailList.indexOf(item);
         if (index !== -1) {
           this.nutritionDetailList.splice(index, 1);
+          this.createNutritionList();
         }
       }
     });
@@ -658,6 +695,7 @@ export class NutritionPage {
         let index: number = this.nutritionDetailList.indexOf(item);
         this.nutritionDetailList[index] = item;
         this.saveDetailList();
+        this.createNutritionList();
       }
     });
     // present the alert popup
