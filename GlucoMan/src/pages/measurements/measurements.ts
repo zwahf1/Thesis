@@ -430,24 +430,19 @@ method to entry the new value
             //switch - case to handle the different input types
             switch (typ) {
               case "Blutdruck": {
-                let v1: number = parseInt(data.sys);
-                let v2: number = parseInt(data.dia);
-                this.addBloodPressure(v1, v2, new Date());
+                this.addBloodPressure(data.sys, data.dia, new Date());
                 break;
               }
               case "Puls": {
-                let v: number = parseInt(data.data);
-                this.addPulse(v, new Date());
+                this.addPulse(data.data, new Date());
                 break;
               }
               case "Gewicht": {
-                let v: number = parseInt(data.data);
-                this.addWeight(v, new Date());
+                this.addWeight(data.data, new Date());
                 break;
               }
               case "Blutzucker": {
-                let v: number = parseInt(data.data);
-                this.openAddAlert("Mess-Art", v);
+                this.openAddAlert("Mess-Art", data.data);
                 break;
               }
               case "Mess-Art": {
@@ -484,6 +479,7 @@ method to entry the new value
   }
 
   importFromDevice(id) {
+    console.log("start import");
     var dataLength = new Uint8Array(6);
     var index: number = 0;
     var result = new Uint8Array(7);
@@ -500,24 +496,21 @@ method to entry the new value
 
     this.bls.enable().then(() => {
       this.bls.connect(id).subscribe(() => {
-        console.log("connected");
-        var dataValues = new Uint8Array(7);
+
         this.bls.write(dataLength).then(() => {
         });
 
         this.bls.subscribeRawData().subscribe((subs) => {
           var a = new Uint8Array(subs);
-          console.log("By index: "+index);
-          console.log(a[0]);
-          result[index] = (a[0]);
-          if(index == 6) {
-            console.log("get Values");
-            console.log(result);
-            this.getBluetoothValues(result[4]);
-
-            loading.dismiss();
-          } else {
+          for(var i = 0; i < a.length; i++) {
+            result[index] = a[i];
             index++;
+          }
+
+          if(index == 7) {
+            console.log(result);
+            loading.dismiss();
+            this.getBluetoothValues(result[4]);
           }
         });
       });
@@ -528,11 +521,11 @@ method to add weight value into weightlist, chart and MIDATA
   **/
   getBluetoothValues(num: number) {
     var dataValues = new Uint8Array((num*7));
-    var result = new Uint8Array((num*6));
-    var dataRead = 0;
+    var result = new Uint8Array((num*13));
+    var byteArray = new Uint8Array((num*6));
     var byteRead = 0;
-    var firstCmd: boolean = false;
-    var secondCmd: boolean = false;
+    var saveBytes: boolean = false;
+    var savedByte: number = 0;
 
     let loading = this.loadingCtrl.create();
 
@@ -548,45 +541,51 @@ method to add weight value into weightlist, chart and MIDATA
       dataValues[(6+(i*7))] = 0xFC;
     }
 
-    this.bls.isConnected().then(() => {
+    this.bls.write(dataValues).then(() => {
+    });
 
-      this.bls.write(dataValues).then(() => {
-      });
+    this.bls.subscribeRawData().subscribe((subs) => {
 
-      this.bls.subscribeRawData().subscribe((subs) => {
-        var a = new Uint8Array(subs);
+      var a = new Uint8Array(subs);
 
-        if((a[0] == 1) && !firstCmd && !secondCmd) {
-          firstCmd = true;
-        } else if((a[0] == dataRead) && firstCmd && !secondCmd) {
-          secondCmd = true;
-        } else if(firstCmd && secondCmd) {
-          result[((dataRead*6)+byteRead)] = a[0];
-          byteRead++;
+      for(var i = 0; i < a.length; i++) {
+        result[byteRead] = a[i];
+        byteRead++;
+      }
 
-          if(byteRead == 6) {
-            byteRead = 0;
-            dataRead++;
-            firstCmd = false;
-            secondCmd = false;
+      console.log(byteRead);
+
+      if(byteRead == (num*13)) {
+        byteRead = 0;
+        console.log(result);
+        for(var i = 0; i < result.length; i++) {
+
+          if(saveBytes) {
+            byteArray[savedByte] = result[i];
+            savedByte++;
+            if((savedByte % 6) == 0) {
+              saveBytes = false;
+              byteRead++;
+            }
+          } else if(result[i] == byteRead) {
+            if(result[(i-1)] == 0x01) {
+              saveBytes = true;
+            }
           }
         }
-
-        if(dataRead == num) {
-          dataRead = 0;
-          console.log(result);
-          loading.dismiss();
-          this.addGlucoseValues(result);
-          this.bls.disconnect().then(() => {
-            console.log("disconnect");
-          });
-        }
-      });
+        console.log(byteArray);
+        loading.dismiss();
+        this.addGlucoseValues(byteArray);
+        this.bls.disconnect().then(() => {
+          console.log("disconnect");
+        });
+      }
     });
   }
 
   addWeight(v,d) {
-    this.valuesWeight.push([d.getTime(),v]);
+    let val: number = parseFloat(v);
+    this.valuesWeight.push([d.getTime(),val]);
     this.storage.ready().then(() => {
       this.storage.set('weightValues', this.valuesWeight.sort());
       this.saveMIDATAWeight(v, d);
@@ -597,7 +596,8 @@ method to add weight value into weightlist, chart and MIDATA
 method to add pulse value into weightlist, chart and MIDATA
   **/
   addPulse(v, d) {
-    this.valuesPulse.push([d.getTime(), v]);
+    let val: number = parseInt(v);
+    this.valuesPulse.push([d.getTime(), val]);
     this.storage.ready().then(() => {
       this.storage.set('pulseValues', this.valuesPulse.sort());
       this.saveMIDATAPulse(v, d);
@@ -607,8 +607,10 @@ method to add pulse value into weightlist, chart and MIDATA
   /**
 method to add blood pressure values into weightlist, chart and MIDATA
   **/
-  addBloodPressure(v1: number, v2: number, d) {
-    this.valuesBP.push([d.getTime(), v1, v2]);
+  addBloodPressure(v1, v2, d) {
+    let val1: number = parseInt(v1);
+    let val2: number = parseInt(v2);
+    this.valuesBP.push([d.getTime(), val1, val2]);
     this.storage.ready().then(() => {
       this.storage.set('bpValues', this.valuesBP.sort());
       this.saveMIDATABloodPressure(v2, v1, d);
@@ -619,7 +621,8 @@ method to add blood pressure values into weightlist, chart and MIDATA
 method to add glucose value into weightlist, chart and MIDATA
   **/
   addGlucose(v, d, e) {
-    this.valuesGlucose.push([d.getTime(), v, e]);
+    let val: number = parseFloat(v);
+    this.valuesGlucose.push([d.getTime(), val, e]);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort());
       this.saveMIDATAGlucose(v, d);
@@ -628,23 +631,29 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   addGlucoseValues(array: Uint8Array) {
-    var gluco: {value: any, date: any, event: any};
+    var gluco: {value, date, event};
     var num = array.length / 6;
     for(var i = 0; i < num; i++) {
-      console.log("input: "+array[i]+" | "+array[(i+1)]+" | "+array[(i+2)]+" | "+array[(i+3)]+" | "+array[(i+4)]+" | "+array[(i+5)]+" | ");
+      console.log("input: "+array[(i*6)]+" | "+array[((i*6)+1)]+" | "+array[((i*6)+2)]+" | "+array[((i*6)+3)]+" | "+array[((i*6)+4)]+" | "+array[((i*6)+5)]);
       gluco = this.getGlucoseRepresentation(array[(i*6)],array[((i*6)+1)],array[((i*6)+2)],array[((i*6)+3)],array[((i*6)+4)],array[((i*6)+5)]);
-      if(this.checkValue(gluco.value, gluco.date, this.valuesGlucose)) {
+      if(this.checkValue(gluco.value, gluco.date, gluco.event, this.valuesGlucose)) {
         console.log("Value already exist");
       } else {
-        this.addGlucose(gluco.value, gluco.date, gluco.event);
+        let val: number = parseFloat(gluco.value);
+        this.valuesGlucose.push([gluco.date.getTime(), val, gluco.event]);
+        this.saveMIDATAGlucose(val, gluco.date);
         console.log("Added new Value");
       }
     }
+    this.storage.ready().then(() => {
+      this.storage.set('glucoseValues', this.valuesGlucose.sort());
+      this.refreshPage();
+    });
   }
 
-  checkValue(v1,d1,array: any[][]): boolean {
+  checkValue(v, d, e, array): boolean {
     var match: boolean = true;
-    var num = array.indexOf([d1,v1]);
+    var num = array.indexOf([d.getTime(), parseFloat(v), e]);
     if(num == -1) {
       match = false;
     }
@@ -652,7 +661,7 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
-    var result: {value: any, date: any, event: any};
+    var result: {value, date, event};
     var event: any = ((byte5&0xf8)>>3);
     if(event == 2) {
       event = "Nach dem Sport";

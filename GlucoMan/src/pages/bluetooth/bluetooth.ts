@@ -20,6 +20,13 @@ export class BluetoothPage {
   constructor(public navCtrl: NavController, public bls: BluetoothSerial, public storage: Storage,
               public alertCtrl: AlertController) {
 
+    this.storage.ready().then(() => {
+      this.storage.get('deviceId').then((val) => {
+        if(val) {
+          this.devices = val;
+        }
+      });
+    });
   }
 
   registerNewDevice() {
