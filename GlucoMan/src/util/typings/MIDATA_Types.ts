@@ -54,6 +54,12 @@ export interface DateToValue
    article: Article;
  }
 
+ export interface LOCAL_Glucose {
+   date: Date;
+   value: number;
+   event: string;
+ }
+
  export interface Article {
    gtin: string,
    pharmaCode: string,
@@ -140,25 +146,4 @@ export interface DateToValue
  export interface Component {
    code: CodeableConcept,
    valueQuantity: Value
- }
-
- export interface MedicationIngredient {
-   itemCodeableConcept:CodeableConcept;
-   isActive:boolean;
-   amount:any;
- }
-
- export interface MedicationPackageContent {
-   itemCodeableConcept:CodeableConcept;
-   amount:any;
- }
-
- export interface MedicationBatch {
-   lotNumber:string;
-   expirationDate:Date;
- }
-
- export interface MedicationImage {
-   url:string;
-   title:string;
  }

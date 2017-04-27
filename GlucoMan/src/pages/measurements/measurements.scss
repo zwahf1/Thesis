@@ -4,5 +4,10 @@ page-measurements {
   }
   .RowHeader {
     background-color: color($colors, primaryLight);
+    border-bottom: 2px solid;
+  }
+
+  .row-border {
+    border-top: 1px solid;
   }
 }

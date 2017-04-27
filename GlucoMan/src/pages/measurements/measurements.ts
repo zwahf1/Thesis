@@ -24,11 +24,12 @@ export class MeasurementsPage {
   chartPulse: any;
   chartWeight: any;
   glucoseUnit: string = 'mmol/L';
+  valuesGlucose: [TYPES.LOCAL_Glucose];
 
   visibleList = [];
   vitalRangeList = [];
 
-  valuesGlucose = [[]];
+  valuesGlucoseChart = [[]];
   valuesBP = [[]];
   valuesPulse = [[]];
   valuesWeight = [[]];
@@ -55,11 +56,14 @@ export class MeasurementsPage {
         if (val) {
           this.valuesGlucose = val;
         } else {
-          this.valuesGlucose = [[Date.UTC(2016, 3, 4), 2, "Vor dem Essen"], [Date.UTC(2016, 3, 5), 4, "Vor dem Essen"],
-            [Date.UTC(2016, 3, 7), 6, "Nach Medikation"], [Date.UTC(2016, 3, 8), 8, "Nach dem Essen"],
-            [Date.UTC(2016, 3, 9), 10, "Nach dem Essen"], [Date.UTC(2016, 3, 11), 3, "Nach dem Sport"],
-            [Date.UTC(2016, 3, 12), 8, "Nach dem Essen"], [Date.UTC(2016, 3, 14), 9, "Nach dem Essen"],
-            [Date.UTC(2016, 3, 17), 10, "Nach dem Essen"], [Date.UTC(2016, 3, 18), 11, "Nach dem Essen"]];
+          this.valuesGlucose = [{date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 5), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 7), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 8), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 10), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 14), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 17), value: 2.2, event: "Nicht verfügbar"},
+                                {date: new Date(2017, 3, 20), value: 2.2, event: "Nicht verfügbar"}];
           this.storage.set('glucoseValues', this.valuesGlucose);
         }
       });
@@ -67,9 +71,9 @@ export class MeasurementsPage {
         if (val) {
           this.valuesBP = val;
         } else {
-          this.valuesBP = [[Date.UTC(2016, 3, 4), 71, 132], [Date.UTC(2016, 3, 5), 62, 124], [Date.UTC(2016, 3, 7), 73, 126], [Date.UTC(2016, 3, 8), 54, 118],
-            [Date.UTC(2016, 3, 9), 65, 110], [Date.UTC(2016, 3, 11), 66, 119], [Date.UTC(2016, 3, 12), 57, 128], [Date.UTC(2016, 3, 14), 68, 129],
-            [Date.UTC(2016, 3, 17), 79, 130], [Date.UTC(2016, 3, 18), 60, 121]];
+          this.valuesBP = [[Date.UTC(2017, 3, 4), 71, 132], [Date.UTC(2017, 3, 5), 62, 124], [Date.UTC(2017, 3, 7), 73, 126], [Date.UTC(2017, 3, 8), 54, 118],
+            [Date.UTC(2017, 3, 9), 65, 110], [Date.UTC(2017, 3, 11), 66, 119], [Date.UTC(2017, 3, 12), 57, 128], [Date.UTC(2017, 3, 14), 68, 129],
+            [Date.UTC(2017, 3, 17), 79, 130], [Date.UTC(2017, 3, 18), 60, 121]];
           this.storage.set('bpValues', this.valuesBP);
         }
       });
@@ -77,9 +81,9 @@ export class MeasurementsPage {
         if (val) {
           this.valuesPulse = val;
         } else {
-          this.valuesPulse = [[Date.UTC(2016, 3, 4), 66], [Date.UTC(2016, 3, 5), 77], [Date.UTC(2016, 3, 7), 65], [Date.UTC(2016, 3, 8), 61],
-            [Date.UTC(2016, 3, 9), 62], [Date.UTC(2016, 3, 11), 75], [Date.UTC(2016, 3, 12), 83], [Date.UTC(2016, 3, 14), 59],
-            [Date.UTC(2016, 3, 17), 65], [Date.UTC(2016, 3, 18), 73]];
+          this.valuesPulse = [[Date.UTC(2017, 3, 4), 66], [Date.UTC(2017, 3, 5), 77], [Date.UTC(2017, 3, 7), 65], [Date.UTC(2017, 3, 8), 61],
+            [Date.UTC(2017, 3, 9), 62], [Date.UTC(2017, 3, 11), 75], [Date.UTC(2017, 3, 12), 83], [Date.UTC(2017, 3, 14), 59],
+            [Date.UTC(2017, 3, 17), 65], [Date.UTC(2017, 3, 18), 73]];
           this.storage.set('pulseValues', this.valuesPulse);
         }
       });
@@ -87,9 +91,9 @@ export class MeasurementsPage {
         if (val) {
           this.valuesWeight = val;
         } else {
-          this.valuesWeight = [[Date.UTC(2016, 3, 4), 76.5], [Date.UTC(2016, 3, 5), 77.6], [Date.UTC(2016, 3, 7), 75.0], [Date.UTC(2016, 3, 8), 76.3],
-            [Date.UTC(2016, 3, 9), 76.7], [Date.UTC(2016, 3, 11), 77.5], [Date.UTC(2016, 3, 12), 77.8], [Date.UTC(2016, 3, 14), 78.1],
-            [Date.UTC(2016, 3, 17), 74.9], [Date.UTC(2016, 3, 18), 75.7]];
+          this.valuesWeight = [[Date.UTC(2017, 3, 4), 76.5], [Date.UTC(2017, 3, 5), 77.6], [Date.UTC(2017, 3, 7), 75.0], [Date.UTC(2017, 3, 8), 76.3],
+            [Date.UTC(2017, 3, 9), 76.7], [Date.UTC(2017, 3, 11), 77.5], [Date.UTC(2017, 3, 12), 77.8], [Date.UTC(2017, 3, 14), 78.1],
+            [Date.UTC(2017, 3, 17), 74.9], [Date.UTC(2017, 3, 18), 75.7]];
           this.storage.set('weightValues', this.valuesWeight);
         }
       });
@@ -130,10 +134,16 @@ while the charts are creating, the loading indicator is presented.
 **/
   refreshPage() {
     let loading = this.loadingCtrl.create();
-
     loading.present();
+
+    if(this.valuesGlucose.length > this.valuesGlucoseChart.length) {
+      for(var i = 0; i < this.valuesGlucose.length; i++) {
+        this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
+      }
+
+      this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
+    }
     //the charts are created by the Chart-class
-    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucose, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
     this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
@@ -230,7 +240,7 @@ it's based on the visibleList, which is editable in the settings.
           type: 'spline',
           name: 'Blutzucker',
           yAxis: 1,
-          data: this.valuesGlucose,
+          data: this.valuesGlucoseChart,
           tooltip: {
             valueSuffix: ' mmol/L'
           }
@@ -362,6 +372,7 @@ method to entry the new value
     let alert = this.alertCtrl.create({});
     alert.setTitle(typ);
     switch (typ) {
+
       case "Blutdruck": {
         alert.addInput({
           type: 'number',
@@ -375,10 +386,13 @@ method to entry the new value
         });
         break;
       }
+
       case "Import": {
         alert.setMessage("Aktivierung des Bluetooth vom Blutzucker-Messgerät");
+        // alert.
         break;
       }
+
       case "Mess-Art": {
         alert.addInput({
           type: 'radio',
@@ -403,6 +417,7 @@ method to entry the new value
         });
         break;
       }
+
       default: {
         alert.addInput({
           type: 'number',
@@ -460,7 +475,7 @@ method to entry the new value
                   } else {
                     let alert = this.alertCtrl.create({
                       title: 'Kein Gerät registriert',
-                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: Einstellungen > Bluetooth",
+                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: "+"Einstellungen > Bluetooth".bold(),
                       buttons: ['OK']
                     });
                     alert.present();
@@ -621,8 +636,12 @@ method to add blood pressure values into weightlist, chart and MIDATA
 method to add glucose value into weightlist, chart and MIDATA
   **/
   addGlucose(v, d, e) {
-    let val: number = parseFloat(v);
-    this.valuesGlucose.push([d.getTime(), val, e]);
+    let gluco: TYPES.LOCAL_Glucose = {
+      date: d,
+      value: parseFloat(v),
+      event: e
+    }
+    this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort());
       this.saveMIDATAGlucose(v, d);
@@ -631,32 +650,46 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   addGlucoseValues(array: Uint8Array) {
-    var gluco: {value, date, event};
+    var gluco: TYPES.LOCAL_Glucose;
     var num = array.length / 6;
     for(var i = 0; i < num; i++) {
+
       console.log("input: "+array[(i*6)]+" | "+array[((i*6)+1)]+" | "+array[((i*6)+2)]+" | "+array[((i*6)+3)]+" | "+array[((i*6)+4)]+" | "+array[((i*6)+5)]);
-      gluco = this.getGlucoseRepresentation(array[(i*6)],array[((i*6)+1)],array[((i*6)+2)],array[((i*6)+3)],array[((i*6)+4)],array[((i*6)+5)]);
-      if(this.checkValue(gluco.value, gluco.date, gluco.event, this.valuesGlucose)) {
+      let glucoRep = this.getGlucoseRepresentation(array[(i*6)],array[((i*6)+1)],array[((i*6)+2)],array[((i*6)+3)],array[((i*6)+4)],array[((i*6)+5)]);
+
+      let val: number = parseFloat(glucoRep.value);
+      let date: Date = glucoRep.date;
+      let dateTime: number = glucoRep.date.getTime();
+      let event: string = glucoRep.event;
+      gluco = {
+        date: date,
+        value: val,
+        event: event
+      }
+
+      if(this.checkValue(gluco)) {
         console.log("Value already exist");
       } else {
-        let val: number = parseFloat(gluco.value);
-        this.valuesGlucose.push([gluco.date.getTime(), val, gluco.event]);
-        this.saveMIDATAGlucose(val, gluco.date);
+        this.valuesGlucose.push(gluco);
+        // this.saveMIDATAGlucose(val, gluco.date);
         console.log("Added new Value");
       }
     }
+    console.log(this.valuesGlucose);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose.sort());
+      this.storage.set('glucoseValues', this.valuesGlucose);
       this.refreshPage();
     });
   }
 
-  checkValue(v, d, e, array): boolean {
+  checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
     var match: boolean = true;
-    var num = array.indexOf([d.getTime(), parseFloat(v), e]);
+    var num = this.valuesGlucose.indexOf(glucose);
     if(num == -1) {
       match = false;
     }
+    console.log(match);
+    console.log(glucose);
     return match;
   }
 

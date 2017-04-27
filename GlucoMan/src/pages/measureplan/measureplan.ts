@@ -15,7 +15,13 @@ import { Storage } from '@ionic/storage';
 export class MeasureplanPage {
 
   arrayValues: string[][];
+  arrayValuesBefore: string[][];
+  aValBefore: boolean = false;
+  actualSchema: string;
+
   arrayIndividualValues: string[][];
+  arrayIndividualValuesBefore: string[][];
+
   arrayLowValues = [
     ["Mo", "X", "X", "", "", "", "", ""],
     ["Di", "", "", "", "", "", "", ""],
@@ -23,7 +29,9 @@ export class MeasureplanPage {
     ["Do", "", "", "", "", "", "", ""],
     ["Fr", "", "", "", "", "", "", ""],
     ["Sa", "", "", "", "", "X", "X", ""],
-    ["So", "", "", "", "", "", "", ""],
+    ["So", "", "", "", "", "", "", ""]
+  ];
+  arrayLowValuesBefore = [
     ["-3", "X", "(X)", "X", "(X)", "X", "(X)", "X"],
     ["-2", "X", "(X)", "X", "(X)", "X", "(X)", "X"],
     ["-1", "X", "X", "X", "X", "X", "X", "X"]
@@ -46,7 +54,6 @@ export class MeasureplanPage {
     ["Sa", "X", "", "X", "X", "X", "", "X"],
     ["So", "X", "", "X", "", "X", "X", "X"]
   ];
-  actualSchema: string;
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage) {
     this.storage.ready().then(() => {
@@ -58,12 +65,19 @@ export class MeasureplanPage {
             ["Do", "", "", "", "", "", "", ""],
             ["Fr", "", "", "", "", "", "", ""],
             ["Sa", "", "", "", "", "", "", ""],
-            ["So", "", "", "", "", "", "", ""],
+            ["So", "", "", "", "", "", "", ""]];
+        } else {
+          this.arrayIndividualValues = val;
+        }
+      });
+      this.storage.get('schemaIndividualBefore').then((val) => {
+        if (val == undefined) {
+          this.arrayIndividualValuesBefore = [
             ["-3", "", "", "", "", "", "", ""],
             ["-2", "", "", "", "", "", "", ""],
             ["-1", "", "", "", "", "", "", ""]];
         } else {
-          this.arrayIndividualValues = val;
+          this.arrayIndividualValuesBefore = val;
         }
       });
       this.storage.get('Schema').then((val) => {
@@ -72,6 +86,7 @@ export class MeasureplanPage {
         //  this.loadSchema(this.actualSchema);
         } else {
           this.actualSchema = 'Individuell';
+          this.aValBefore = true;
         //  this.loadSchema(this.actualSchema);
         }
         this.loadSchema(this.actualSchema);
@@ -115,26 +130,33 @@ export class MeasureplanPage {
   setIndividualValues() {
     //  this.actualSchema = "Individual";
     this.arrayValues = this.arrayIndividualValues;
+    this.arrayValuesBefore = this.arrayIndividualValuesBefore;
+    this.aValBefore = true;
   }
 
   saveIndividualValues() {
     this.storage.ready().then(() => {
       this.storage.set('schemaIndividual', this.arrayIndividualValues);
+      this.storage.set('schemaIndividualBefore', this.arrayIndividualValuesBefore);
     });
   }
 
   setLowValues() {
     //  this.actualSchema = "Low";
     this.arrayValues = this.arrayLowValues;
+    this.arrayValuesBefore = this.arrayLowValuesBefore;
+    this.aValBefore = true;
   }
 
   setMediumValues() {
     //    this.actualSchema = "Medium";
     this.arrayValues = this.arrayMediumValues;
+    this.aValBefore = false;
   }
 
   setHighValues() {
     //  this.actualSchema = "High";
     this.arrayValues = this.arrayHighValues;
+    this.aValBefore = false;
   }
 }

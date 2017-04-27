@@ -83,7 +83,39 @@
         {{day["7"]}}
       </ion-col>
     </ion-row>
-
+    <div *ngIf="aValBefore">
+      <ion-row class="RowHeader">
+        <ion-col col-12>
+          3 Tage vor der nächsten Arztkonsultation
+        </ion-col>
+      </ion-row>
+      <ion-row class="RowDay" *ngFor="let day of arrayValuesBefore">
+        <ion-col col-2 class="ColDay">
+          {{day["0"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,1)">
+          {{day["1"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,2)">
+          {{day["2"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,3)">
+          {{day["3"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,4)">
+          {{day["4"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,5)">
+          {{day["5"]}}
+        </ion-col>
+        <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,6)">
+          {{day["6"]}}
+        </ion-col>
+        <ion-col col-3 class="ColDay" (click)="toogleValue(day,7)">
+          {{day["7"]}}
+        </ion-col>
+      </ion-row>
+    </div>
   </ion-grid>
 
 </ion-content>
