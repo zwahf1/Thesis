@@ -20,15 +20,18 @@ export class DataPage {
 
   constructor(public navCtrl: NavController, public appCtrl: App, public navParams: NavParams, public popoverCtrl: PopoverController, public alertCtrl: AlertController, public storage: Storage) { }
 
-  //PopoverController to present the DisclaimerPage
+  /**
+   * PopoverController to present the DisclaimerPage
+   *  @return {[type]} [description]
+   */
   presentPopover() {
     let popover = this.popoverCtrl.create(DisclaimerPage);
     popover.present();
   }
   /**
-  an alet is presented to confirm the deletion of the storage.
-  after the confirm, the storage wil lbe cleared
-  */
+   * an alet is presented to confirm the deletion of the storage. after the confirm, the storage wil lbe cleared
+   * @return {[type]} [description]
+   */
   deleteAllData() {
     //Alert to confirm the deletion of the data
     let confirm = this.alertCtrl.create({
@@ -57,8 +60,9 @@ export class DataPage {
     confirm.present();
   }
   /**
-  log ou and navigate to the LoginPage
-  */
+   * log out and navigate to the LoginPage
+   * @return {[type]} [description]
+   */
   logout() {
     this.mp.logout();
     this.appCtrl.getRootNav().setRoot(LoginPage);

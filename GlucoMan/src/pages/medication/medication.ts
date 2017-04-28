@@ -468,4 +468,23 @@ storage GET:
     // present the alert popup
     alert.present();
   }
+/**
+ * method to collapse and expand the charts. it's called by clicking on a divider between the charts.
+ * @param  {[type]} src source element of the click
+ * @return {[type]}     [description]
+ */
+  expand(src){
+    let element = src.parentNode.parentNode.parentNode.nextElementSibling;
+    //mode is the style attribute of the chart element
+    let mode = '' + element.getAttribute('style');
+    //if 'style' contains the word 'none', the method 'search' returns a
+    //positive value, otherwise -1
+    if (mode.search('none') < 0) {
+      //the attribute 'display' is set to none to hide the chart
+      element.style.display = 'none';
+    } else if (mode.search('none') > 0) {
+      //the attribute 'display' is set to inline to show the chart
+      element.style.display = 'inline';
+    }
+  }
 }

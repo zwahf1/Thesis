@@ -1,4 +1,3 @@
-.
 <ion-header>
   <ion-navbar >
     <!-- <ion-buttons left>
@@ -13,7 +12,7 @@
 <ion-content padding>
   <ion-list>
     <ion-item-group *ngFor="let item of vitalRangeList">
-      <table>
+      <table [style.background-color]="item.changeFlag ? 'whitesmoke' : 'transparent'">
         <tr style="width: inherit">
           <th colspan="4">
             <ion-item-divider>
@@ -27,13 +26,13 @@
         <tr>
           <td>
             <ion-item>
-              <ion-input (input)='inputChange($event.srcElement, item)' type="number" [(ngModel)]="item.lowerLimit"></ion-input>
+              <ion-input (input)='inputChange(item)' type="number" [(ngModel)]="item.lowerLimit"></ion-input>
             </ion-item>
           </td>
           <td style="min-width: 10px">-</td>
           <td>
             <ion-item>
-              <ion-input (input)='inputChange($event.srcElement, item)' type="number" [(ngModel)]="item.upperLimit"></ion-input>
+              <ion-input (input)='inputChange(item)' type="number" [(ngModel)]="item.upperLimit"></ion-input>
             </ion-item>
           </td>
           <td style="min-width: 4em;">

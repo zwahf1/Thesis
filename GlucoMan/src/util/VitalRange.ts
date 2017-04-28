@@ -13,6 +13,7 @@ export class VitalRange {
   upperLimit: number;
   unit: any;
   date: any;
+  changeFlag: boolean = false;
 
   constructor(title: any, lower: number, upper: number, unit: any, date: any) {
 

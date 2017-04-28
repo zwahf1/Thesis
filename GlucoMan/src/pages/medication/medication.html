@@ -12,29 +12,29 @@
 <ion-content>
   <ion-list class="mediList">
 
-    <ion-item-divider class="divider"> Regelmässige Medikamente </ion-item-divider>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Regelmässige Medikamente </ion-item-divider>
 
     <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(chronicMedis, m)" text-wrap class="medi">
-      {{m.article.title}}
+      <!-- {{m.article.title}} -->
+      hier kommt das Medikament
     </ion-item>
 
-    <ion-item-divider class="divider"> Selbstgekaufte Medikamente </ion-item-divider>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Selbstgekaufte Medikamente </ion-item-divider>
 
     <ion-item *ngFor="let m of selfMedis" (click)="detailMedi(selfMedis, m)" text-wrap class="medi">
       {{m.article.title}}
     </ion-item>
 
-    <ion-item-divider class="divider"> Insulin </ion-item-divider>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Insulin </ion-item-divider>
 
     <ion-item *ngFor="let m of insulin" (click)="detailMedi(insulin, m)" text-wrap class="medi">
       {{m.article.title}}
     </ion-item>
 
-    <ion-item-divider class="divider"> Unverträglichkeiten </ion-item-divider>
+    <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Unverträglichkeiten </ion-item-divider>
 
     <ion-item *ngFor="let m of intolerances" (click)="detailMedi(intolerances, m)" text-wrap class="medi">
       {{m.article.title}}
     </ion-item>
-
   </ion-list>
 </ion-content>
