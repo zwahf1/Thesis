@@ -14,41 +14,37 @@ import { Storage } from '@ionic/storage';
 })
 export class CheckupsPage {
 
-  arrayCheckups: [[any]];
-  arrayControls: [[any]];
+  arrayCheckups = [];
+  arrayControls = [[]];
 
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public alertCtrl: AlertController) {
     this.storage.ready().then(() => {
 
       this.storage.get('arrayCheckups').then((val) => {
         if(val == undefined) {
-          console.log("undefined values");
-          this.arrayCheckups = [[""]];
+          this.arrayCheckups = [];
         } else {
-          console.log("defined values");
           this.arrayCheckups = val;
         }
       });
 
       this.storage.get('arrayControls').then((val) => {
         if(val == undefined) {
-          console.log("undefined values");
           this.arrayControls = [[false,"Hautbild","",""],
-                                [true,"Sensibilität","",""],
+                                [false,"Sensibilität","",""],
                                 [false,"Durchblutung","",""],
                                 [false,"Deformitäten","",""],
                                 [false,"Schuhe","",""],
                                 [false,"Serumkreatinin","",""],
                                 [false,"Mikroalbuminurie","",""],
                                 [false,"TC/HDL","",""],
-                                [true,"LDL","",""],
+                                [false,"LDL","",""],
                                 [false,"Triglyceride","",""],
                                 [false,"Retinopathie","",""],
                                 [false,"Tabak","",""],
                                 [false,"Bewegung","",""]];
           this.storage.set('arrayControls',this.arrayControls);
         } else {
-          console.log("defined values");
           this.arrayControls = val;
         }
       });
@@ -137,7 +133,7 @@ export class CheckupsPage {
   openEntryCheckup() {
     let alert = this.alertCtrl.create({});
     // set title of popup
-    alert.setTitle('Neue Kontrolluntersuchung einfügen');
+    alert.setTitle('Neue Kontrolluntersuchung');
 
     alert.addInput({
       type: 'date',
@@ -147,22 +143,17 @@ export class CheckupsPage {
     alert.addInput({
       type: 'number',
       name: 'hba1c',
-      placeholder: 'HbA1c-Wert'
+      placeholder: 'HbA1c-Wert in %'
     });
     alert.addInput({
-      type: 'number',
+      type: 'text',
       name: 'bp',
-      placeholder: 'Blutdruck-Wert'
+      placeholder: 'Blutdruck in mmHg (Sys / Dia)'
     });
     alert.addInput({
       type: 'number',
       name: 'weight',
-      placeholder: 'Gewicht'
-    });
-    alert.addInput({
-      type: 'number',
-      name: 'hypo',
-      placeholder: 'Anzahl Hypoglykämien'
+      placeholder: 'Gewicht in kg'
     });
     // button to cancel
     alert.addButton('Cancel');
@@ -179,7 +170,7 @@ export class CheckupsPage {
           // if the category is choosed
           navTransition.then(() => {
             console.log(data);
-            this.arrayCheckups.push([new Date(), data.hba1c, data.bp, data.weight, data.hypo]);
+            this.arrayCheckups.push([data.date, data.hba1c, data.bp, data.weight]);
             this.storage.set('arrayCheckups',this.arrayCheckups);
           });
         });

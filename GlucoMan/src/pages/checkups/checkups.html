@@ -23,37 +23,44 @@
     <ion-slide>
       <ion-grid>
         <ion-row class="RowHeader">
-          <ion-col col-2>
+          <ion-col col-3>
             Datum
           </ion-col>
-          <ion-col col-md-1>
+          <ion-col col-3>
             HbA1c-Wert
           </ion-col>
-          <ion-col col-md-1>
-            Blutdruck-Wert
+          <ion-col col-3>
+            Blutdruck
           </ion-col>
-          <ion-col col-md-1>
+          <ion-col col-3>
             Gewicht
           </ion-col>
-          <ion-col col-md-1>
-            Anzahl Hypo-glykämien
+        </ion-row>
+        <ion-row class="RowHeader">
+          <ion-col col-3>
+          </ion-col>
+          <ion-col col-3>
+            %
+          </ion-col>
+          <ion-col col-3>
+            mmHg
+          </ion-col>
+          <ion-col col-3>
+            kg
           </ion-col>
         </ion-row>
-        <ion-row *ngFor="let entry of arrayCheckups">
-          <ion-col col-2>
-            {{entry[0]}}
+        <ion-row class="row-border" *ngFor="let entry of arrayCheckups">
+          <ion-col col-3>
+            {{entry[0] | date:'dd.MM.yyyy'}}
           </ion-col>
-          <ion-col col-md-1>
+          <ion-col col-3>
             {{entry[1]}}
           </ion-col>
-          <ion-col col-md-1>
+          <ion-col col-3>
             {{entry[2]}}
           </ion-col>
-          <ion-col col-md-1>
+          <ion-col col-3>
             {{entry[3]}}
-          </ion-col>
-          <ion-col col-md-1>
-            {{entry[4]}}
           </ion-col>
         </ion-row>
       </ion-grid>
@@ -76,13 +83,13 @@
             <ion-checkbox (click)="clickCheckBox(control)" [(ngModel)]="control[0]">
             </ion-checkbox>
           </ion-col>
-          <ion-col col-4>
+          <ion-col col-4 style="text-align: left">
             {{control[1]}}
           </ion-col>
           <ion-col col-3>
             {{control[2] | date:'dd.MM.yyyy'}}
           </ion-col>
-          <ion-col col-4>
+          <ion-col col-4 style="text-align: left">
             {{control[3]}}
           </ion-col>
         </ion-row>

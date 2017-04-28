@@ -643,7 +643,7 @@ method to add glucose value into weightlist, chart and MIDATA
     }
     this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose.sort());
+      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
       this.saveMIDATAGlucose(v, d);
       this.refreshPage();
     });
@@ -677,19 +677,34 @@ method to add glucose value into weightlist, chart and MIDATA
     }
     console.log(this.valuesGlucose);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose);
+      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
       this.refreshPage();
     });
   }
 
-  checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
-    var match: boolean = true;
-    var num = this.valuesGlucose.indexOf(glucose);
-    if(num == -1) {
-      match = false;
+  compareGlucoseValues(a: TYPES.LOCAL_Glucose, b: TYPES.LOCAL_Glucose): number {
+    if(a.date.getTime() > b.date.getTime()) {
+      return 1;
+    } else if(a.date.getTime() == b.date.getTime()) {
+      if((a.value == b.value) && (a.event == b.event)) {
+        return 0;
+      } else if(a.value > b.value) {
+        return 1;
+      } else {
+        return -1;
+      }
+    } else {
+      return -1;
     }
-    console.log(match);
-    console.log(glucose);
+  }
+
+  checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
+    var match: boolean = false;
+    for(var i = 0; i < this.valuesGlucose.length; i++) {
+      if(this.compareGlucoseValues(glucose, this.valuesGlucose[i]) == 0) {
+        match = true;
+      }
+    }
     return match;
   }
 
