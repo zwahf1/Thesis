@@ -23,8 +23,9 @@ export class SettingsPage {
 
   }
   /**
-  method to navigate to the next page
-  **/
+   * method to navigate to the next page
+   * @param  {[Page]} target target Page of the navigation
+   */
   goTo(target) {
     switch(target){
       case 'TargetrangePage':

@@ -27,9 +27,9 @@ the default will be overwritten.
 **/
   constructor(public navCtrl: NavController, public storage: Storage, public appCtrl: App, private alertCtrl: AlertController) {
     this.vitalRangeList.push( new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date));
-    this.vitalRangeList.push(new VitalRange('Diastolischer BD', 70, 89, 'mmHg', new Date));
+    this.vitalRangeList.push( new VitalRange('Diastolischer BD', 70, 89, 'mmHg', new Date));
     this.vitalRangeList.push( new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date));
-    this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
+    this.vitalRangeList.push( new VitalRange('Puls', 0, 0, '/min', new Date));
     this.vitalRangeList.push( new VitalRange('Gewicht', 65, 85, 'kg', new Date));
 
     this.storage.ready().then(() => {
@@ -70,9 +70,7 @@ before the navCtrl pops the current view.
   ionViewWillLeave(){
     if(this.changeFlag){
       this.presentConfirm();
-      this.changeFlag = false;
     }
-    //this.navCtrl.pop();
   }
 /**
 method to confirm and save the edited values.

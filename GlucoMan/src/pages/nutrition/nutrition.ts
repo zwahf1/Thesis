@@ -19,12 +19,12 @@ it's possible to import data with the barcode of a product or to make an entry m
 
 export class NutritionPage {
 
+  //list with every single nutrition
+  nutritionDetailList: DetailNutrition[] = [];
   //list with all nutrition of one day with, divided per time of day
   nutritionList: DayNutrition[] = [];
   //list with all nutrition per time of day, divided per date
   nutritionTimeOfDayList: any[][];
-  //list with every single nutrition
-  nutritionDetailList: DetailNutrition[] = [];
   //options of the carbohydrates chart of the NutritionPage
   chartCarbo: any;
 
@@ -72,27 +72,26 @@ export class NutritionPage {
     //for each entry of nutritionDetailList
     for (let entry of this.nutritionDetailList) {
       //date of the current entry
-      let dateEntry = entry.date;
+      let dateEntry = new Date(entry.date);
+      dateEntry.setHours(0, 0, 0, 0);
       //variable for last date in nutritionList, default 0, so it isn't the same day
       let dateLastInList = new Date(0);
       //if there's a date, load it to local variable, ortherwise it stays the default date
       try {
-        dateLastInList = this.nutritionList[this.nutritionList.length - 1][0];
+        //date of the last entry
+        dateLastInList = new Date(this.nutritionList[this.nutritionList.length - 1][0]);
+        dateLastInList.setHours(0, 0, 0, 0);
       } catch (Error) {
       }
-      //calculate the difference between the two dates
-      let diffDate = dateEntry.getTime() - dateLastInList.getTime();
-      //timeOfDay is the value of 24h in milliseconds
-      let timeOfDay = 86400000;
-
-      //if the two dates have not the same day and the different is lower than 24h or if the different
-      //of the two dates are bigger than 24h, so push a new entry to the list and set the date
-      if (dateEntry.getDate() != dateLastInList.getDate() && Math.abs(diffDate) < timeOfDay || (Math.abs(diffDate) > timeOfDay)) {
+      //if two dates don't have the same time, push a new entry with
+      //the date of the current entry
+      if (dateEntry.getTime() != dateLastInList.getTime()) {
         this.nutritionList.push(new DayNutrition);
         this.nutritionList[this.nutritionList.length - 1][0] = entry.date;
       }
+
       //local variable tempCarb for current carb value of the time of day of the entry, default = 0
-      let tempCarb: number = 0
+      let tempCarb: number = 0;
       tempCarb = this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)];
       //add the tempCarb and carb value of the entry and load it to the list
       this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)] = (parseInt('' + entry.carb) + parseInt('' + tempCarb));
@@ -105,12 +104,12 @@ export class NutritionPage {
   this method returns the index of the
   time of day of a given date.
 
-  index 0 for nigth: 22:00-03:59
   index 1 for morning: 4:00-08:59
   index 2 for forenoon: 9:00-10:59
   index 3 for midday: 11:00-13:59
   index 4 for afternoon: 14:00-16:59
   index 5 for evening: 17:00-21:59
+  index 6 for nigth: 22:00-03:59
   **/
   getTimeOfDay(date: Date) {
     let d = date;
@@ -150,7 +149,7 @@ export class NutritionPage {
     //for-loop for every entry of the nutritionList
     for (let entry of this.nutritionList) {
       //clone the date of the current entry
-      let date = new Date(entry[0].getTime());
+      let date = new Date(entry[0]);
       //set the time to 0. Cause the time zone, hours has an offset of 2
       date.setHours(2);
       date.setMinutes(0);
@@ -183,7 +182,7 @@ export class NutritionPage {
         height: 300,
         //width is null, so it fits to the window
         width: window.innerWidth,
-      //  marginRight: 10,
+        //  marginRight: 10,
         resetZoomButton: {
           position: {
             verticalAlign: 'bottom', // by default
@@ -349,7 +348,6 @@ export class NutritionPage {
     1. priority: Open Food Facts
     2. priority: Open Food
     3. priority: FDDB
-
   **/
   scan() {
     //plugin barcodeScanner to get the text of a printed barcode
@@ -595,8 +593,7 @@ export class NutritionPage {
     alert.addButton({
       text: 'berechnen',
       handler: (data) => {
-        let valueCarbo = Math.round((carbo / port * data.port) * 100) / 100;
-      //  this.valuePort = data.port;
+        let valueCarbo = (carbo / port * data.port).toFixed(1);
         this.showDataDetailsBarcode(data.desc, data.port, valueCarbo);
       }
     });
@@ -628,7 +625,6 @@ export class NutritionPage {
     this.nutritionDetailList.push(new DetailNutrition(desc, port, carbo));
     //save the updated list and create the new nutrition list
     this.saveDetailList();
-    this.createNutritionList();
   }
   /**
   method to edit or remove a clicked entry of the nutritionDetailList
@@ -668,7 +664,6 @@ export class NutritionPage {
         if (index !== -1) {
           this.nutritionDetailList.splice(index, 1);
           this.saveDetailList();
-          this.createNutritionList();
         }
       }
     });
@@ -684,7 +679,6 @@ export class NutritionPage {
         let index: number = this.nutritionDetailList.indexOf(item);
         this.nutritionDetailList[index] = item;
         this.saveDetailList();
-        this.createNutritionList();
       }
     });
     // present the alert popup
@@ -700,8 +694,8 @@ export class NutritionPage {
   saveDetailList() {
     this.storage.ready().then(() => {
       this.storage.set('NutritionDetailList', this.nutritionDetailList);
-      console.log('saved in storage as NutritionDetailList');
     });
+    this.createNutritionList();
   }
   /**
   method to hide and show the chart container.
