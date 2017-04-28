@@ -5,5 +5,15 @@ page-checkups {
 
   .row-border {
     border-bottom: 1px solid;
+    border-color: color($colors, delimiter);
+  }
+
+  .boldText {
+    font-weight: bold;
+  }
+
+  .borderRight {
+    border-right: 1px solid;
+    border-color: color($colors, delimiter);
   }
 }

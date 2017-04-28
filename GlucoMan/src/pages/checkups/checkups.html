@@ -23,26 +23,26 @@
     <ion-slide>
       <ion-grid>
         <ion-row class="RowHeader">
-          <ion-col col-3>
+          <ion-col col-3 class="boldText borderRight">
             Datum
           </ion-col>
-          <ion-col col-3>
-            HbA1c-Wert
+          <ion-col col-3 class="boldText borderRight">
+            HbA1c
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="boldText borderRight">
             Blutdruck
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="boldText">
             Gewicht
           </ion-col>
         </ion-row>
         <ion-row class="RowHeader">
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
             %
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
             mmHg
           </ion-col>
           <ion-col col-3>
@@ -50,13 +50,13 @@
           </ion-col>
         </ion-row>
         <ion-row class="row-border" *ngFor="let entry of arrayCheckups">
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
             {{entry[0] | date:'dd.MM.yyyy'}}
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
             {{entry[1]}}
           </ion-col>
-          <ion-col col-3>
+          <ion-col col-3 class="borderRight">
             {{entry[2]}}
           </ion-col>
           <ion-col col-3>
@@ -67,7 +67,7 @@
     </ion-slide>
     <ion-slide>
       <ion-grid>
-        <ion-row class="RowHeader">
+        <ion-row class="RowHeader boldText">
           <ion-col col-5>
             Untersuchung
           </ion-col>
@@ -78,7 +78,7 @@
             Bemerkung
           </ion-col>
         </ion-row>
-        <ion-row *ngFor="let control of arrayControls">
+        <ion-row class="row-border" *ngFor="let control of arrayControls">
           <ion-col col-1>
             <ion-checkbox (click)="clickCheckBox(control)" [(ngModel)]="control[0]">
             </ion-checkbox>

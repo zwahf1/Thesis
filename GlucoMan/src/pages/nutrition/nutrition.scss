@@ -2,10 +2,11 @@ page-nutrition {
   table{
     width: 100%;
     border-collapse: collapse;
-}
-td {
-    border: 1px solid black;
-}
+  }
+  td {
+      border: 1px solid;
+      border-color: color($colors, delimiter);
+  }
   thead {
     background-color: color($colors, primary);
   }
@@ -18,7 +19,29 @@ td {
   }
   .scroll-content {
      margin-bottom: 76px !important;
-   }
+  }
+
+  .RowHeader {
+    background-color: color($colors, primary);
+  }
+
+  .borderBottom {
+    border-bottom: 1px solid;
+    border-color: color($colors, delimiter);
+  }
+
+  .borderRight {
+    border-right: 1px solid;
+    border-color: color($colors, delimiter);
+  }
+
+  .boldText {
+    font-weight: bold;
+  }
+
+  .centerText {
+    align-items: center;
+  }
 }
 .dataDetails {
   .alert-input-wrapper:nth-child(1):after{

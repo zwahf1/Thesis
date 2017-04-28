@@ -18,7 +18,7 @@
         </div>
         <table>
           <thead>
-            <th>Datum</th>
+            <th class="borderRight">Datum</th>
             <th colspan="6">Kohlenhydrate in Gramm</th>
           </thead>
           <tbody>
@@ -46,22 +46,48 @@
     </ion-slide>
     <ion-slide>
       <content>
-        <table>
-          <thead>
-            <th>Datum</th>
-            <th>Beschreibung</th>
-            <th>Portion in g</th>
-            <th>Kohlenhydrate in g </th>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of nutritionDetailList" (click)="edit(item)">
-              <td>{{item.date | date:'dd.MM.yyyy - HH:mm'}}</td>
-              <td>{{item.desc}}</td>
-              <td>{{item.port}}</td>
-              <td>{{item.carb}}</td>
-            </tr>
-          </tbody>
-        </table>
+        <ion-grid>
+          <ion-row class="RowHeader">
+            <ion-col col-3 class="boldText borderRight">
+              Datum
+            </ion-col>
+            <ion-col col-3 class="boldText borderRight">
+              Artikel
+            </ion-col>
+            <ion-col col-2 class="boldText borderRight">
+              Portion
+            </ion-col>
+            <ion-col col-4 class="boldText">
+              Kohlenhydrate
+            </ion-col>
+          </ion-row>
+          <ion-row class="RowHeader">
+            <ion-col col-3 class="borderRight">
+            </ion-col>
+            <ion-col col-3 class="borderRight">
+            </ion-col>
+            <ion-col col-2 class="borderRight">
+              g
+            </ion-col>
+            <ion-col col-4>
+              g
+            </ion-col>
+          </ion-row>
+          <ion-row class="borderBottom centerText" *ngFor="let item of nutritionDetailList" (click)="edit(item)">
+            <ion-col col-3 class="borderRight">
+              {{item.date | date:'dd.MM.yyyy hh:mm'}}
+            </ion-col>
+            <ion-col col-3 class="borderRight">
+              {{item.desc}}
+            </ion-col>
+            <ion-col col-2 class="borderRight">
+              {{item.port}}
+            </ion-col>
+            <ion-col col-4>
+              {{item.carb}}
+            </ion-col>
+          </ion-row>
+        </ion-grid>
       </content>
     </ion-slide>
   </ion-slides>

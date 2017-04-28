@@ -52,22 +52,22 @@
         <ion-grid>
           <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Blutzucker</ion-item-divider>
           <div>
-            <ion-row class="RowHeader">
-              <ion-col col-5>
+            <ion-row class="RowHeader boldText">
+              <ion-col col-5 class="borderRight">
                 Datum
               </ion-col>
-              <ion-col col-4>
+              <ion-col col-4 class="borderRight">
                 Wert
               </ion-col>
               <ion-col col-3>
                 Art
               </ion-col>
             </ion-row>
-            <ion-row class="row-border" *ngFor="let entry of valuesGlucose">
-              <ion-col col-5>
+            <ion-row class="borderTop centerText" *ngFor="let entry of valuesGlucose">
+              <ion-col col-5 class="borderRight">
                 {{entry.date | date:'dd.MM.yyyy hh:mm'}}
               </ion-col>
-              <ion-col col-4>
+              <ion-col col-4 class="borderRight">
                 {{entry.value}} mmol/l
               </ion-col>
               <ion-col col-3>
@@ -77,16 +77,16 @@
           </div>
           <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Puls</ion-item-divider>
           <div>
-            <ion-row class="RowHeader">
-              <ion-col col-6>
+            <ion-row class="RowHeader boldText">
+              <ion-col col-6 class="borderRight">
                 Datum
               </ion-col>
               <ion-col col-6>
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="row-border" *ngFor="let entry of valuesPulse">
-              <ion-col col-6>
+            <ion-row class="borderTop centerText" *ngFor="let entry of valuesPulse">
+              <ion-col col-6 class="borderRight">
                 {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
               </ion-col>
               <ion-col col-6>
@@ -96,16 +96,16 @@
           </div>
           <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Blutdruck</ion-item-divider>
           <div>
-            <ion-row class="RowHeader">
-              <ion-col col-6>
+            <ion-row class="RowHeader boldText">
+              <ion-col col-6 class="borderRight">
                 Datum
               </ion-col>
               <ion-col col-6>
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="row-border" *ngFor="let entry of valuesBP">
-              <ion-col col-6>
+            <ion-row class="borderTop centerText" *ngFor="let entry of valuesBP">
+              <ion-col col-6 class="borderRight">
                 {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
               </ion-col>
               <ion-col col-6>
@@ -115,16 +115,16 @@
           </div>
           <ion-item-divider class="divider" (click)="expandValues($event.srcElement)">Gewicht</ion-item-divider>
           <div>
-            <ion-row class="RowHeader">
-              <ion-col col-6>
+            <ion-row class="RowHeader boldText">
+              <ion-col col-6 class="borderRight">
                 Datum
               </ion-col>
               <ion-col col-6>
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="row-border" *ngFor="let entry of valuesWeight">
-              <ion-col col-6>
+            <ion-row class="borderTop centerText" *ngFor="let entry of valuesWeight">
+              <ion-col col-6 class="borderRight">
                 {{entry[0] | date:'dd.MM.yyyy'}}
               </ion-col>
               <ion-col col-6>

@@ -16,40 +16,40 @@
 <ion-content padding>
   <ion-grid>
     <ion-row class="RowHeader">
-      <ion-col col-2>
+      <ion-col col-2 class="borderRight">
       </ion-col>
-      <ion-col col-md-2>
+      <ion-col col-md-2 class="boldText borderRight">
         Morgen
       </ion-col>
-      <ion-col col-md-2>
+      <ion-col col-md-2 class="boldText borderRight">
         Mittag
       </ion-col>
-      <ion-col col-md-2>
+      <ion-col col-md-2 class="boldText borderRight">
         Abend
       </ion-col>
-      <ion-col col-3>
+      <ion-col col-3 class="boldText">
         Bettruhe
       </ion-col>
     </ion-row>
     <ion-row class="RowHeader">
-      <ion-col col-2>
+      <ion-col col-2 class="borderRight">
       </ion-col>
       <ion-col col-md-1>
         <ion-icon name="battery-full"></ion-icon>
       </ion-col>
-      <ion-col col-md-1>
+      <ion-col col-md-1 class="borderRight">
         <ion-icon name="battery-dead"></ion-icon>
       </ion-col>
       <ion-col col-md-1>
         <ion-icon name="battery-full"></ion-icon>
       </ion-col>
-      <ion-col col-md-1>
+      <ion-col col-md-1 class="borderRight">
         <ion-icon name="battery-dead"></ion-icon>
       </ion-col>
       <ion-col col-md-1>
         <ion-icon name="battery-full"></ion-icon>
       </ion-col>
-      <ion-col col-md-1>
+      <ion-col col-md-1 class="borderRight">
         <ion-icon name="battery-dead"></ion-icon>
       </ion-col>
       <ion-col col-3>
@@ -58,7 +58,7 @@
     </ion-row>
 
     <ion-row class="RowDay" *ngFor="let day of arrayValues">
-      <ion-col col-2 class="ColDay">
+      <ion-col col-2 class="ColDay boldText">
         {{day["0"]}}
       </ion-col>
       <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,1)">
@@ -85,12 +85,12 @@
     </ion-row>
     <div *ngIf="aValBefore">
       <ion-row class="RowHeader">
-        <ion-col col-12>
+        <ion-col col-12 class="boldText">
           3 Tage vor der nächsten Arztkonsultation
         </ion-col>
       </ion-row>
       <ion-row class="RowDay" *ngFor="let day of arrayValuesBefore">
-        <ion-col col-2 class="ColDay">
+        <ion-col col-2 class="ColDay boldText">
           {{day["0"]}}
         </ion-col>
         <ion-col col-md-1 class="ColDay" (click)="toogleValue(day,1)">
@@ -116,6 +116,9 @@
         </ion-col>
       </ion-row>
     </div>
+    <p style="text-align:center">
+      <span style="font-weight:bold">X:</span> Messung zwingend, <span style="font-weight:bold">(X):</span> Messung freiwillig
+    </p>
   </ion-grid>
 
 </ion-content>
