@@ -12,18 +12,15 @@ import { CheckupsPage } from '../checkups/checkups';
 })
 export class HomePage {
 
-  //page: {title: string, component: any};
-
-
   constructor(public navCtrl: NavController, public appCtrl: App) {
-
-
   }
-
-
+  /**
+   * [goTo description]
+   * @param  {[type]} target [description]
+   * @return {[type]}        [description]
+   */
   goTo(target) {
-    console.log(''+target);
-    switch(target){
+    switch (target) {
       case 'Settings':
         this.navCtrl.push(SettingsPage);
         break;
