@@ -30,41 +30,41 @@ export class MedicationPage {
   insulin: [TYPES.LOCAL_MedicationStatementRes];
   intolerances: [TYPES.LOCAL_MedicationStatementRes];
 
-/**************************************************
-                  constructor
+  /**************************************************
+                    constructor
 
-create the medication page with parameters
-  - navCtrl: navigation controller to navigate between pages
-  - platform: platform for using plugins
-  - storage: local storage
-  - http: for http requests
-  - alertCtrl: alert controller to handle alerts (popups)
+  create the medication page with parameters
+    - navCtrl: navigation controller to navigate between pages
+    - platform: platform for using plugins
+    - storage: local storage
+    - http: for http requests
+    - alertCtrl: alert controller to handle alerts (popups)
 
-storage SET:
-  - chronicMedis: all longtime medication
-  - selfMedis: all self medication
-  - insulin: all insulin
-  - intolerances: all medication intolerances
-***************************************************/
+  storage SET:
+    - chronicMedis: all longtime medication
+    - selfMedis: all self medication
+    - insulin: all insulin
+    - intolerances: all medication intolerances
+  ***************************************************/
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
-                public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+    public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
     // refresh page (load list)
     this.refreshPage();
   }
 
-/**************************************************
-                refresh page
+  /**************************************************
+                  refresh page
 
-refresh the medication list by save the medication
-into the category lists (arrays).
+  refresh the medication list by save the medication
+  into the category lists (arrays).
 
-storage GET:
-  - chronicMedis: all longtime medication
-  - selfMedis: all self medication
-  - insulin: all insulin
-  - intolerances: all medication intolerances
-***************************************************/
-  refreshPage () {
+  storage GET:
+    - chronicMedis: all longtime medication
+    - selfMedis: all self medication
+    - insulin: all insulin
+    - intolerances: all medication intolerances
+  ***************************************************/
+  refreshPage() {
     let loading = this.loadingCtrl.create();
 
     loading.present();
@@ -73,7 +73,7 @@ storage GET:
 
       this.storage.get('chronicMedis').then((val) => {
         this.chronicMedis = val;
-        if(this.chronicMedis == undefined) {
+        if (this.chronicMedis == undefined) {
           console.log("MIDATA chronicMedis");
           this.storage.set('chronicMedis', []);
         }
@@ -81,7 +81,7 @@ storage GET:
       });
       this.storage.get('selfMedis').then((val) => {
         this.selfMedis = val;
-        if(this.selfMedis == undefined) {
+        if (this.selfMedis == undefined) {
           console.log("MIDATA selfMedis");
           this.storage.set('selfMedis', []);
         }
@@ -89,7 +89,7 @@ storage GET:
       });
       this.storage.get('insulin').then((val) => {
         this.insulin = val;
-        if(this.insulin == undefined) {
+        if (this.insulin == undefined) {
           console.log("MIDATA insulin");
           this.storage.set('insulin', []);
         }
@@ -97,7 +97,7 @@ storage GET:
       });
       this.storage.get('intolerances').then((val) => {
         this.intolerances = val;
-        if(this.intolerances == undefined) {
+        if (this.intolerances == undefined) {
           console.log("MIDATA intolerances");
           this.storage.set('intolerances', []);
         }
@@ -109,31 +109,31 @@ storage GET:
 
   }
 
-/**************************************************
-            medication detail page
+  /**************************************************
+              medication detail page
 
-shows the page to the given medication with details
+  shows the page to the given medication with details
 
-params:
-  - medi: medication for detail page
-***************************************************/
-  detailMedi(medis, medi:TYPES.LOCAL_MedicationStatementRes) {
+  params:
+    - medi: medication for detail page
+  ***************************************************/
+  detailMedi(medis, medi: TYPES.LOCAL_MedicationStatementRes) {
     this.navCtrl.push(MedicationDetailPage, {
       array: medis,
       medi: medi
     });
   }
 
-/**************************************************
-              scan a barcode
+  /**************************************************
+                scan a barcode
 
-conneciton to cordova plugin scanner to get the barcode.
-Get the medication data from the hospINDEX and
-store it ith the storage.
+  conneciton to cordova plugin scanner to get the barcode.
+  Get the medication data from the hospINDEX and
+  store it ith the storage.
 
-storage SET:
-  - MedicationData: the last scanned medication
-***************************************************/
+  storage SET:
+    - MedicationData: the last scanned medication
+  ***************************************************/
   scan() {
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
@@ -143,7 +143,7 @@ storage SET:
     });
   }
 
-  saveMIDATAMedication(medi:TYPES.LOCAL_MedicationStatementRes) {
+  saveMIDATAMedication(medi: TYPES.LOCAL_MedicationStatementRes) {
     this.mp.save(medi);
   }
 
@@ -172,36 +172,36 @@ storage SET:
     //set credentials for a basic authentication (Base64)
     let email = 'EPN236342@hcisolutions.ch';
     let password = 'UMPbDJu7!W';
-    let reqHeader = 'Basic '+btoa(email+':'+password);
+    let reqHeader = 'Basic ' + btoa(email + ':' + password);
     //create XMLHttp request for get the medication data form the
     //HCI Solutions db with given barcode
     var xhr = new XMLHttpRequest();
     var method = "GET";
-    var url = "https://index.hcisolutions.ch/index/current/get.aspx?schema=ARTICLE&keytype=ARTBAR&key="+
-                barcode+"&index=hospINDEX";
+    var url = "https://index.hcisolutions.ch/index/current/get.aspx?schema=ARTICLE&keytype=ARTBAR&key=" +
+      barcode + "&index=hospINDEX";
     //open the request for import
     xhr.open(method, url);
     //set the request header with coded credentials
-    xhr.setRequestHeader('Authorization',reqHeader);
+    xhr.setRequestHeader('Authorization', reqHeader);
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
 
         //save in localstorage as LOCAL medi res
         this.storage.ready().then(() => {
-          var xml =  xhr.responseXML;
+          var xml = xhr.responseXML;
           var art = xml.getElementsByTagName("ART");
           // for each children (xml tag) in the article
-          for(var i = 0; i < art[0].children.length; i++) {
-            if(art[0].children[i].nodeName === "GTIN")
+          for (var i = 0; i < art[0].children.length; i++) {
+            if (art[0].children[i].nodeName === "GTIN")
               gtin = art[0].children[i].innerHTML;
-            if(art[0].children[i].nodeName === "DSCRD")
+            if (art[0].children[i].nodeName === "DSCRD")
               dscrd = art[0].children[i].innerHTML;
-            if(art[0].children[i].nodeName === "PHAR")
+            if (art[0].children[i].nodeName === "PHAR")
               phar = art[0].children[i].innerHTML;
-            if(art[0].children[i].nodeName === "PRDNO")
+            if (art[0].children[i].nodeName === "PRDNO")
               prdno = art[0].children[i].innerHTML;
-            if(art[0].children[i].nodeName === "IMG2")
+            if (art[0].children[i].nodeName === "IMG2")
               img = art[0].children[i].innerHTML;
           };
           title = dscrd.split(" ")[0];
@@ -216,21 +216,21 @@ storage SET:
                 display: title
               }]
             },
-            effectiveDateTime:new Date(),
-            note:[],
-            dosage:[{
+            effectiveDateTime: new Date(),
+            note: [],
+            dosage: [{
               timing: {
                 repeat: {
-                  frequency:0,
-                  period:0,
-                  periodUnit:"d"
+                  frequency: 0,
+                  period: 0,
+                  periodUnit: "d"
                 }
               },
               route: {
                 coding: [{
-                  system:"http://snomed.info/sct",
-                  code:"",
-                  display:""
+                  system: "http://snomed.info/sct",
+                  code: "",
+                  display: ""
                 }]
               }
             }],
@@ -248,20 +248,20 @@ storage SET:
             }
           };
 
-          if(img === "true") {
-            result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Front/F";
-            result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/"+phar+"/Pharmacode/PA/Back/F";
-            result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F";
-            result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F";
+          if (img === "true") {
+            result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Front/F";
+            result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Back/F";
+            result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Front/F";
+            result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Back/F";
           }
           this.showTakingMedication(result);
         }).catch(() => {
           console.log("Artikel nicht gefunden");
         });
-      //if not ready
-      } else if(xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
+        //if not ready
+      } else if (xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
         console.log("XMLHTTPRequest not ready");
-      //if bad authorization
+        //if bad authorization
       } else {
         console.log("Error from XMLHTTPRequest: NOT Status = 200");
       }
@@ -270,34 +270,34 @@ storage SET:
     xhr.send();
   }
 
-/***************************************************
-        show the diffrent medication categories
+  /***************************************************
+          show the diffrent medication categories
 
-open an alert for choosing the category of the entered
-medication.
+  open an alert for choosing the category of the entered
+  medication.
 
-params:
-  - medication: the new medication to save (got by barcode)
+  params:
+    - medication: the new medication to save (got by barcode)
 
-categories:
-  - Regelmässiges Medikament: longtime medication
-  - Selbstgekauftes Medikament: self medication
-  - Insulin: the used insulin
-  - Unverträglichkeiten: medication intolerances
+  categories:
+    - Regelmässiges Medikament: longtime medication
+    - Selbstgekauftes Medikament: self medication
+    - Insulin: the used insulin
+    - Unverträglichkeiten: medication intolerances
 
-storage SET:
-  - chronicMedis: all longtime medication
-  - selfMedis: all self medication
-  - insulin: all insulin
-  - intolerances: all medication intolerances
+  storage SET:
+    - chronicMedis: all longtime medication
+    - selfMedis: all self medication
+    - insulin: all insulin
+    - intolerances: all medication intolerances
 
-storage GET:
-  - chronicMedis: all longtime medication
-  - selfMedis: all self medication
-  - insulin: all insulin
-  - intolerances: all medication intolerances
-****************************************************/
-  showMedicationCategory(medication:TYPES.LOCAL_MedicationStatementRes) {
+  storage GET:
+    - chronicMedis: all longtime medication
+    - selfMedis: all self medication
+    - insulin: all insulin
+    - intolerances: all medication intolerances
+  ****************************************************/
+  showMedicationCategory(medication: TYPES.LOCAL_MedicationStatementRes) {
     // create empty array for medication
     var medis = [];
     //create alert for choosing a category
@@ -349,7 +349,7 @@ storage GET:
               // save medis in local variable (array)
               medis = val;
 
-              medication.note.push({text: data});
+              medication.note.push({ text: data });
               // add the new medication to the current medication
               medis.push(medication);
               // save the current medication to the storage
@@ -403,14 +403,14 @@ storage GET:
         // user has clicked the new medication button
         // begin the alert's dismiss transition
         let navTransition = alert.dismiss();
-          // if the category is choosed
+        // if the category is choosed
         navTransition.then(() => {
           let coding = "";
-          if(data === "Oral") {
+          if (data === "Oral") {
             coding = "26643006";
-          } else if(data === "Anal") {
+          } else if (data === "Anal") {
             coding = "37161004";
-          } else if(data === "Topic") {
+          } else if (data === "Topic") {
             coding = "6064005";
           }
           result.dosage[0].route.coding[0].code = coding;
@@ -453,7 +453,7 @@ storage GET:
         // user has clicked the new medication button
         // begin the alert's dismiss transition
         let navTransition = alert.dismiss();
-          // if the category is choosed
+        // if the category is choosed
         navTransition.then(() => {
 
           result.dosage[0].timing.repeat.frequency = data.number;
@@ -468,23 +468,42 @@ storage GET:
     // present the alert popup
     alert.present();
   }
-/**
- * method to collapse and expand the charts. it's called by clicking on a divider between the charts.
- * @param  {[type]} src source element of the click
- * @return {[type]}     [description]
- */
-  expand(src){
-    let element = src.parentNode.parentNode.parentNode.nextElementSibling;
-    //mode is the style attribute of the chart element
-    let mode = '' + element.getAttribute('style');
-    //if 'style' contains the word 'none', the method 'search' returns a
-    //positive value, otherwise -1
-    if (mode.search('none') < 0) {
-      //the attribute 'display' is set to none to hide the chart
-      element.style.display = 'none';
-    } else if (mode.search('none') > 0) {
-      //the attribute 'display' is set to inline to show the chart
-      element.style.display = 'inline';
+  /**
+   * method to collapse and expand the charts. it's called by clicking on a divider between the charts.
+   * @param  {[type]} src source element of the click
+   * @return {[type]}     [description]
+   */
+  expand(src) {
+    try {
+      let element = src.parentNode.parentNode.parentNode.nextElementSibling;
+      if(element.tagName == 'ION-ITEM'){
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a
+      //positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    }
+    } catch (Error) {
+      let element = src.parentNode.parentNode.nextElementSibling;
+      if(element.tagName == 'ION-ITEM'){
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a
+      //positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    }
     }
   }
 }

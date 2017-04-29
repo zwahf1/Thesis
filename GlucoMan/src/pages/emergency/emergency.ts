@@ -25,9 +25,13 @@ export class EmergencyPage {
     document.getElementById(langShow).style.display = 'block';
     document.getElementById(langHide).style.display = 'none';
   }
-
-  copyText(lang) {
-
+/**
+ * Method to copy the emergency information in the language
+ * which is given by the parameter
+ * @param  {string} lang language of the text.
+ * @return {[type]}      [description]
+ */
+  copyText(lang: string) {
     if (lang == 'german') {
       cordova.plugins.clipboard.copy('Falls ich mich ungewöhnlich verhalte und den Eindruck erwecke, als wäre ich betrunken, kann das ein Zeichen einer Unterzuckerung sein.\n\n' +
         'Bitte geben Sie mir 20g Zucker, z.B. als 2dl gesüsstes Getränk oder mind. 4 Stück Traubenzucker oder Würfelzucker. Verbessert sich mein Zustand nicht innert 10 Minuten, rufen Sie einen Arzt oder den Notfalldienst.\n\n' +
@@ -39,6 +43,5 @@ export class EmergencyPage {
         'If I am unconscious do not give me anything by mouth. Call a doctor or an ambulance immediately.');
       console.log('did copy english');
     }
-
   }
 }

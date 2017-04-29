@@ -18,7 +18,6 @@ it's possible to import data with the barcode of a product or to make an entry m
 })
 
 export class NutritionPage {
-
   //list with every single nutrition
   nutritionDetailList: DetailNutrition[] = [];
   //list with all nutrition of one day with, divided per time of day
@@ -702,18 +701,34 @@ export class NutritionPage {
   it sets the property 'display' to none or inline
   **/
   expand(src) {
-    //source navigate to the chart tag and store it to 'element'
-    let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
-    //mode is the style attribute of the chart element
-    let mode = '' + element.getAttribute('style');
-    //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+    try{
+      //source navigate to the chart tag and store it to 'element'
+      let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
 
-    if (mode.search('none') < 0) {
-      //the attribute 'display' is set to none to hide the chart
-      element.style.display = 'none';
-    } else if (mode.search('none') > 0) {
-      //the attribute 'display' is set to inline to show the chart
-      element.style.display = 'inline';
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    }catch (Error){
+      //source navigate to the chart tag and store it to 'element'
+      let element = src.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
     }
   }
 

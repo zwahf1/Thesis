@@ -21,7 +21,7 @@ import { InformationDetailsPage } from '../information-details/information-detai
   <ion-content>
     <ion-list>
       <button ion-item *ngFor="let item of informationList" (click)="openNavDetailsPage(item)" icon-left>
-        <ion-icon [name]="item.icon" [ngStyle]="{'color': item.color}" item-left></ion-icon>
+        <ion-icon [name]="item.icon" item-left></ion-icon>
         {{ item.title }}
         </button>
       </ion-list>

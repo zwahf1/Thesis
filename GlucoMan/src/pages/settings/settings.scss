@@ -1,4 +1,9 @@
 page-settings {
+  ion-content {
+    ion-icon {
+      color: color($colors, primary);
+    }
+  }
   font-size: 14px !important;
   table{
     width: 100%;

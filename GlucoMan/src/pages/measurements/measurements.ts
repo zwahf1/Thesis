@@ -48,7 +48,7 @@ export class MeasurementsPage {
     -weightValues: the measurements of the scale
 **/
   constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
-                public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
+    public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
 
 
     this.storage.ready().then(() => {
@@ -56,14 +56,14 @@ export class MeasurementsPage {
         if (val) {
           this.valuesGlucose = val;
         } else {
-          this.valuesGlucose = [{date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 5), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 7), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 8), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 10), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 14), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 17), value: 2.2, event: "Nicht verfügbar"},
-                                {date: new Date(2017, 3, 20), value: 2.2, event: "Nicht verfügbar"}];
+          this.valuesGlucose = [{ date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 5), value: 5.2, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 7), value: 6.3, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 8), value: 4.3, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 10), value: 7.6, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 14), value: 5.0, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 17), value: 3.3, event: "Nicht verfügbar" },
+            { date: new Date(2017, 3, 20), value: 5.7, event: "Nicht verfügbar" }];
           this.storage.set('glucoseValues', this.valuesGlucose);
         }
       });
@@ -71,9 +71,9 @@ export class MeasurementsPage {
         if (val) {
           this.valuesBP = val;
         } else {
-          this.valuesBP = [[Date.UTC(2017, 3, 4), 71, 132], [Date.UTC(2017, 3, 5), 62, 124], [Date.UTC(2017, 3, 7), 73, 126], [Date.UTC(2017, 3, 8), 54, 118],
-            [Date.UTC(2017, 3, 9), 65, 110], [Date.UTC(2017, 3, 11), 66, 119], [Date.UTC(2017, 3, 12), 57, 128], [Date.UTC(2017, 3, 14), 68, 129],
-            [Date.UTC(2017, 3, 17), 79, 130], [Date.UTC(2017, 3, 18), 60, 121]];
+          this.valuesBP = [[Date.UTC(2017, 3, 4), 71, 132], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
+            [Date.UTC(2017, 3, 9), 110, 65], [Date.UTC(2017, 3, 11), 119, 66], [Date.UTC(2017, 3, 12), 128, 57], [Date.UTC(2017, 3, 14), 129, 68],
+            [Date.UTC(2017, 3, 17), 130, 79], [Date.UTC(2017, 3, 18), 121, 60]];
           this.storage.set('bpValues', this.valuesBP);
         }
       });
@@ -99,11 +99,11 @@ export class MeasurementsPage {
       });
     });
   }
-/**
-if the view did enter, the latest stored visibleList and target range list
-loads to local variables.
-if there's no vitalRangeList available, the default values loads, they're 0.
-**/
+  /**
+  if the view did enter, the latest stored visibleList and target range list
+  loads to local variables.
+  if there's no vitalRangeList available, the default values loads, they're 0.
+  **/
   ionViewDidEnter() {
     this.storage.ready().then(() => {
       this.storage.get('VisibleList').then((val) => {
@@ -127,17 +127,17 @@ if there's no vitalRangeList available, the default values loads, they're 0.
       });
     });
   }
-/**
-method to refresh the page and redraw the charts.
+  /**
+  method to refresh the page and redraw the charts.
 
-while the charts are creating, the loading indicator is presented.
-**/
+  while the charts are creating, the loading indicator is presented.
+  **/
   refreshPage() {
     let loading = this.loadingCtrl.create();
     loading.present();
 
-    if(this.valuesGlucose.length > this.valuesGlucoseChart.length) {
-      for(var i = 0; i < this.valuesGlucose.length; i++) {
+    if (this.valuesGlucose.length > this.valuesGlucoseChart.length) {
+      for (var i = 0; i < this.valuesGlucose.length; i++) {
         this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
       }
 
@@ -145,51 +145,82 @@ while the charts are creating, the loading indicator is presented.
     }
     //the charts are created by the Chart-class
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    this.chartPulse = new Chart('spline', 'Puls', 'pro Min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
+    this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
     this.createAllChart();
     loading.dismiss();
   }
-/**
-method to collapse and expand the charts.
-it's called by clicking on a divider between the charts
-**/
+  /**
+  method to collapse and expand the charts.
+  it's called by clicking on a divider between the charts
+  **/
   expand(src) {
-    //source navigate to the chart tag and store it to 'element'
-    let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
-    //mode is the style attribute of the chart element
-    let mode = '' + element.getAttribute('style');
-    //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
-    if (mode.search('none') < 0) {
-      //the attribute 'display' is set to none to hide the chart
-      element.style.display = 'none';
-    } else if (mode.search('none') > 0) {
-      //the attribute 'display' is set to inline to show the chart
-      element.style.display = 'inline';
+    try {
+      //source navigate to the chart tag and store it to 'element'
+      let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    } catch (Error) {
+      //source navigate to the chart tag and store it to 'element'
+      let element = src.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
     }
   }
   /**
 method to collapse and expand the measurement values.
 it's called by clicking on a divider above the table
 **/
-expandValues(src){
-  let element = src.parentNode.parentNode.parentNode.nextElementSibling;
-  //mode is the style attribute of the chart element
-  let mode = '' + element.getAttribute('style');
-  //if 'style' contains the word 'none', the method 'search' returns a
-  //positive value, otherwise -1
-  if (mode.search('none') < 0) {
-    //the attribute 'display' is set to none to hide the chart
-    element.style.display = 'none';
-  } else if (mode.search('none') > 0) {
-    //the attribute 'display' is set to inline to show the chart
-    element.style.display = 'inline';
+  expandValues(src) {
+    try {
+      let element = src.parentNode.parentNode.parentNode.nextElementSibling;
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a
+      //positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    } catch (Error) {
+      console.log('catched :)');
+      let element = src.parentNode.parentNode.nextElementSibling;
+      //mode is the style attribute of the chart element
+      let mode = '' + element.getAttribute('style');
+      //if 'style' contains the word 'none', the method 'search' returns a
+      //positive value, otherwise -1
+      if (mode.search('none') < 0) {
+        //the attribute 'display' is set to none to hide the chart
+        element.style.display = 'none';
+      } else if (mode.search('none') > 0) {
+        //the attribute 'display' is set to inline to show the chart
+        element.style.display = 'inline';
+      }
+    }
   }
-}
-/**
-method to hide and show the charts.
-it's based on the visibleList, which is editable in the settings.
-**/
+  /**
+  method to hide and show the charts.
+  it's based on the visibleList, which is editable in the settings.
+  **/
   hideCharts() {
     for (var key in this.visibleList) {
       var x = document.getElementById(key);
@@ -232,18 +263,23 @@ it's based on the visibleList, which is editable in the settings.
         min: 0,
         opposite: false,
       }, {
-        title: { text: 'Blutzucker' },
-        min: 0,
-        opposite: true,
-      }], series: [{
-        //series of the vital signs
+          title: { text: 'Blutzucker' },
+          min: 0,
+          opposite: true,
+        }], series: [{
+          //series of the vital signs
           type: 'spline',
           name: 'Blutzucker',
           yAxis: 1,
           data: this.valuesGlucoseChart,
           tooltip: {
             valueSuffix: ' mmol/L'
-          }
+          },
+          lineWidth: 0,
+          marker: {
+            enabled: true,
+            radius: 5,
+          },
         }, {
             type: 'columnrange',
             name: 'Blutdruck',
@@ -251,7 +287,7 @@ it's based on the visibleList, which is editable in the settings.
             data: this.valuesBP,
             tooltip: {
               valueSuffix: ' mmHg'
-            }
+            },
           }, {
             type: 'spline',
             name: 'Puls',
@@ -259,7 +295,12 @@ it's based on the visibleList, which is editable in the settings.
             data: this.valuesPulse,
             tooltip: {
               valueSuffix: ' pro Min'
-            }
+            },
+            lineWidth: 0,
+            marker: {
+              enabled: true,
+              radius: 5,
+            },
           }, {
             type: 'spline',
             name: 'Gewicht',
@@ -267,7 +308,12 @@ it's based on the visibleList, which is editable in the settings.
             data: this.valuesWeight,
             tooltip: {
               valueSuffix: ' kg'
-            }
+            },
+            lineWidth: 2,
+            marker: {
+              enabled: true,
+              radius: 5,
+            },
           }],
       //the legend isn't visible, so the user can't disable e serie of data
       legend: {
@@ -294,10 +340,10 @@ it's based on the visibleList, which is editable in the settings.
       },
     }
   }
-/**
-method to choose the vital sign for the new measurement value.
-after the selection it calls the method openAddAlert() with the vital sign as parameter
-**/
+  /**
+  method to choose the vital sign for the new measurement value.
+  after the selection it calls the method openAddAlert() with the vital sign as parameter
+  **/
   openActionSheet() {
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Neuer Messwert hinzufügen');
@@ -365,9 +411,9 @@ after the selection it calls the method openAddAlert() with the vital sign as pa
     // present the alert popup
     actionSheet.present();
   }
-/**
-method to entry the new value
-**/
+  /**
+  method to entry the new value
+  **/
   openAddAlert(typ, glucoVal?) {
     let alert = this.alertCtrl.create({});
     alert.setTitle(typ);
@@ -466,16 +512,16 @@ method to entry the new value
               }
               case "Import": {
                 this.storage.get('deviceId').then((val) => {
-                  if(val) {
-                    for(var i = 0;i < val.length;i++) {
-                      if(val[i].name === "myglucohealth") {
+                  if (val) {
+                    for (var i = 0; i < val.length; i++) {
+                      if (val[i].name === "myglucohealth") {
                         this.importFromDevice(val[i].id);
                       }
                     }
                   } else {
                     let alert = this.alertCtrl.create({
                       title: 'Kein Gerät registriert',
-                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: "+"Einstellungen > Bluetooth".bold(),
+                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: " + "Einstellungen > Bluetooth".bold(),
                       buttons: ['OK']
                     });
                     alert.present();
@@ -517,12 +563,12 @@ method to entry the new value
 
         this.bls.subscribeRawData().subscribe((subs) => {
           var a = new Uint8Array(subs);
-          for(var i = 0; i < a.length; i++) {
+          for (var i = 0; i < a.length; i++) {
             result[index] = a[i];
             index++;
           }
 
-          if(index == 7) {
+          if (index == 7) {
             console.log(result);
             loading.dismiss();
             this.getBluetoothValues(result[4]);
@@ -535,9 +581,9 @@ method to entry the new value
 method to add weight value into weightlist, chart and MIDATA
   **/
   getBluetoothValues(num: number) {
-    var dataValues = new Uint8Array((num*7));
-    var result = new Uint8Array((num*13));
-    var byteArray = new Uint8Array((num*6));
+    var dataValues = new Uint8Array((num * 7));
+    var result = new Uint8Array((num * 13));
+    var byteArray = new Uint8Array((num * 6));
     var byteRead = 0;
     var saveBytes: boolean = false;
     var savedByte: number = 0;
@@ -546,14 +592,14 @@ method to add weight value into weightlist, chart and MIDATA
 
     loading.present();
 
-    for(var i = 0; i < num;i++) {
-      dataValues[(0+(i*7))] = 0x80;
-      dataValues[(1+(i*7))] = 0x02;
-      dataValues[(2+(i*7))] = 0xFD;
-      dataValues[(3+(i*7))] = 0x01;
-      dataValues[(4+(i*7))] = i;
-      dataValues[(5+(i*7))] = (((0x80^0xFD)^i)^0xFF);
-      dataValues[(6+(i*7))] = 0xFC;
+    for (var i = 0; i < num; i++) {
+      dataValues[(0 + (i * 7))] = 0x80;
+      dataValues[(1 + (i * 7))] = 0x02;
+      dataValues[(2 + (i * 7))] = 0xFD;
+      dataValues[(3 + (i * 7))] = 0x01;
+      dataValues[(4 + (i * 7))] = i;
+      dataValues[(5 + (i * 7))] = (((0x80 ^ 0xFD) ^ i) ^ 0xFF);
+      dataValues[(6 + (i * 7))] = 0xFC;
     }
 
     this.bls.write(dataValues).then(() => {
@@ -563,27 +609,27 @@ method to add weight value into weightlist, chart and MIDATA
 
       var a = new Uint8Array(subs);
 
-      for(var i = 0; i < a.length; i++) {
+      for (var i = 0; i < a.length; i++) {
         result[byteRead] = a[i];
         byteRead++;
       }
 
       console.log(byteRead);
 
-      if(byteRead == (num*13)) {
+      if (byteRead == (num * 13)) {
         byteRead = 0;
         console.log(result);
-        for(var i = 0; i < result.length; i++) {
+        for (var i = 0; i < result.length; i++) {
 
-          if(saveBytes) {
+          if (saveBytes) {
             byteArray[savedByte] = result[i];
             savedByte++;
-            if((savedByte % 6) == 0) {
+            if ((savedByte % 6) == 0) {
               saveBytes = false;
               byteRead++;
             }
-          } else if(result[i] == byteRead) {
-            if(result[(i-1)] == 0x01) {
+          } else if (result[i] == byteRead) {
+            if (result[(i - 1)] == 0x01) {
               saveBytes = true;
             }
           }
@@ -598,9 +644,9 @@ method to add weight value into weightlist, chart and MIDATA
     });
   }
 
-  addWeight(v,d) {
+  addWeight(v, d) {
     let val: number = parseFloat(v);
-    this.valuesWeight.push([d.getTime(),val]);
+    this.valuesWeight.push([d.getTime(), val]);
     this.storage.ready().then(() => {
       this.storage.set('weightValues', this.valuesWeight.sort());
       this.saveMIDATAWeight(v, d);
@@ -652,10 +698,10 @@ method to add glucose value into weightlist, chart and MIDATA
   addGlucoseValues(array: Uint8Array) {
     var gluco: TYPES.LOCAL_Glucose;
     var num = array.length / 6;
-    for(var i = 0; i < num; i++) {
+    for (var i = 0; i < num; i++) {
 
-      console.log("input: "+array[(i*6)]+" | "+array[((i*6)+1)]+" | "+array[((i*6)+2)]+" | "+array[((i*6)+3)]+" | "+array[((i*6)+4)]+" | "+array[((i*6)+5)]);
-      let glucoRep = this.getGlucoseRepresentation(array[(i*6)],array[((i*6)+1)],array[((i*6)+2)],array[((i*6)+3)],array[((i*6)+4)],array[((i*6)+5)]);
+      console.log("input: " + array[(i * 6)] + " | " + array[((i * 6) + 1)] + " | " + array[((i * 6) + 2)] + " | " + array[((i * 6) + 3)] + " | " + array[((i * 6) + 4)] + " | " + array[((i * 6) + 5)]);
+      let glucoRep = this.getGlucoseRepresentation(array[(i * 6)], array[((i * 6) + 1)], array[((i * 6) + 2)], array[((i * 6) + 3)], array[((i * 6) + 4)], array[((i * 6) + 5)]);
 
       let val: number = parseFloat(glucoRep.value);
       let date: Date = glucoRep.date;
@@ -667,7 +713,7 @@ method to add glucose value into weightlist, chart and MIDATA
         event: event
       }
 
-      if(this.checkValue(gluco)) {
+      if (this.checkValue(gluco)) {
         console.log("Value already exist");
       } else {
         this.valuesGlucose.push(gluco);
@@ -683,12 +729,12 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   compareGlucoseValues(a: TYPES.LOCAL_Glucose, b: TYPES.LOCAL_Glucose): number {
-    if(a.date.getTime() > b.date.getTime()) {
+    if (a.date.getTime() > b.date.getTime()) {
       return 1;
-    } else if(a.date.getTime() == b.date.getTime()) {
-      if((a.value == b.value) && (a.event == b.event)) {
+    } else if (a.date.getTime() == b.date.getTime()) {
+      if ((a.value == b.value) && (a.event == b.event)) {
         return 0;
-      } else if(a.value > b.value) {
+      } else if (a.value > b.value) {
         return 1;
       } else {
         return -1;
@@ -700,8 +746,8 @@ method to add glucose value into weightlist, chart and MIDATA
 
   checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
     var match: boolean = false;
-    for(var i = 0; i < this.valuesGlucose.length; i++) {
-      if(this.compareGlucoseValues(glucose, this.valuesGlucose[i]) == 0) {
+    for (var i = 0; i < this.valuesGlucose.length; i++) {
+      if (this.compareGlucoseValues(glucose, this.valuesGlucose[i]) == 0) {
         match = true;
       }
     }
@@ -709,208 +755,209 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
-    var result: {value, date, event};
-    var event: any = ((byte5&0xf8)>>3);
-    if(event == 2) {
-      event = "Nach dem Sport";
-    } else if(event == 4) {
-      event = "Nach Medikation";
-    } else if(event == 8) {
-      event = "Nach dem Essen";
-    } else if(event == 16) {
-      event = "Vor dem Essen";
+    var result: {value, date, event
+  };
+    var event: any = ((byte5 & 0xf8) >> 3);
+if (event == 2) {
+  event = "Nach dem Sport";
+} else if (event == 4) {
+  event = "Nach Medikation";
+} else if (event == 8) {
+  event = "Nach dem Essen";
+} else if (event == 16) {
+  event = "Vor dem Essen";
+}
+
+result = {
+  value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
+  date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
+  event: event
+}
+return result;
+  }
+
+saveMIDATAWeight(v, d) {
+  this.mp.save(this.getWeightRes(v, d));
+}
+
+saveMIDATAPulse(v, d) {
+  this.mp.save(this.getPulseRes(v, d));
+}
+
+saveMIDATABloodPressure(v1, v2, d) {
+  this.mp.save(this.getBloodPressureRes(v1, v2, d));
+}
+
+saveMIDATAGlucose(v, d) {
+  this.mp.save(this.getGlucoseRes(v, d));
+}
+
+getMIDATAObservations() {
+  var o = this.mp.search("Observation");
+  console.log(o);
+  return o;
+}
+
+getMIDATAWeight() {
+
+}
+
+getMIDATAPulse() {
+
+}
+
+getMIDATABloodPressure() {
+
+}
+
+getMIDATAGlucose() {
+
+}
+
+getWeightRes(v, d) {
+  var weight: TYPES.FHIR_ObservationRes_1Value;
+  weight = {
+    resourceType: 'Observation',
+    status: "preliminary",
+    effectiveDateTime: d,
+    category: {
+      coding: [{
+        system: "http://hl7.org/fhir/observation-category",
+        code: "vital-signs",
+        display: "Vital-Signs"
+      }]
+    },
+    code: {
+      text: "Gewicht",
+      coding: [{
+        system: 'http://loinc.org',
+        code: '3141-9',
+        display: 'Weight Measured'
+      }]
+    },
+    valueQuantity: {
+      value: v,
+      unit: 'kg',
+      system: 'http://unitsofmeasure.org'
     }
+  } as TYPES.FHIR_ObservationRes_1Value;
+  return weight;
+}
 
-    result = {
-      value: ((((byte3&0x03)<<8)+byte4)/18).toFixed(1),
-      date: new Date(((byte1>>1)+2000),(((byte1&0x01)<<3)+(byte2>>5)-1),(byte2&0x1f),(((byte5&0x07)<<2)+(byte6>>6)),(byte6&0x3f)),
-      event: event
+getPulseRes(v, d) {
+  var pulse: TYPES.FHIR_ObservationRes_1Value;
+  pulse = {
+    resourceType: 'Observation',
+    status: "preliminary",
+    effectiveDateTime: d,
+    category: {
+      coding: [{
+        system: "http://hl7.org/fhir/observation-category",
+        code: "vital-signs",
+        display: "Vital-Signs"
+      }]
+    },
+    code: {
+      text: "Herzfrequenz",
+      coding: [{
+        system: 'http://loinc.org',
+        code: '8867-4',
+        display: 'Herzfrequenz'
+      }]
+    },
+    valueQuantity: {
+      value: v,
+      unit: 'bpm',
+      system: 'http://unitsofmeasure.org'
     }
-    return result;
-  }
+  } as TYPES.FHIR_ObservationRes_1Value;
+  return pulse;
+}
 
-  saveMIDATAWeight(v,d) {
-    this.mp.save(this.getWeightRes(v,d));
-  }
-
-  saveMIDATAPulse(v, d) {
-    this.mp.save(this.getPulseRes(v, d));
-  }
-
-  saveMIDATABloodPressure(v1, v2, d) {
-    this.mp.save(this.getBloodPressureRes(v1, v2, d));
-  }
-
-  saveMIDATAGlucose(v, d) {
-    this.mp.save(this.getGlucoseRes(v, d));
-  }
-
-  getMIDATAObservations() {
-    var o = this.mp.search("Observation");
-    console.log(o);
-    return o;
-  }
-
-  getMIDATAWeight() {
-
-  }
-
-  getMIDATAPulse() {
-
-  }
-
-  getMIDATABloodPressure() {
-
-  }
-
-  getMIDATAGlucose() {
-
-  }
-
-  getWeightRes(v, d) {
-    var weight: TYPES.FHIR_ObservationRes_1Value;
-    weight = {
-      resourceType: 'Observation',
-      status: "preliminary",
-      effectiveDateTime: d,
-      category: {
-        coding: [{
-          system: "http://hl7.org/fhir/observation-category",
-          code: "vital-signs",
-          display: "Vital-Signs"
-        }]
-      },
-      code: {
-        text: "Gewicht",
-        coding: [{
-          system: 'http://loinc.org',
-          code: '3141-9',
-          display: 'Weight Measured'
-        }]
-      },
-      valueQuantity: {
-        value: v,
-        unit: 'kg',
-        system: 'http://unitsofmeasure.org'
-      }
-    } as TYPES.FHIR_ObservationRes_1Value;
-    return weight;
-  }
-
-  getPulseRes(v, d) {
-    var pulse: TYPES.FHIR_ObservationRes_1Value;
-    pulse = {
-      resourceType: 'Observation',
-      status: "preliminary",
-      effectiveDateTime: d,
-      category: {
-        coding: [{
-          system: "http://hl7.org/fhir/observation-category",
-          code: "vital-signs",
-          display: "Vital-Signs"
-        }]
-      },
-      code: {
-        text: "Herzfrequenz",
-        coding: [{
-          system: 'http://loinc.org',
-          code: '8867-4',
-          display: 'Herzfrequenz'
-        }]
-      },
-      valueQuantity: {
-        value: v,
-        unit: 'bpm',
-        system: 'http://unitsofmeasure.org'
-      }
-    } as TYPES.FHIR_ObservationRes_1Value;
-    return pulse;
-  }
-
-  getBloodPressureRes(v1, v2, d) {
-    var bp: TYPES.FHIR_ObservationRes_2Value;
-    bp = {
-      resourceType: 'Observation',
-      status: "preliminary",
-      effectiveDateTime: d,
-      category: {
-        coding: [{
-          system: "http://hl7.org/fhir/observation-category",
-          code: "vital-signs",
-          display: "Vital-Signs"
-        }]
-      },
-      code: {
-        text: "Blutdruck",
-        coding: [{
-          system: 'http://loinc.org',
-          code: '55417-0',
-          display: 'Blood Pressure'
-        }]
-      },
-      component: [
-        {
-          code: {
-            text: 'Systolic blood pressure',
-            coding: [{
-              system: 'http://loinc.org',
-              display: 'Systolic blood pressure',
-              code: '8480-6'
-            }]
-          },
-          valueQuantity: {
-            value: v2,
-            unit: 'mmHg',
-            system: 'http://unitsofmeasure.org'
-          }
+getBloodPressureRes(v1, v2, d) {
+  var bp: TYPES.FHIR_ObservationRes_2Value;
+  bp = {
+    resourceType: 'Observation',
+    status: "preliminary",
+    effectiveDateTime: d,
+    category: {
+      coding: [{
+        system: "http://hl7.org/fhir/observation-category",
+        code: "vital-signs",
+        display: "Vital-Signs"
+      }]
+    },
+    code: {
+      text: "Blutdruck",
+      coding: [{
+        system: 'http://loinc.org',
+        code: '55417-0',
+        display: 'Blood Pressure'
+      }]
+    },
+    component: [
+      {
+        code: {
+          text: 'Systolic blood pressure',
+          coding: [{
+            system: 'http://loinc.org',
+            display: 'Systolic blood pressure',
+            code: '8480-6'
+          }]
         },
-        {
-          code: {
-            text: 'Diastolic blood pressure',
-            coding: [{
-              system: 'http://loinc.org',
-              display: 'Diastolic blood pressure',
-              code: '8462-4'
-            }]
-          },
-          valueQuantity: {
-            value: v1,
-            unit: 'mmHg',
-            system: 'http://unitsofmeasure.org'
-          }
+        valueQuantity: {
+          value: v2,
+          unit: 'mmHg',
+          system: 'http://unitsofmeasure.org'
         }
-      ]
-    } as TYPES.FHIR_ObservationRes_2Value;
-    return bp;
-  }
-
-  getGlucoseRes(v, d) {
-    var glucose: TYPES.FHIR_ObservationRes_1Value;
-    glucose = {
-      resourceType: 'Observation',
-      status: "preliminary",
-      effectiveDateTime: d,
-      category: {
-        coding: [{
-          system: "http://hl7.org/fhir/observation-category",
-          code: "laboratory",
-          display: "Laboratory"
-        }]
       },
-      code: {
-        text: "Glukose",
-        coding: [{
-          system: 'http://loinc.org',
-          code: '15074-8',
-          display: 'Glucose [Moles/volume] in blood'
-        }]
-      },
-      valueQuantity: {
-        value: v,
-        unit: 'mmol/l',
-        system: 'http://unitsofmeasure.org'
+      {
+        code: {
+          text: 'Diastolic blood pressure',
+          coding: [{
+            system: 'http://loinc.org',
+            display: 'Diastolic blood pressure',
+            code: '8462-4'
+          }]
+        },
+        valueQuantity: {
+          value: v1,
+          unit: 'mmHg',
+          system: 'http://unitsofmeasure.org'
+        }
       }
-    } as TYPES.FHIR_ObservationRes_1Value;
-    return glucose;
-  }
+    ]
+  } as TYPES.FHIR_ObservationRes_2Value;
+  return bp;
+}
+
+getGlucoseRes(v, d) {
+  var glucose: TYPES.FHIR_ObservationRes_1Value;
+  glucose = {
+    resourceType: 'Observation',
+    status: "preliminary",
+    effectiveDateTime: d,
+    category: {
+      coding: [{
+        system: "http://hl7.org/fhir/observation-category",
+        code: "laboratory",
+        display: "Laboratory"
+      }]
+    },
+    code: {
+      text: "Glukose",
+      coding: [{
+        system: 'http://loinc.org',
+        code: '15074-8',
+        display: 'Glucose [Moles/volume] in blood'
+      }]
+    },
+    valueQuantity: {
+      value: v,
+      unit: 'mmol/l',
+      system: 'http://unitsofmeasure.org'
+    }
+  } as TYPES.FHIR_ObservationRes_1Value;
+  return glucose;
+}
 }

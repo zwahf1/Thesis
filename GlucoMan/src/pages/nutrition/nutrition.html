@@ -16,7 +16,8 @@
           <ion-item-divider class="divider" (click)="expand($event.srcElement)">Kohlenhydrate</ion-item-divider>
           <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
         </div>
-        <table>
+        <p *ngIf="nutritionDetailList == 0">Es sind keine Einträge zur Ernährung vorhanden.</p>
+        <table  *ngIf="nutritionDetailList != 0">
           <thead>
             <th class="borderRight">Datum</th>
             <th colspan="6">Kohlenhydrate in Gramm</th>
@@ -73,7 +74,7 @@
               g
             </ion-col>
           </ion-row>
-          <ion-row class="borderBottom centerText" *ngFor="let item of nutritionDetailList" (click)="edit(item)">
+          <ion-row class="borderBottom centerText"  *ngFor="let item of nutritionDetailList" (click)="edit(item)">
             <ion-col col-3 class="borderRight">
               {{item.date | date:'dd.MM.yyyy hh:mm'}}
             </ion-col>
@@ -87,6 +88,7 @@
               {{item.carb}}
             </ion-col>
           </ion-row>
+          <p *ngIf="nutritionDetailList == 0">Es sind keine Einträge zur Ernährung vorhanden.</p>
         </ion-grid>
       </content>
     </ion-slide>
