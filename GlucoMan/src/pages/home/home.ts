@@ -1,10 +1,13 @@
 import { Component } from '@angular/core';
-import { App, NavController } from 'ionic-angular';
+import { App, NavController, ActionSheetController } from 'ionic-angular';
+import { TabsPage} from '../tabs/tabs';
 import { SettingsPage } from '../settings/settings';
 import { InformationPage } from '../information/information';
 import { EmergencyPage } from '../emergency/emergency';
 import { MeasureplanPage } from '../measureplan/measureplan';
 import { CheckupsPage } from '../checkups/checkups';
+import { MeasurementsPage } from '../measurements/measurements';
+import { NutritionPage } from '../nutrition/nutrition';
 
 @Component({
   selector: 'page-home',
@@ -12,7 +15,7 @@ import { CheckupsPage } from '../checkups/checkups';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public appCtrl: App) {
+  constructor(public navCtrl: NavController, public appCtrl: App, public actionCtrl: ActionSheetController) {
   }
   /**
    * [goTo description]
@@ -37,5 +40,60 @@ export class HomePage {
         this.navCtrl.push(CheckupsPage);
         break;
     }
+  }
+  /**
+   * open an action sheet to choose the vital sign for a new entry.
+   * @return {[type]} [description]
+   */
+  openActionSheet() {
+    let actionSheet = this.actionCtrl.create({});
+    actionSheet.setTitle('Neuer Eintrag');
+    actionSheet.addButton({
+      text: 'Essen',
+      icon: 'restaurant',
+      handler: () => {
+        this.navCtrl.push(NutritionPage, 'nutrition');
+      }
+    });
+    actionSheet.addButton({
+      text: 'Blutzucker',
+      icon: 'water',
+      handler: () => {
+        this.addVitalSign('Blutzucker');
+      }
+    });
+    actionSheet.addButton({
+      text: 'Blutdruck',
+      icon: 'heart',
+      handler: () => {
+        this.addVitalSign('Blutdruck');
+      }
+    });
+    actionSheet.addButton({
+      text: 'Puls',
+      icon: 'pulse',
+      handler: () => {
+        this.addVitalSign('Puls');
+      }
+    });
+    actionSheet.addButton({
+      text: 'Gewicht',
+      icon: 'speedometer',
+      handler: () => {
+        this.addVitalSign('Gewicht');
+      }
+    });
+    actionSheet.addButton({
+      text: 'Cancel',
+      icon: 'close',
+      role: 'destructive'
+    });
+
+    // present the alert popup
+    actionSheet.present();
+  }
+  addVitalSign(param: string){
+    console.log('go to MeasurementsPage');
+    this.navCtrl.push(MeasurementsPage, param);
   }
 }

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DayNutrition } from '../../util/DayNutrition';
 import { DetailNutrition } from '../../util/DetailNutrition';
-import { Platform, NavController, AlertController, ActionSheetController} from 'ionic-angular';
+import { Platform, NavController, NavParams, AlertController, ActionSheetController} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 declare var cordova: any;
@@ -51,7 +51,10 @@ export class NutritionPage {
   createTimeOfDayList() invokes createNutritionChart(), that creates
   the stacked column chart of the NutritionPage.
   **/
-  constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public storage: Storage, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
+    if (navParams.data == 'nutrition') {
+      this.openActionSheet();
+    }
     this.storage.ready().then(() => {
       this.storage.get('NutritionDetailList').then((val) => {
         //if there's a value in 'NutritionDetailList', load it to local variable
@@ -701,7 +704,7 @@ export class NutritionPage {
   it sets the property 'display' to none or inline
   **/
   expand(src) {
-    try{
+    try {
       //source navigate to the chart tag and store it to 'element'
       let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
       //mode is the style attribute of the chart element
@@ -715,7 +718,7 @@ export class NutritionPage {
         //the attribute 'display' is set to inline to show the chart
         element.style.display = 'inline';
       }
-    }catch (Error){
+    } catch (Error) {
       //source navigate to the chart tag and store it to 'element'
       let element = src.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
       //mode is the style attribute of the chart element

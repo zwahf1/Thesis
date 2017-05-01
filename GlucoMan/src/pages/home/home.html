@@ -14,7 +14,12 @@
 -->
 </ion-header>
 
-<ion-content padding>
+<ion-content>
+  <ion-fab right bottom>
+    <button ion-fab color="primaryDark" (click)='openActionSheet()'>
+      <ion-icon name="add"></ion-icon>
+    </button>
+  </ion-fab>
   <ion-grid>
     <ion-row>
       <ion-col col-6>

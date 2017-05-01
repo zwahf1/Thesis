@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { VitalRange } from '../../util/VitalRange';
-import { NavController, LoadingController, AlertController, ActionSheetController, Platform } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, AlertController, ActionSheetController, Platform } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
 import { Storage } from '@ionic/storage';
 
@@ -47,10 +47,13 @@ export class MeasurementsPage {
     -pulseValues: the measurements of the pulse
     -weightValues: the measurements of the scale
 **/
-  constructor(public navCtrl: NavController, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
-
-
+      if (navParams.data == 'Blutzucker') {
+        this.openActionSheetGlucose();
+      }else if(navParams.data){
+        this.openAddAlert(navParams.data);
+      }
     this.storage.ready().then(() => {
       this.storage.get('glucoseValues').then((val) => {
         if (val) {
@@ -348,6 +351,13 @@ it's called by clicking on a divider above the table
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Neuer Messwert hinzufügen');
     actionSheet.addButton({
+      text: 'Glukose',
+      icon: 'water',
+      handler: () => {
+        this.openActionSheetGlucose();
+      }
+    });
+    actionSheet.addButton({
       text: 'Blutdruck',
       icon: 'heart',
       handler: () => {
@@ -366,13 +376,6 @@ it's called by clicking on a divider above the table
       icon: 'speedometer',
       handler: () => {
         this.openAddAlert("Gewicht");
-      }
-    });
-    actionSheet.addButton({
-      text: 'Glukose',
-      icon: 'water',
-      handler: () => {
-        this.openActionSheetGlucose();
       }
     });
     actionSheet.addButton({

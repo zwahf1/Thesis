@@ -3,9 +3,18 @@ page-home {
     ion-icon {
       font-size: 4rem;
     }
-
+    ion-fab{
+      button{
+        height: 56px !important;
+      }
+    }
     button {
       height: inherit !important;
+    }
+    ion-fab{
+      button{
+        height: 56px !important;
+      }
     }
   }
 }
