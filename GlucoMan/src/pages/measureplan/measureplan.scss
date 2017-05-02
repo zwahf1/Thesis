@@ -24,4 +24,7 @@ page-measureplan {
     border-right: 1px solid;
     border-color: color($colors, delimiter);
   }
+  img, ion-img{
+        height: 1.7em;
+  }
 }
