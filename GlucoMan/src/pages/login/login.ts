@@ -22,12 +22,17 @@ export class LoginPage {
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage,
                 public popoverCtrl: PopoverController, public appCtrl: App) {
     this.storage.ready().then(() => {
+      // get login data from storage
       this.storage.get('UserAuthentication').then((val) => {
-        if(this.mp.loggedIn() && val != undefined) {
+        // if some login data is stored
+        if(val != undefined) {
           console.log("Logged in");
+          // login to the saved account
           this.mp.login(val[0], val[1]);
+          // set the start page to tabs (no login)
           this.navCtrl.setRoot(TabsPage);
         } else {
+          // normal login page
           console.log("Logged out");
         }
       });

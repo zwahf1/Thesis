@@ -49,7 +49,7 @@
             kg
           </ion-col>
         </ion-row>
-        <ion-row class="row-border" *ngFor="let entry of arrayCheckups">
+        <ion-row class="row-border" *ngFor="let entry of arrayCheckups" (click)="openClearCheckupsAlert(entry)">
           <ion-col col-3 class="borderRight">
             {{entry[0] | date:'dd.MM.yyyy'}}
           </ion-col>

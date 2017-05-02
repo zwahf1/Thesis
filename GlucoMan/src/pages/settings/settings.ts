@@ -7,6 +7,8 @@ import { DataPage } from '../data/data';
 import { BluetoothPage } from '../bluetooth/bluetooth';
 
 import { MidataPersistence } from '../../util/midataPersistence';
+
+import { Storage } from '@ionic/storage';
 /**
 SettingsPage
 it shows a menu to navigate into 2nd level to edit the settings
@@ -19,7 +21,7 @@ export class SettingsPage {
 
   private mp = MidataPersistence.getInstance();
 
-  constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController, public storage: Storage) {
 
   }
   /**
@@ -46,6 +48,10 @@ export class SettingsPage {
 method to log out from the midata account and navigate to the LoginPage
   **/
   logout() {
+    this.storage.ready().then(() => {
+      this.storage.clear();
+      localStorage.clear();
+    });
     this.mp.logout();
     this.appCtrl.getRootNav().setRoot(LoginPage);
   }

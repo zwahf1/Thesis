@@ -15,8 +15,7 @@
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Regelmässige Medikamente </ion-item-divider>
 
     <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(chronicMedis, m)" text-wrap class="medi">
-      <!-- {{m.article.title}} -->
-      hier kommt das Medikament
+      {{m.article.title}}
     </ion-item>
 
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Selbstgekaufte Medikamente </ion-item-divider>

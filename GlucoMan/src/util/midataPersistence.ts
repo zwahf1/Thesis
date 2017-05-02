@@ -97,7 +97,7 @@ export class MidataPersistence {
   // Search function (call it with MidataPersistence.search(Resource, {}))
   // Searches for a resrouce with a defined type
   // If the params are defined, it will look up for the resource with the given params
-  // --> resourceTyoe:  Can be any 'fhir' resource as a string. Example: "Patient", "Person" or "Observation"
+  // --> resourceType:  Can be any 'fhir' resource as a string. Example: "Patient", "Person" or "Observation"
   // --> params:        A JSON object with the given params. Can also be empty "{}"
   //                    Look up for the possible params at http://build.fhir.org/search.html and the specific resource doc
   // IMPORTANT:         This is an asynchronus call. You have to use the '.then(function (response) {})' notation.

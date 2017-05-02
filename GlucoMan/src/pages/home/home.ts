@@ -52,7 +52,8 @@ export class HomePage {
       text: 'Essen',
       icon: 'restaurant',
       handler: () => {
-        this.navCtrl.push(NutritionPage, 'nutrition');
+        this.navCtrl.setRoot(NutritionPage, 'nutrition');
+        // this.navCtrl.parent.select(2);
       }
     });
     actionSheet.addButton({
@@ -93,7 +94,8 @@ export class HomePage {
     actionSheet.present();
   }
   addVitalSign(param: string){
-    console.log('go to MeasurementsPage');
-    this.navCtrl.push(MeasurementsPage, param);
+    console.log(this.navCtrl.parent);
+    this.navCtrl.setRoot(MeasurementsPage, param);
+    this.navCtrl.parent.select(1);
   }
 }

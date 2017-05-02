@@ -12,6 +12,7 @@ import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
+import { HciHospAPI } from 'hci-hospindex-api';
 declare var cordova: any;
 
 @Component({
@@ -22,6 +23,8 @@ declare var cordova: any;
 export class MedicationPage {
 
   private mp = MidataPersistence.getInstance();
+
+  hciapi = HciHospAPI;
   // barcode scan result
   resultFromBarcode: any;
   // medication arrays
@@ -48,6 +51,7 @@ export class MedicationPage {
   ***************************************************/
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
     public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
+
     // refresh page (load list)
     this.refreshPage();
   }
@@ -249,14 +253,24 @@ export class MedicationPage {
           };
 
           if (img === "true") {
-            result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Front/F";
-            result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Back/F";
-            result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Front/F";
-            result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Back/F";
+            this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val) => {
+              console.log(val);
+              // result.article.imgFrontPack = val;
+            });
+            // result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Front/F";
+            // result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Back/F";
+            // result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Front/F";
+            // result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Back/F";
           }
-          this.showTakingMedication(result);
+          this.showMedicationCategory(result);
         }).catch(() => {
           console.log("Artikel nicht gefunden");
+          let alert = this.alertCtrl.create({
+            title: 'Artikel nicht gefunden',
+            subTitle: "Der gescannte Artikel ist nicht verfügbar!",
+            buttons: ['OK']
+          });
+          alert.present();
         });
         //if not ready
       } else if (xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
@@ -345,23 +359,28 @@ export class MedicationPage {
           // if the category is choosed
           navTransition.then(() => {
             // get the actual medication of the choosen category
-            this.storage.get(data).then((val) => {
-              // save medis in local variable (array)
-              medis = val;
+            medication.note.push({ text: data });
 
-              medication.note.push({ text: data });
-              // add the new medication to the current medication
-              medis.push(medication);
-              // save the current medication to the storage
-              this.storage.set(data, medis);
-              // save the medication in MIDATA
-              this.saveMIDATAMedication(medication);
+            if((data == "insulin") || (data == "intolerances")) {
+              this.storage.get(data).then((val) => {
+                // save medis in local variable (array)
+                medis = val;
 
-              navTransition.then(() => {
-                // refresh page
-                this.refreshPage();
+                // add the new medication to the current medication
+                medis.push(medication);
+                // save the current medication to the storage
+                this.storage.set(data, medis);
+                // save the medication in MIDATA
+                this.saveMIDATAMedication(medication);
+
+                navTransition.then(() => {
+                  // refresh page
+                  this.refreshPage();
+                });
               });
-            });
+            } else {
+              this.showTakingMedication(medication);
+            }
           });
         });
         return false;
@@ -428,15 +447,17 @@ export class MedicationPage {
   }
 
   showTimingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
+    // create a new Alert
     let alert = this.alertCtrl.create({});
-    // set title of popup
+    // set title of alert
     alert.setTitle('Tagesdosierung eingeben');
-
+    // add an input field with typ number (number per interval)
     alert.addInput({
       type: 'number',
       name: 'number',
       placeholder: 'Anzahl Tabletten pro Interval'
     });
+    // add a second input field with typ number (interval in days)
     alert.addInput({
       type: 'number',
       name: 'days',
@@ -444,24 +465,36 @@ export class MedicationPage {
     });
     // button to cancel
     alert.addButton('Cancel');
-    // button for save medication
+    // button for save medication parameter
     alert.addButton({
       text: 'Ok',
       // handle the click event for the OK button
-      // data: choosen category
       handler: (data) => {
-        // user has clicked the new medication button
+        // user has clicked the OK button
         // begin the alert's dismiss transition
         let navTransition = alert.dismiss();
-        // if the category is choosed
-        navTransition.then(() => {
+          // save the new parameter in the medication (JSON)
+          this.storage.ready().then(() => {
+            // if the category is choosed
+            navTransition.then(() => {
+              result.dosage[0].timing.repeat.frequency = data.number;
+              result.dosage[0].timing.repeat.period = data.days;
 
-          result.dosage[0].timing.repeat.frequency = data.number;
-          result.dosage[0].timing.repeat.period = data.days;
-          navTransition.then(() => {
-            this.showMedicationCategory(result);
+              this.storage.get(data).then((val) => {
+                // save medis in local variable (array)
+                var medis = val;
+
+                // add the new medication to the current medication
+                medis.push(result);
+                // save the current medication to the storage
+                this.storage.set(data, medis);
+                // save the medication in MIDATA
+                this.saveMIDATAMedication(result);
+
+                this.refreshPage();
+              });
+            });
           });
-        });
         return false;
       }
     });

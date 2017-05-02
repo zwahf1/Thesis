@@ -12,28 +12,28 @@
 <ion-content padding>
   <ion-grid>
     <ion-row *ngIf="medication.article.img">
-      <ion-row>
-        <ion-card>
-          <img src="{{medication.article.imgFrontPack}}"/>
-          <img src="{{medication.article.imgBackPack}}"/>
+      <ion-col>
+        <ion-card style="height: 100%">
+          <ion-card-header style="font-size: 5vw">
+            Packung
+          </ion-card-header>
           <ion-card-content>
-            <ion-card-title style="font-size: 5vw">
-              Packung
-              </ion-card-title>
+            <img src="{{medication.article.imgFrontPack}}"/>
+            <img src="{{medication.article.imgBackPack}}"/>
           </ion-card-content>
         </ion-card>
-      </ion-row>
-      <ion-row>
-        <ion-card>
-          <img src="{{medication.article.imgFrontDrug}}"/>
-          <img src="{{medication.article.imgBackDrug}}"/>
+      </ion-col>
+      <ion-col>
+        <ion-card style="height: 100%">
+          <ion-card-header style="font-size: 5vw">
+            Medikament
+          </ion-card-header>
           <ion-card-content>
-            <ion-card-title style="font-size: 5vw">
-              Medikament
-              </ion-card-title>
+            <img src="{{medication.article.imgFrontDrug}}"/>
+            <img src="{{medication.article.imgBackDrug}}"/>
           </ion-card-content>
         </ion-card>
-      </ion-row>
+      </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>

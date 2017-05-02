@@ -36,7 +36,7 @@ export class CheckupsPage {
                                 [false,"Deformitäten","",""],
                                 [false,"Schuhe","",""],
                                 [false,"Serumkreatinin","",""],
-                                [false,"Mikroalbuminurie","",""],
+                                [false,"Mikroalbumin-urie","",""],
                                 [false,"TC/HDL","",""],
                                 [false,"LDL","",""],
                                 [false,"Triglyceride","",""],
@@ -53,7 +53,7 @@ export class CheckupsPage {
 
   clickCheckBox(control) {
     if(!control[0]) {
-      this.openClearAlert(control);
+      this.openClearControlAlert(control);
 
     } else {
 
@@ -65,7 +65,7 @@ export class CheckupsPage {
     });
   }
 
-  openClearAlert(control) {
+  openClearControlAlert(control) {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle('Löschen');
@@ -89,6 +89,34 @@ export class CheckupsPage {
         control[2] = "";
         control[3] = "";
         return false;
+      }
+    });
+    // present the alert popup
+    alert.present();
+  }
+
+  openClearCheckupsAlert(checkup) {
+    let alert = this.alertCtrl.create({});
+    // set title of popup
+    alert.setTitle('Löschen');
+    alert.setMessage('Wollen sie den Eintrag wirklich löschen?');
+    // button to cancel
+    alert.addButton({
+      text: 'Cancel'
+    });
+    // button for save medication
+    alert.addButton({
+      text: 'Ok',
+      // handle the click event for the OK button
+      handler: (data) => {
+        let index: number = this.arrayCheckups.indexOf(checkup);
+        console.log(index);
+        if (index != -1) {
+          this.arrayCheckups.splice(index, 1);
+        }
+        this.storage.ready().then(() => {
+          this.storage.set("arrayCheckups",this.arrayCheckups);
+        });
       }
     });
     // present the alert popup

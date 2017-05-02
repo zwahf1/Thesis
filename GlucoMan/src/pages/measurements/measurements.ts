@@ -29,10 +29,10 @@ export class MeasurementsPage {
   visibleList = [];
   vitalRangeList = [];
 
-  valuesGlucoseChart = [[]];
-  valuesBP = [[]];
-  valuesPulse = [[]];
-  valuesWeight = [[]];
+  valuesGlucoseChart = [];
+  valuesBP = [];
+  valuesPulse = [];
+  valuesWeight = [];
 
   /**
                     constructor
@@ -143,10 +143,9 @@ export class MeasurementsPage {
       for (var i = 0; i < this.valuesGlucose.length; i++) {
         this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
       }
-
-      this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
     }
     //the charts are created by the Chart-class
+    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
     this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
     this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
     this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
@@ -354,7 +353,8 @@ it's called by clicking on a divider above the table
       text: 'Glukose',
       icon: 'water',
       handler: () => {
-        this.openActionSheetGlucose();
+        // this.openActionSheetGlucose();
+        this.getMIDATAObservations();
       }
     });
     actionSheet.addButton({
@@ -758,209 +758,208 @@ method to add glucose value into weightlist, chart and MIDATA
   }
 
   getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
-    var result: {value, date, event
-  };
+    var result: {value, date, event};
     var event: any = ((byte5 & 0xf8) >> 3);
-if (event == 2) {
-  event = "Nach dem Sport";
-} else if (event == 4) {
-  event = "Nach Medikation";
-} else if (event == 8) {
-  event = "Nach dem Essen";
-} else if (event == 16) {
-  event = "Vor dem Essen";
-}
+    if (event == 2) {
+      event = "Nach dem Sport";
+    } else if (event == 4) {
+      event = "Nach Medikation";
+    } else if (event == 8) {
+      event = "Nach dem Essen";
+    } else if (event == 16) {
+      event = "Vor dem Essen";
+    }
 
-result = {
-  value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
-  date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
-  event: event
-}
-return result;
+    result = {
+      value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
+      date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
+      event: event
+    }
+    return result;
   }
 
-saveMIDATAWeight(v, d) {
-  this.mp.save(this.getWeightRes(v, d));
-}
+  saveMIDATAWeight(v, d) {
+    this.mp.save(this.getWeightRes(v, d));
+  }
 
-saveMIDATAPulse(v, d) {
-  this.mp.save(this.getPulseRes(v, d));
-}
+  saveMIDATAPulse(v, d) {
+    this.mp.save(this.getPulseRes(v, d));
+  }
 
-saveMIDATABloodPressure(v1, v2, d) {
-  this.mp.save(this.getBloodPressureRes(v1, v2, d));
-}
+  saveMIDATABloodPressure(v1, v2, d) {
+    this.mp.save(this.getBloodPressureRes(v1, v2, d));
+  }
 
-saveMIDATAGlucose(v, d) {
-  this.mp.save(this.getGlucoseRes(v, d));
-}
+  saveMIDATAGlucose(v, d) {
+    this.mp.save(this.getGlucoseRes(v, d));
+  }
 
-getMIDATAObservations() {
-  var o = this.mp.search("Observation");
-  console.log(o);
-  return o;
-}
+  getMIDATAObservations() {
+    var o = this.mp.search("Observation");
+    console.log(o);
+    return o;
+  }
 
-getMIDATAWeight() {
+  getMIDATAWeight() {
 
-}
+  }
 
-getMIDATAPulse() {
+  getMIDATAPulse() {
 
-}
+  }
 
-getMIDATABloodPressure() {
+  getMIDATABloodPressure() {
 
-}
+  }
 
-getMIDATAGlucose() {
+  getMIDATAGlucose() {
 
-}
+  }
 
-getWeightRes(v, d) {
-  var weight: TYPES.FHIR_ObservationRes_1Value;
-  weight = {
-    resourceType: 'Observation',
-    status: "preliminary",
-    effectiveDateTime: d,
-    category: {
-      coding: [{
-        system: "http://hl7.org/fhir/observation-category",
-        code: "vital-signs",
-        display: "Vital-Signs"
-      }]
-    },
-    code: {
-      text: "Gewicht",
-      coding: [{
-        system: 'http://loinc.org',
-        code: '3141-9',
-        display: 'Weight Measured'
-      }]
-    },
-    valueQuantity: {
-      value: v,
-      unit: 'kg',
-      system: 'http://unitsofmeasure.org'
-    }
-  } as TYPES.FHIR_ObservationRes_1Value;
-  return weight;
-}
-
-getPulseRes(v, d) {
-  var pulse: TYPES.FHIR_ObservationRes_1Value;
-  pulse = {
-    resourceType: 'Observation',
-    status: "preliminary",
-    effectiveDateTime: d,
-    category: {
-      coding: [{
-        system: "http://hl7.org/fhir/observation-category",
-        code: "vital-signs",
-        display: "Vital-Signs"
-      }]
-    },
-    code: {
-      text: "Herzfrequenz",
-      coding: [{
-        system: 'http://loinc.org',
-        code: '8867-4',
-        display: 'Herzfrequenz'
-      }]
-    },
-    valueQuantity: {
-      value: v,
-      unit: 'bpm',
-      system: 'http://unitsofmeasure.org'
-    }
-  } as TYPES.FHIR_ObservationRes_1Value;
-  return pulse;
-}
-
-getBloodPressureRes(v1, v2, d) {
-  var bp: TYPES.FHIR_ObservationRes_2Value;
-  bp = {
-    resourceType: 'Observation',
-    status: "preliminary",
-    effectiveDateTime: d,
-    category: {
-      coding: [{
-        system: "http://hl7.org/fhir/observation-category",
-        code: "vital-signs",
-        display: "Vital-Signs"
-      }]
-    },
-    code: {
-      text: "Blutdruck",
-      coding: [{
-        system: 'http://loinc.org',
-        code: '55417-0',
-        display: 'Blood Pressure'
-      }]
-    },
-    component: [
-      {
-        code: {
-          text: 'Systolic blood pressure',
-          coding: [{
-            system: 'http://loinc.org',
-            display: 'Systolic blood pressure',
-            code: '8480-6'
-          }]
-        },
-        valueQuantity: {
-          value: v2,
-          unit: 'mmHg',
-          system: 'http://unitsofmeasure.org'
-        }
+  getWeightRes(v, d) {
+    var weight: TYPES.FHIR_ObservationRes_1Value;
+    weight = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
+        }]
       },
-      {
-        code: {
-          text: 'Diastolic blood pressure',
-          coding: [{
-            system: 'http://loinc.org',
-            display: 'Diastolic blood pressure',
-            code: '8462-4'
-          }]
-        },
-        valueQuantity: {
-          value: v1,
-          unit: 'mmHg',
-          system: 'http://unitsofmeasure.org'
-        }
+      code: {
+        text: "Gewicht",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '3141-9',
+          display: 'Weight Measured'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'kg',
+        system: 'http://unitsofmeasure.org'
       }
-    ]
-  } as TYPES.FHIR_ObservationRes_2Value;
-  return bp;
-}
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return weight;
+  }
 
-getGlucoseRes(v, d) {
-  var glucose: TYPES.FHIR_ObservationRes_1Value;
-  glucose = {
-    resourceType: 'Observation',
-    status: "preliminary",
-    effectiveDateTime: d,
-    category: {
-      coding: [{
-        system: "http://hl7.org/fhir/observation-category",
-        code: "laboratory",
-        display: "Laboratory"
-      }]
-    },
-    code: {
-      text: "Glukose",
-      coding: [{
-        system: 'http://loinc.org',
-        code: '15074-8',
-        display: 'Glucose [Moles/volume] in blood'
-      }]
-    },
-    valueQuantity: {
-      value: v,
-      unit: 'mmol/l',
-      system: 'http://unitsofmeasure.org'
-    }
-  } as TYPES.FHIR_ObservationRes_1Value;
-  return glucose;
-}
+  getPulseRes(v, d) {
+    var pulse: TYPES.FHIR_ObservationRes_1Value;
+    pulse = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
+        }]
+      },
+      code: {
+        text: "Herzfrequenz",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '8867-4',
+          display: 'Herzfrequenz'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'bpm',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return pulse;
+  }
+
+  getBloodPressureRes(v1, v2, d) {
+    var bp: TYPES.FHIR_ObservationRes_2Value;
+    bp = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "vital-signs",
+          display: "Vital-Signs"
+        }]
+      },
+      code: {
+        text: "Blutdruck",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '55417-0',
+          display: 'Blood Pressure'
+        }]
+      },
+      component: [
+        {
+          code: {
+            text: 'Systolic blood pressure',
+            coding: [{
+              system: 'http://loinc.org',
+              display: 'Systolic blood pressure',
+              code: '8480-6'
+            }]
+          },
+          valueQuantity: {
+            value: v2,
+            unit: 'mmHg',
+            system: 'http://unitsofmeasure.org'
+          }
+        },
+        {
+          code: {
+            text: 'Diastolic blood pressure',
+            coding: [{
+              system: 'http://loinc.org',
+              display: 'Diastolic blood pressure',
+              code: '8462-4'
+            }]
+          },
+          valueQuantity: {
+            value: v1,
+            unit: 'mmHg',
+            system: 'http://unitsofmeasure.org'
+          }
+        }
+      ]
+    } as TYPES.FHIR_ObservationRes_2Value;
+    return bp;
+  }
+
+  getGlucoseRes(v, d) {
+    var glucose: TYPES.FHIR_ObservationRes_1Value;
+    glucose = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "laboratory",
+          display: "Laboratory"
+        }]
+      },
+      code: {
+        text: "Glukose",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '15074-8',
+          display: 'Glucose [Moles/volume] in blood'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'mmol/l',
+        system: 'http://unitsofmeasure.org'
+      }
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return glucose;
+  }
 }
