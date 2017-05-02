@@ -49,13 +49,26 @@ export class MeasurementsPage {
 **/
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
-      if(navParams.data.length==undefined){
-      } else if (navParams.data == 'Blutzucker') {
-        this.openActionSheetGlucose();
-      }else if(navParams.data){
-        this.openAddAlert(navParams.data);
-      }
+
     this.storage.ready().then(() => {
+      this.storage.get('VisibleList').then((val) => {
+        if (val) {
+          this.visibleList = val;
+          this.hideCharts();
+        }
+      });
+      this.storage.get('VitalRangeList').then((val) => {
+        if (val) {
+          this.vitalRangeList = val;
+        } else {
+          this.vitalRangeList.push(new VitalRange('Glukose', 0, 0, 'mmol/L', new Date));
+          this.vitalRangeList.push(new VitalRange('Diastolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
+          this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
+          this.storage.set('VitalRangeList', this.vitalRangeList);
+        }
+      });
       this.storage.get('glucoseValues').then((val) => {
         if (val) {
           this.valuesGlucose = val;
@@ -100,6 +113,7 @@ export class MeasurementsPage {
             [Date.UTC(2017, 3, 17), 74.9], [Date.UTC(2017, 3, 18), 75.7]];
           this.storage.set('weightValues', this.valuesWeight);
         }
+        this.refreshPage("all");
       });
     });
   }
@@ -110,6 +124,15 @@ export class MeasurementsPage {
   **/
   ionViewDidEnter() {
     this.storage.ready().then(() => {
+      this.storage.get('addNewValueFromHome').then((val) => {
+        //if there's a value in 'NutritionDetailList', load it to local variable
+        if (val == 'Blutzucker') {
+          this.openActionSheetGlucose();
+        } else if(val != "") {
+          this.openAddAlert(val);
+        }
+        this.storage.set('addNewValueFromHome',"");
+      });
       this.storage.get('VisibleList').then((val) => {
         if (val) {
           this.visibleList = val;
@@ -127,7 +150,12 @@ export class MeasurementsPage {
           this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
           this.storage.set('VitalRangeList', this.vitalRangeList);
         }
-        this.refreshPage();
+      });
+      this.storage.get('changeTheMeasurementsView').then((val) => {
+        if (val) {
+          this.storage.set('changeTheMeasurementsView', false);
+          this.refreshPage("all");
+        }
       });
     });
   }
@@ -136,23 +164,46 @@ export class MeasurementsPage {
 
   while the charts are creating, the loading indicator is presented.
   **/
-  refreshPage() {
+  refreshPage(typ: string) {
     let loading = this.loadingCtrl.create();
     loading.present();
 
-    if (this.valuesGlucose.length > this.valuesGlucoseChart.length) {
-      for (var i = 0; i < this.valuesGlucose.length; i++) {
-        this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
+    if(typ == "g" || typ == "all") {
+      if (this.valuesGlucose.length > this.valuesGlucoseChart.length) {
+        for (var i = 0; i < this.valuesGlucose.length; i++) {
+          this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
+        }
       }
     }
-    //the charts are created by the Chart-class
 
-    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, 25, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
-    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, null, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, null, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
-    this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, null, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
-
+    switch(typ) {
+      case "all": {
+        //the charts are created by the Chart-class
+        this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, 25, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
+        this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, null, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
+        this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, null, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
+        this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, null, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
+        break;
+      }
+      case "g": {
+        this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, 25, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
+        break;
+      }
+      case "p": {
+        this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, null, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
+        break;
+      }
+      case "bp": {
+        this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, null, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
+        break;
+      }
+      case "w": {
+        this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, null, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
+        break;
+      }
+    }
     this.createAllChart();
+
     loading.dismiss();
   }
   /**
@@ -357,8 +408,7 @@ it's called by clicking on a divider above the table
       text: 'Glukose',
       icon: 'water',
       handler: () => {
-        // this.openActionSheetGlucose();
-        this.getMIDATAObservations();
+        this.openActionSheetGlucose();
       }
     });
     actionSheet.addButton({
@@ -657,7 +707,7 @@ method to add weight value into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('weightValues', this.valuesWeight.sort());
       this.saveMIDATAWeight(v, d);
-      this.refreshPage();
+      this.refreshPage("w");
     });
   }
   /**
@@ -669,7 +719,7 @@ method to add pulse value into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('pulseValues', this.valuesPulse.sort());
       this.saveMIDATAPulse(v, d);
-      this.refreshPage();
+      this.refreshPage("p");
     });
   }
   /**
@@ -682,7 +732,7 @@ method to add blood pressure values into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('bpValues', this.valuesBP.sort());
       this.saveMIDATABloodPressure(v2, v1, d);
-      this.refreshPage();
+      this.refreshPage("bp");
     });
   }
   /**
@@ -698,7 +748,7 @@ method to add glucose value into weightlist, chart and MIDATA
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
       this.saveMIDATAGlucose(v, d);
-      this.refreshPage();
+      this.refreshPage("g");
     });
   }
 
@@ -724,14 +774,14 @@ method to add glucose value into weightlist, chart and MIDATA
         console.log("Value already exist");
       } else {
         this.valuesGlucose.push(gluco);
-        // this.saveMIDATAGlucose(val, gluco.date);
+        this.saveMIDATAGlucose(val, gluco.date);
         console.log("Added new Value");
       }
     }
     console.log(this.valuesGlucose);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
-      this.refreshPage();
+      this.refreshPage("g");
     });
   }
 

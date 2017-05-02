@@ -50,7 +50,7 @@ export interface DateToValue
    effectiveDateTime:any;
    subject?:any;
    note:Array<any>;
-   dosage?:Array<any>;
+   dosage?:Array<Dosage>;
    article: Article;
  }
 
@@ -127,7 +127,7 @@ export interface DateToValue
  }
 
  export interface Dosage {
-   timing: {
+   timing?: {
      repeat: {
        frequency:number;
        period:number;

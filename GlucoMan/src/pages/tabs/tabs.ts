@@ -19,6 +19,6 @@ export class TabsPage {
   tab4Root: any = MedicationPage;
 
   constructor() {
-    
+
   }
 }

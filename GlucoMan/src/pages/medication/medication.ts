@@ -253,15 +253,14 @@ export class MedicationPage {
           };
 
           if (img === "true") {
-            this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val) => {
+            this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val: any) => {
               console.log(val);
               var all = val;
-              // result.article.imgFrontPack = all.front;
+              result.article.imgFrontPack = all.front;
+              result.article.imgBackPack = all.back;
+              result.article.imgFrontDrug = all.detailFront;
+              result.article.imgBackDrug = all.detailBack;
             });
-            // result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Front/F";
-            // result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Back/F";
-            // result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Front/F";
-            // result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/" + prdno + "/ProductNr/PI/Back/F";
           }
           this.showMedicationCategory(result);
         }).catch(() => {
@@ -394,18 +393,28 @@ export class MedicationPage {
   showTakingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
     let alert = this.alertCtrl.create({});
     // set title of popup
-    alert.setTitle('Einnahme-Art auswählen');
+    alert.setTitle('Wirkstoffaufnahme');
 
     alert.addInput({
       type: 'radio',
-      label: 'Oral',
-      value: 'Oral',
+      label: 'Mund',
+      value: 'Mund',
       checked: true
     });
     alert.addInput({
       type: 'radio',
-      label: 'Auftragen',
-      value: 'Topic'
+      label: 'Augen',
+      value: 'Augen'
+    });
+    alert.addInput({
+      type: 'radio',
+      label: 'Spritzen',
+      value: 'Spritzen'
+    });
+    alert.addInput({
+      type: 'radio',
+      label: 'Eincremen',
+      value: 'Eincremen'
     });
     // button to cancel
     alert.addButton('Cancel');
@@ -421,17 +430,30 @@ export class MedicationPage {
         // if the category is choosed
         navTransition.then(() => {
           let coding = "";
-          if (data === "Oral") {
+          let codingDisplay = "";
+          if (data === "Mund") {
             coding = "26643006";
-          } else if (data === "Topic") {
+            codingDisplay = "Oral";
+          }
+          else if (data === "Augen") {
+            coding = "54485002";
+            codingDisplay = "Ophthalmic";
+          }
+          else if (data === "Spritzen") {
+            coding = "34206005";
+            codingDisplay = "Subcutaneous";
+          }
+          else if (data === "Eincremen") {
             coding = "6064005";
+            codingDisplay = "Topical";
           }
           // save the new parameter in the medication (JSON)
           this.storage.ready().then(() => {
             // if the category is choosed
             navTransition.then(() => {
               result.dosage[0].route.coding[0].code = coding;
-              result.dosage[0].route.coding[0].display = data;
+              result.dosage[0].route.coding[0].display = codingDisplay;
+              result.dosage[0].route.text = data;
 
               this.storage.get(result.note[0].text).then((val) => {
                 // save medis in local variable (array)

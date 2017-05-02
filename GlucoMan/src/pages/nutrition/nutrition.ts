@@ -27,6 +27,8 @@ export class NutritionPage {
   //options of the carbohydrates chart of the NutritionPage
   chartCarbo: any;
 
+  loadFromHome: boolean;
+
   /**
                     constructor NutritionPage
 
@@ -52,9 +54,7 @@ export class NutritionPage {
   the stacked column chart of the NutritionPage.
   **/
   constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public storage: Storage, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
-    if (navParams.data == 'nutrition') {
-      this.openActionSheet();
-    }
+
     this.storage.ready().then(() => {
       this.storage.get('NutritionDetailList').then((val) => {
         //if there's a value in 'NutritionDetailList', load it to local variable
@@ -63,7 +63,19 @@ export class NutritionPage {
           //after list is loaded, create daily nutrition list
           this.createNutritionList();
         }
-      })
+      });
+    });
+  }
+
+  ionViewDidEnter() {
+    this.storage.ready().then(() => {
+      this.storage.get('addNewValueFromHome').then((val) => {
+        //if there's a value in 'NutritionDetailList', load it to local variable
+        if (val == 'nutrition') {
+          this.storage.set('addNewValueFromHome',"");
+          this.openActionSheet();
+        }
+      });
     });
   }
   /**

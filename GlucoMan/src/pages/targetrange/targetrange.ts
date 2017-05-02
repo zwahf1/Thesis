@@ -99,6 +99,7 @@ loads the latest vitalRangeList from the storage
           text: 'Speichern',
           handler: () => {
             this.storage.ready().then(() => {
+              this.storage.set('changeTheMeasurementsView', true);
               this.storage.set('VitalRangeList', this.vitalRangeList);
               this.changeFlag = false;
               this.vitalRangeList.forEach((obj) => {

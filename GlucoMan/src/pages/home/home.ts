@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { App, NavController, ActionSheetController } from 'ionic-angular';
+import { Storage } from '@ionic/storage';
 import { TabsPage} from '../tabs/tabs';
 import { SettingsPage } from '../settings/settings';
 import { InformationPage } from '../information/information';
@@ -15,7 +16,7 @@ import { NutritionPage } from '../nutrition/nutrition';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public appCtrl: App, public actionCtrl: ActionSheetController) {
+  constructor(public navCtrl: NavController, public appCtrl: App, public actionCtrl: ActionSheetController, public storage: Storage) {
   }
   /**
    * [goTo description]
@@ -52,8 +53,11 @@ export class HomePage {
       text: 'Essen',
       icon: 'restaurant',
       handler: () => {
-        this.navCtrl.setRoot(NutritionPage, 'nutrition');
-        // this.navCtrl.parent.select(2);
+        // this.navCtrl.setRoot(NutritionPage, 'nutrition
+        this.storage.ready().then(() => {
+          this.storage.set('addNewValueFromHome', 'nutrition');
+          this.navCtrl.parent.select(2);
+        });
       }
     });
     actionSheet.addButton({
@@ -94,8 +98,9 @@ export class HomePage {
     actionSheet.present();
   }
   addVitalSign(param: string){
-    console.log(this.navCtrl.parent);
-    this.navCtrl.setRoot(MeasurementsPage, param);
-    this.navCtrl.parent.select(1);
+    this.storage.ready().then(() => {
+      this.storage.set('addNewValueFromHome', param);
+      this.navCtrl.parent.select(1);
+    });
   }
 }
