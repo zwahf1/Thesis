@@ -50,7 +50,7 @@ export interface DateToValue
    effectiveDateTime:any;
    subject?:any;
    note:Array<any>;
-   dosage:Array<any>;
+   dosage?:Array<any>;
    article: Article;
  }
 

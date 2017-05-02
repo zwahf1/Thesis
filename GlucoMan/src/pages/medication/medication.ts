@@ -255,7 +255,8 @@ export class MedicationPage {
           if (img === "true") {
             this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val) => {
               console.log(val);
-              // result.article.imgFrontPack = val;
+              var all = val;
+              // result.article.imgFrontPack = all.front;
             });
             // result.article.imgFrontPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Front/F";
             // result.article.imgBackPack = "https://apps.hcisolutions.ch/MyProducts/picture/" + phar + "/Pharmacode/PA/Back/F";
@@ -317,7 +318,7 @@ export class MedicationPage {
     //create alert for choosing a category
     let alert = this.alertCtrl.create({});
     // set title of popup
-    alert.setTitle('Kategorie für Medikation auswählen');
+    alert.setTitle('Medikamenten-Kategorie auswählen');
     // radio button (category)
     alert.addInput({
       type: 'radio',
@@ -393,18 +394,13 @@ export class MedicationPage {
   showTakingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
     let alert = this.alertCtrl.create({});
     // set title of popup
-    alert.setTitle('Kategorie für Einnahme-Art auswählen');
+    alert.setTitle('Einnahme-Art auswählen');
 
     alert.addInput({
       type: 'radio',
       label: 'Oral',
       value: 'Oral',
       checked: true
-    });
-    alert.addInput({
-      type: 'radio',
-      label: 'Anal',
-      value: 'Anal'
     });
     alert.addInput({
       type: 'radio',
@@ -427,67 +423,24 @@ export class MedicationPage {
           let coding = "";
           if (data === "Oral") {
             coding = "26643006";
-          } else if (data === "Anal") {
-            coding = "37161004";
           } else if (data === "Topic") {
             coding = "6064005";
           }
-          result.dosage[0].route.coding[0].code = coding;
-          result.dosage[0].route.coding[0].display = data;
-
-          navTransition.then(() => {
-            this.showTimingMedication(result);
-          });
-        });
-        return false;
-      }
-    });
-    // present the alert popup
-    alert.present();
-  }
-
-  showTimingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
-    // create a new Alert
-    let alert = this.alertCtrl.create({});
-    // set title of alert
-    alert.setTitle('Tagesdosierung eingeben');
-    // add an input field with typ number (number per interval)
-    alert.addInput({
-      type: 'number',
-      name: 'number',
-      placeholder: 'Anzahl Tabletten pro Interval'
-    });
-    // add a second input field with typ number (interval in days)
-    alert.addInput({
-      type: 'number',
-      name: 'days',
-      placeholder: 'Interval in Tagen'
-    });
-    // button to cancel
-    alert.addButton('Cancel');
-    // button for save medication parameter
-    alert.addButton({
-      text: 'Ok',
-      // handle the click event for the OK button
-      handler: (data) => {
-        // user has clicked the OK button
-        // begin the alert's dismiss transition
-        let navTransition = alert.dismiss();
           // save the new parameter in the medication (JSON)
           this.storage.ready().then(() => {
             // if the category is choosed
             navTransition.then(() => {
-              result.dosage[0].timing.repeat.frequency = data.number;
-              result.dosage[0].timing.repeat.period = data.days;
+              result.dosage[0].route.coding[0].code = coding;
+              result.dosage[0].route.coding[0].display = data;
 
-              this.storage.get(data).then((val) => {
+              this.storage.get(result.note[0].text).then((val) => {
                 // save medis in local variable (array)
                 var medis = val;
 
                 // add the new medication to the current medication
                 medis.push(result);
                 // save the current medication to the storage
-                this.storage.set(data, medis);
+                this.storage.set(result.note[0].text, medis);
                 // save the medication in MIDATA
                 this.saveMIDATAMedication(result);
 
@@ -495,6 +448,7 @@ export class MedicationPage {
               });
             });
           });
+        });
         return false;
       }
     });
@@ -509,7 +463,7 @@ export class MedicationPage {
   expand(src) {
     try {
       let element = src.parentNode.parentNode.parentNode.nextElementSibling;
-      if(element.tagName == 'ION-ITEM'){
+      if(element.tagName == 'DIV'){
       //mode is the style attribute of the chart element
       let mode = '' + element.getAttribute('style');
       //if 'style' contains the word 'none', the method 'search' returns a
@@ -524,7 +478,7 @@ export class MedicationPage {
     }
     } catch (Error) {
       let element = src.parentNode.parentNode.nextElementSibling;
-      if(element.tagName == 'ION-ITEM'){
+      if(element.tagName == 'DIV'){
       //mode is the style attribute of the chart element
       let mode = '' + element.getAttribute('style');
       //if 'style' contains the word 'none', the method 'search' returns a
