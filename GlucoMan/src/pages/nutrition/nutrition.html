@@ -2,10 +2,10 @@
   <ion-navbar>
     <ion-title>Ernährung</ion-title>
     <ion-buttons end>
-    <button ion-button end (click)='openActionSheet()'>
+      <button ion-button end (click)='openActionSheet()'>
       <ion-icon name="add"></ion-icon>
     </button>
-  </ion-buttons>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 <ion-content>
@@ -17,7 +17,7 @@
           <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
         </div>
         <p *ngIf="nutritionDetailList == 0">Es sind keine Einträge zur Ernährung vorhanden.</p>
-        <table  *ngIf="nutritionDetailList != 0">
+        <table *ngIf="nutritionDetailList != 0">
           <thead>
             <th class="borderRight">Datum</th>
             <th colspan="6">Kohlenhydrate in Gramm</th>
@@ -74,7 +74,7 @@
               g
             </ion-col>
           </ion-row>
-          <ion-row class="borderBottom centerText"  *ngFor="let item of nutritionDetailList" (click)="edit(item)">
+          <ion-row class="borderBottom centerText" *ngFor="let item of nutritionDetailList" (click)="edit(item)">
             <ion-col col-3 class="borderRight">
               {{item.date | date:'dd.MM.yyyy hh:mm'}}
             </ion-col>

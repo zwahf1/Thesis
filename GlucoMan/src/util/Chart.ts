@@ -19,7 +19,7 @@ input parameters:
     -data (any): the data to feed the chart
 **************************************************/
 
-  constructor(type: string, title: string, unit: string, data: any, from1: number, to1: number, from2: number, to2: number){
+  constructor(type: string, title: string, unit: string, data: any, maxY: number, from1: number, to1: number, from2: number, to2: number){
     this.chart = {
       chart: {
         //type of the chart. spline for blood glucose, weight and pulse,
@@ -57,6 +57,7 @@ input parameters:
           //rotation: -90,
         },
         min: 0,
+        max: maxY,
         opposite: true,
         plotBands: [{
           from: from1,

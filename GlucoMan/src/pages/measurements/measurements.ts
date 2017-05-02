@@ -49,7 +49,8 @@ export class MeasurementsPage {
 **/
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
     public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
-      if (navParams.data == 'Blutzucker') {
+      if(navParams.data.length==undefined){
+      } else if (navParams.data == 'Blutzucker') {
         this.openActionSheetGlucose();
       }else if(navParams.data){
         this.openAddAlert(navParams.data);
@@ -145,10 +146,12 @@ export class MeasurementsPage {
       }
     }
     //the charts are created by the Chart-class
-    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
-    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
-    this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
-    this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
+
+    this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, 25, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
+    this.chartBP = new Chart('columnrange', 'Blutdruck', 'mmHg', this.valuesBP, null, this.vitalRangeList[1].lowerLimit, this.vitalRangeList[1].upperLimit, this.vitalRangeList[2].lowerLimit, this.vitalRangeList[2].upperLimit);
+    this.chartPulse = new Chart('spline', 'Puls', '/min', this.valuesPulse, null, this.vitalRangeList[3].lowerLimit, this.vitalRangeList[3].upperLimit, 0, 0);
+    this.chartWeight = new Chart('spline', 'Gewicht', 'kg', this.valuesWeight, null, this.vitalRangeList[4].lowerLimit, this.vitalRangeList[4].upperLimit, 0, 0);
+
     this.createAllChart();
     loading.dismiss();
   }
@@ -266,6 +269,7 @@ it's called by clicking on a divider above the table
         opposite: false,
       }, {
           title: { text: 'Blutzucker' },
+          max: 25,
           min: 0,
           opposite: true,
         }], series: [{
