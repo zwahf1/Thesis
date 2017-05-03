@@ -19,7 +19,9 @@ export class MedicationDetailPage {
 
 create the detail page for the given medication
 ***************************************************/
-  constructor(public navCtrl: NavController, public params: NavParams, public storage: Storage, public alertCtrl: AlertController) {
+  constructor(public navCtrl: NavController, public params: NavParams, public storage: Storage,
+    public alertCtrl: AlertController) {
+      
     this.medication = params.get('medi');
     this.array = params.get('array');
   }

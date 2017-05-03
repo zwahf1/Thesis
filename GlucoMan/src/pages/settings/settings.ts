@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, AlertController  } from 'ionic-angular';
+import { App, NavController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { TargetrangePage } from '../targetrange/targetrange';
 import { DisplayPage } from '../display/display';
@@ -21,7 +21,7 @@ export class SettingsPage {
 
   private mp = MidataPersistence.getInstance();
 
-  constructor(public navCtrl: NavController, public appCtrl: App, private alertCtrl: AlertController, public storage: Storage) {
+  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage) {
 
   }
   /**

@@ -1,18 +1,14 @@
 import { Component } from '@angular/core';
-import { Platform, NavController, AlertController, LoadingController, Slides } from 'ionic-angular';
-import { Storage } from '@ionic/storage';
-
-import { Http, Headers, RequestOptions } from '@angular/http';
-import 'rxjs/add/operator/map';
-import 'rxjs/add/operator/toPromise';
-
-
+import { Platform, NavController, AlertController, LoadingController } from 'ionic-angular';
 import { MedicationDetailPage } from '../medicationDetail/medicationDetail';
+import { Storage } from '@ionic/storage';
 
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
 import { HciHospAPI } from 'hci-hospindex-api';
+import { Http } from '@angular/http';
+
 declare var cordova: any;
 
 @Component({
@@ -25,30 +21,22 @@ export class MedicationPage {
   private mp = MidataPersistence.getInstance();
 
   hciapi = HciHospAPI;
-  // barcode scan result
-  resultFromBarcode: any;
   // medication arrays
   chronicMedis: [TYPES.LOCAL_MedicationStatementRes];
   selfMedis: [TYPES.LOCAL_MedicationStatementRes];
   insulin: [TYPES.LOCAL_MedicationStatementRes];
   intolerances: [TYPES.LOCAL_MedicationStatementRes];
 
-  /**************************************************
-                    constructor
-
-  create the medication page with parameters
-    - navCtrl: navigation controller to navigate between pages
-    - platform: platform for using plugins
-    - storage: local storage
-    - http: for http requests
-    - alertCtrl: alert controller to handle alerts (popups)
-
-  storage SET:
-    - chronicMedis: all longtime medication
-    - selfMedis: all self medication
-    - insulin: all insulin
-    - intolerances: all medication intolerances
-  ***************************************************/
+  /**
+   * constructor
+   * refresh the page for show all saved medications from storage
+   * @param  {NavController}     publicnavCtrl     navigation of app
+   * @param  {Platform}          publicplatform    platform of app
+   * @param  {Storage}           publicstorage     ionic storage from phone
+   * @param  {Http}              publichttp        http requests
+   * @param  {AlertController}   publicalertCtrl   show alerts
+   * @param  {LoadingController} publicloadingCtrl show loading
+   */
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
     public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
 
@@ -56,18 +44,11 @@ export class MedicationPage {
     this.refreshPage();
   }
 
-  /**************************************************
-                  refresh page
-
-  refresh the medication list by save the medication
-  into the category lists (arrays).
-
-  storage GET:
-    - chronicMedis: all longtime medication
-    - selfMedis: all self medication
-    - insulin: all insulin
-    - intolerances: all medication intolerances
-  ***************************************************/
+  /**
+   * refreshPage
+   * refresh the medication list by save the medication from storage
+   * into the category (arrays) of the html-lists.
+   */
   refreshPage() {
     let loading = this.loadingCtrl.create();
 
@@ -113,31 +94,25 @@ export class MedicationPage {
 
   }
 
-  /**************************************************
-              medication detail page
-
-  shows the page to the given medication with details
-
-  params:
-    - medi: medication for detail page
-  ***************************************************/
-  detailMedi(medis, medi: TYPES.LOCAL_MedicationStatementRes) {
+  /**
+   * detailMedi
+   * shows the page to the given medication with details
+   * @param  {Array<TYPES.LOCAL_MedicationStatementRes>} medis medication array from the detail
+   * @param  {TYPES.LOCAL_MedicationStatementRes}        medi  medication from the detail
+   */
+  detailMedi(medis: Array<TYPES.LOCAL_MedicationStatementRes>, medi: TYPES.LOCAL_MedicationStatementRes) {
     this.navCtrl.push(MedicationDetailPage, {
       array: medis,
       medi: medi
     });
   }
 
-  /**************************************************
-                scan a barcode
-
-  conneciton to cordova plugin scanner to get the barcode.
-  Get the medication data from the hospINDEX and
-  store it ith the storage.
-
-  storage SET:
-    - MedicationData: the last scanned medication
-  ***************************************************/
+  /**
+   * scan
+   * conneciton to cordova plugin scanner to get the barcode.
+   * Get the medication data from the hospINDEX and
+   * store it ith the storage
+   */
   scan() {
     this.platform.ready().then(() => {
       cordova.plugins.barcodeScanner.scan((result) => {
@@ -147,11 +122,23 @@ export class MedicationPage {
     });
   }
 
+  /**
+   * saveMIDATAMedication
+   * save the given medication on the midata account
+   * @param  {TYPES.LOCAL_MedicationStatementRes} medi medication to save
+   */
   saveMIDATAMedication(medi: TYPES.LOCAL_MedicationStatementRes) {
     this.mp.save(medi);
   }
 
-  getMIDATAMedications(category: string) {
+  /**
+   * getMIDATAMedications
+   * get all medications of the given category from the midata account
+   * @param  {string}                                    category medication category |
+   *                                                              chronicMedis, selfMedis, insulin, intolerances
+   * @return {Array<TYPES.LOCAL_MedicationStatementRes>}          array with all medications from category
+   */
+  getMIDATAMedications(category: string): Array<TYPES.LOCAL_MedicationStatementRes> {
     var m = this.mp.search("MedicationStatement");
     var result = [];
     console.log(m);
@@ -165,7 +152,14 @@ export class MedicationPage {
     return result;
   }
 
-  saveMedicationFromHCI(barcode) {
+  /**
+   * saveMedicationFromHCI
+   * get the medication of the given barcode from the HCI Solutions DB and
+   * save the result if possible in storage and midata.
+   * open alerts for medication category and route
+   * @param  {string} barcode barcode from swissmedic
+   */
+  saveMedicationFromHCI(barcode: string) {
     var result: TYPES.LOCAL_MedicationStatementRes;
     var gtin: string;
     var dscrd: string;
@@ -284,33 +278,12 @@ export class MedicationPage {
     xhr.send();
   }
 
-  /***************************************************
-          show the diffrent medication categories
-
-  open an alert for choosing the category of the entered
-  medication.
-
-  params:
-    - medication: the new medication to save (got by barcode)
-
-  categories:
-    - Regelmässiges Medikament: longtime medication
-    - Selbstgekauftes Medikament: self medication
-    - Insulin: the used insulin
-    - Unverträglichkeiten: medication intolerances
-
-  storage SET:
-    - chronicMedis: all longtime medication
-    - selfMedis: all self medication
-    - insulin: all insulin
-    - intolerances: all medication intolerances
-
-  storage GET:
-    - chronicMedis: all longtime medication
-    - selfMedis: all self medication
-    - insulin: all insulin
-    - intolerances: all medication intolerances
-  ****************************************************/
+  /**
+   * showMedicationCategory
+   * open an alert for choosing the category of the given medication.
+   * save the category to the medication and open next alert if necessary or save it
+   * @param  {TYPES.LOCAL_MedicationStatementRes} medication medication to save
+   */
   showMedicationCategory(medication: TYPES.LOCAL_MedicationStatementRes) {
     // create empty array for medication
     var medis = [];
@@ -390,6 +363,12 @@ export class MedicationPage {
     alert.present();
   }
 
+  /**
+   * [showTakingMedication
+   * open an alert for choosing the route of the given medication (category: chronicMedis & selfMedis).
+   * save the route to the medication and save it]
+   * @param  {TYPES.LOCAL_MedicationStatementRes} result [description]
+   */
   showTakingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
     let alert = this.alertCtrl.create({});
     // set title of popup
@@ -477,12 +456,13 @@ export class MedicationPage {
     // present the alert popup
     alert.present();
   }
+
   /**
    * method to collapse and expand the charts. it's called by clicking on a divider between the charts.
-   * @param  {[type]} src source element of the click
+   * @param  {any} src source element of the click
    * @return {[type]}     [description]
    */
-  expand(src) {
+  expand(src: any) {
     try {
       let element = src.parentNode.parentNode.parentNode.nextElementSibling;
       if(element.tagName == 'DIV'){

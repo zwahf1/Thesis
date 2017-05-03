@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController, NavParams, PopoverController, AlertController } from 'ionic-angular';
+import { App, PopoverController, AlertController } from 'ionic-angular';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
 import { LoginPage } from '../login/login';
 import { Storage } from '@ionic/storage';
@@ -18,7 +18,7 @@ export class DataPage {
 
   private mp = MidataPersistence.getInstance();
 
-  constructor(public navCtrl: NavController, public appCtrl: App, public navParams: NavParams, public popoverCtrl: PopoverController, public alertCtrl: AlertController, public storage: Storage) { }
+  constructor(public appCtrl: App, public popoverCtrl: PopoverController, public alertCtrl: AlertController, public storage: Storage) { }
 
   /**
    * PopoverController to present the DisclaimerPage

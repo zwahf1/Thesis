@@ -1,6 +1,5 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { App, NavController, AlertController, PopoverController } from 'ionic-angular';
+import { NavController, AlertController, PopoverController } from 'ionic-angular';
 import { TabsPage} from '../tabs/tabs';
 import { MidataPersistence } from '../../util/midataPersistence';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
@@ -13,14 +12,11 @@ import { Storage } from '@ionic/storage';
 export class LoginPage {
 
   private mp = MidataPersistence.getInstance();
-  private username: string;
-  private password: string;
-  private disclaimer: boolean;
 
   private input = {username: 'mia.egger@mail.com', password : 'PW4mia17'};
 
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage,
-                public popoverCtrl: PopoverController, public appCtrl: App) {
+                public popoverCtrl: PopoverController) {
     this.storage.ready().then(() => {
       // get login data from storage
       this.storage.get('UserAuthentication').then((val) => {

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, AlertController } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 
 import { Storage } from '@ionic/storage';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
@@ -17,7 +17,7 @@ export class BluetoothPage {
 
   devices = [];
 
-  constructor(public navCtrl: NavController, public bls: BluetoothSerial, public storage: Storage,
+  constructor(public bls: BluetoothSerial, public storage: Storage,
               public alertCtrl: AlertController) {
 
     this.storage.ready().then(() => {

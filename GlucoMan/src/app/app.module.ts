@@ -28,6 +28,7 @@ import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 import { HttpModule, JsonpModule } from '@angular/http';
 
 declare var require: any;
+
 var Highcharts = require('highcharts/highstock');
 
 require('highcharts/highcharts-more.js')(Highcharts);

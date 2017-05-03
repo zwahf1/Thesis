@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DayNutrition } from '../../util/DayNutrition';
 import { DetailNutrition } from '../../util/DetailNutrition';
-import { Platform, NavController, NavParams, AlertController, ActionSheetController} from 'ionic-angular';
+import { Platform, AlertController, ActionSheetController} from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 declare var cordova: any;
@@ -27,8 +27,6 @@ export class NutritionPage {
   //options of the carbohydrates chart of the NutritionPage
   chartCarbo: any;
 
-  loadFromHome: boolean;
-
   /**
                     constructor NutritionPage
 
@@ -53,7 +51,8 @@ export class NutritionPage {
   createTimeOfDayList() invokes createNutritionChart(), that creates
   the stacked column chart of the NutritionPage.
   **/
-  constructor(public navCtrl: NavController, public navParams: NavParams, public platform: Platform, public storage: Storage, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
+  constructor(public platform: Platform, public storage: Storage, public alertCtrl: AlertController,
+    public actionCtrl: ActionSheetController) {
 
     this.storage.ready().then(() => {
       this.storage.get('NutritionDetailList').then((val) => {
@@ -549,7 +548,7 @@ export class NutritionPage {
           console.log('Results1b: ');
           console.log(result);
           //navigate to the value of carbohydrates of 100 gram and store it to the variable
-          let kh_gram = result[0].getElementsByTagName('data')[0].getElementsByTagName('kh_gram')[0].textContent;
+          let kh_gram: any = result[0].getElementsByTagName('data')[0].getElementsByTagName('kh_gram')[0].textContent;
           carbo = kh_gram;
           port = 100;
           //navigate to the description of the product and store it to the variable
@@ -561,7 +560,7 @@ export class NutritionPage {
           console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1]);
           console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0]);
           //navigate to the value of a portion and store it to the variable
-          let weight_gram = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
+          let weight_gram: any = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
           carbo = (kh_gram / 100 * weight_gram);
           port = weight_gram;
         } catch (Error) {

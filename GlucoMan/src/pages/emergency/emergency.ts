@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
 
 declare var cordova: any;
 
@@ -15,7 +14,7 @@ declare var cordova: any;
 })
 export class EmergencyPage {
 
-  constructor(public navCtrl: NavController, public navParams: NavParams) { }
+  constructor() { }
   /**
    * toggle the visibility of the langauges german an english
    * @param  {string} langShow the language to set visible

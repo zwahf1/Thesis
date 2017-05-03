@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams, AlertController } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 /*
@@ -15,9 +15,9 @@ import { Storage } from '@ionic/storage';
 export class CheckupsPage {
 
   arrayCheckups = [];
-  arrayControls = [[]];
+  arrayControls = [];
 
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public alertCtrl: AlertController) {
+  constructor(public storage: Storage, public alertCtrl: AlertController) {
     this.storage.ready().then(() => {
 
       this.storage.get('arrayCheckups').then((val) => {
@@ -82,13 +82,9 @@ export class CheckupsPage {
       text: 'Ok',
       // handle the click event for the OK button
       handler: (data) => {
-        // user has clicked the new medication button
-        // begin the alert's dismiss transition
-        let navTransition = alert.dismiss();
         control[0] = false;
         control[2] = "";
         control[3] = "";
-        return false;
       }
     });
     // present the alert popup
@@ -145,13 +141,9 @@ export class CheckupsPage {
       text: 'Ok',
       // handle the click event for the OK button
       handler: (data) => {
-        // user has clicked the new medication button
-        // begin the alert's dismiss transition
-        let navTransition = alert.dismiss();
         control[0] = true;
         control[2] = ""+ new Date();
         control[3] = data.note;
-        return false;
       }
     });
     // present the alert popup

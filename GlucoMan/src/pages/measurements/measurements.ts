@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { VitalRange } from '../../util/VitalRange';
-import { NavController, NavParams, LoadingController, AlertController, ActionSheetController, Platform } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, AlertController, ActionSheetController } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
 import { Storage } from '@ionic/storage';
 
@@ -20,9 +20,9 @@ export class MeasurementsPage {
 
   chartAll: any;
   chartGluco: Chart;
-  chartBP: any;
-  chartPulse: any;
-  chartWeight: any;
+  chartBP: Chart;
+  chartPulse: Chart;
+  chartWeight: Chart;
   glucoseUnit: string = 'mmol/L';
   valuesGlucose: [TYPES.LOCAL_Glucose];
 
@@ -47,8 +47,9 @@ export class MeasurementsPage {
     -pulseValues: the measurements of the pulse
     -weightValues: the measurements of the scale
 **/
-  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage, public platform: Platform, public loadingCtrl: LoadingController,
-    public alertCtrl: AlertController, public actionCtrl: ActionSheetController, public bls: BluetoothSerial) {
+  constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
+    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public actionCtrl: ActionSheetController,
+    public bls: BluetoothSerial) {
 
     this.storage.ready().then(() => {
       this.storage.get('VisibleList').then((val) => {
@@ -88,7 +89,7 @@ export class MeasurementsPage {
         if (val) {
           this.valuesBP = val;
         } else {
-          this.valuesBP = [[Date.UTC(2017, 3, 4), 71, 132], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
+          this.valuesBP = [[Date.UTC(2017, 3, 4), 132, 71], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
             [Date.UTC(2017, 3, 9), 110, 65], [Date.UTC(2017, 3, 11), 119, 66], [Date.UTC(2017, 3, 12), 128, 57], [Date.UTC(2017, 3, 14), 129, 68],
             [Date.UTC(2017, 3, 17), 130, 79], [Date.UTC(2017, 3, 18), 121, 60]];
           this.storage.set('bpValues', this.valuesBP);
@@ -493,7 +494,8 @@ it's called by clicking on a divider above the table
       }
 
       case "Import": {
-        alert.setMessage("Aktivierung des Bluetooth vom Blutzucker-Messgerät");
+        alert.setMessage("Bitte aktivieren Sie Bluetooth vom Blutzucker-Messgerät durch klicken auf den linken Knopf"+
+        " (Pfeil nach oben)");
         // alert.
         break;
       }
@@ -550,19 +552,162 @@ it's called by clicking on a divider above the table
             //switch - case to handle the different input types
             switch (typ) {
               case "Blutdruck": {
-                this.addBloodPressure(data.sys, data.dia, new Date());
+                let checkSys = true;
+                let checkDia = true;
+                let outOfRangeSys = false;
+                let outOfRangeDia = false;
+                let createAlert = false;
+                let alertMessage = "";
+
+                if(this.vitalRangeList[2].lowerLimit == this.vitalRangeList[2].upperLimit) {
+                  checkSys = false;
+                }
+                if(this.vitalRangeList[1].lowerLimit == this.vitalRangeList[1].upperLimit) {
+                  checkDia = false;
+                }
+                if(checkSys) {
+                  if(data.sys < this.vitalRangeList[2].lowerLimit || data.sys > this.vitalRangeList[2].upperLimit) {
+                    outOfRangeSys = true;
+                  }
+                }
+                if(checkDia) {
+                  if(data.dia < this.vitalRangeList[1].lowerLimit || data.dia > this.vitalRangeList[1].upperLimit) {
+                    outOfRangeDia = true;
+                  }
+                }
+
+                if(outOfRangeSys && outOfRangeDia) {
+                  createAlert = true;
+                  alertMessage = 'Die eingegebenen Werte für den '+'systolischen & diastolischen Blutdruck'.bold()+
+                  ' sind ausserhalb der definierten Zielbereiche! Wollen Sie die Werte trotzdem speichern?';
+                }
+                else if(outOfRangeSys) {
+                  createAlert = true;
+                  alertMessage = 'Der eingegebene Wert für den '+'systolischen Blutdruck'.bold()+
+                  ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?';
+                }
+                else if(outOfRangeDia) {
+                  createAlert = true;
+                  alertMessage = 'Der eingegebene Wert für den '+'diastolischen Blutdruck'.bold()+
+                  ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?';
+                }
+                else {
+                  this.addBloodPressure(data.sys, data.dia, new Date());
+                }
+
+                if(createAlert) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Werte-Prüfung',
+                    message: alertMessage
+                  });
+                  alert.addButton('Nein');
+                  alert.addButton({
+                    text: 'Ja',
+                    handler: () => {
+                      this.addBloodPressure(data.sys, data.dia, new Date());
+                    }
+                  });
+                  alert.present();
+                }
                 break;
               }
               case "Puls": {
-                this.addPulse(data.data, new Date());
+                let check = true;
+                let outOfRange = false;
+
+                if(this.vitalRangeList[3].lowerLimit == this.vitalRangeList[3].upperLimit) {
+                  check = false;
+                }
+
+                if(check) {
+                  if(data.data < this.vitalRangeList[3].lowerLimit || data.data > this.vitalRangeList[3].upperLimit) {
+                    outOfRange = true;
+                  }
+                }
+
+                if(outOfRange) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Werte-Prüfung',
+                    message: 'Der eingegebene Wert für den '+'Puls'.bold()+
+                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                  });
+                  alert.addButton('Nein');
+                  alert.addButton({
+                    text: 'Ja',
+                    handler: () => {
+                      this.addPulse(data.data, new Date());
+                    }
+                  });
+                  alert.present();
+                } else {
+                  this.addPulse(data.data, new Date());
+                }
                 break;
               }
               case "Gewicht": {
-                this.addWeight(data.data, new Date());
+                let check = true;
+                let outOfRange = false;
+
+                if(this.vitalRangeList[4].lowerLimit == this.vitalRangeList[4].upperLimit) {
+                  check = false;
+                }
+
+                if(check) {
+                  if(data.data < this.vitalRangeList[4].lowerLimit || data.data > this.vitalRangeList[4].upperLimit) {
+                    outOfRange = true;
+                  }
+                }
+
+                if(outOfRange) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Werte-Prüfung',
+                    message: 'Der eingegebene Wert für das '+'Gewicht'.bold()+
+                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                  });
+                  alert.addButton('Nein');
+                  alert.addButton({
+                    text: 'Ja',
+                    handler: () => {
+                      this.addWeight(data.data, new Date());
+                    }
+                  });
+                  alert.present();
+                } else {
+                  this.addWeight(data.data, new Date());
+                }
                 break;
               }
               case "Blutzucker": {
-                this.openAddAlert("Mess-Art", data.data);
+                let check = true;
+                let outOfRange = false;
+
+                if(this.vitalRangeList[0].lowerLimit == this.vitalRangeList[0].upperLimit) {
+                  check = false;
+                }
+
+                if(check) {
+                  if(data.data < this.vitalRangeList[0].lowerLimit || data.data > this.vitalRangeList[0].upperLimit) {
+                    outOfRange = true;
+                  }
+                }
+
+                if(outOfRange) {
+                  let alert = this.alertCtrl.create({
+                    title: 'Werte-Prüfung',
+                    message: 'Der eingegebene Wert für den '+'Blutzucker'.bold()+
+                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                  });
+                  alert.addButton('Nein');
+                  alert.addButton({
+                    text: 'Ja',
+                    handler: () => {
+                      this.openAddAlert("Mess-Art", data.data);
+                    }
+                  });
+                  alert.present();
+                } else {
+                  this.openAddAlert("Mess-Art", data.data);
+                }
                 break;
               }
               case "Mess-Art": {
@@ -764,7 +909,6 @@ method to add glucose value into weightlist, chart and MIDATA
 
       let val: number = parseFloat(glucoRep.value);
       let date: Date = glucoRep.date;
-      let dateTime: number = glucoRep.date.getTime();
       let event: string = glucoRep.event;
       gluco = {
         date: date,

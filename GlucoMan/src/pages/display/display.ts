@@ -1,5 +1,4 @@
 import { Component } from '@angular/core';
-import { App, NavController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 /**
@@ -20,7 +19,7 @@ export class DisplayPage {
 /**
 constructor overwrites the default values of the visibility and schema with the values of the storage
 **/
-  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage) {
+  constructor(public storage: Storage) {
     this.visibleList['all'] = true;
     this.visibleList['glucose'] = true;
     this.visibleList['bloodpressure'] = true;

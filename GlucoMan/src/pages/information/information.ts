@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { NavController, NavParams } from 'ionic-angular';
+import { NavController } from 'ionic-angular';
 import { InformationDetailsPage } from '../information-details/information-details';
 /*
   Generated class for the Information page.

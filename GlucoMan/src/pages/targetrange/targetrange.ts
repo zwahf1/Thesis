@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { VitalRange } from '../../util/VitalRange';
-import { App, NavController, AlertController  } from 'ionic-angular';
+import { AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 /**
@@ -24,13 +24,11 @@ export class TargetrangePage {
    * constructor of TargetrangePage
    * loads default values as target range. if there's a value in the storage,
    * the default will be overwritten.
-   * @param  {NavController}   publicnavCtrl    [description]
    * @param  {Storage}         publicstorage    [description]
-   * @param  {App}             publicappCtrl    [description]
-   * @param  {AlertController} privatealertCtrl [description]
+   * @param  {AlertController} publicalertCtrl [description]
    * @return {[type]}                           [description]
    */
-  constructor(public navCtrl: NavController, public storage: Storage, public appCtrl: App, private alertCtrl: AlertController) {
+  constructor(public storage: Storage, public alertCtrl: AlertController) {
     this.vitalRangeList.push(new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date));
     this.vitalRangeList.push(new VitalRange('Diastolischer BD', 70, 89, 'mmHg', new Date));
     this.vitalRangeList.push(new VitalRange('Systolischer BD', 100, 139, 'mmHg', new Date));

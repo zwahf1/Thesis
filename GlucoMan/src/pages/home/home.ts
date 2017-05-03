@@ -1,14 +1,11 @@
 import { Component } from '@angular/core';
-import { App, NavController, ActionSheetController } from 'ionic-angular';
+import { NavController, ActionSheetController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
-import { TabsPage} from '../tabs/tabs';
 import { SettingsPage } from '../settings/settings';
 import { InformationPage } from '../information/information';
 import { EmergencyPage } from '../emergency/emergency';
 import { MeasureplanPage } from '../measureplan/measureplan';
 import { CheckupsPage } from '../checkups/checkups';
-import { MeasurementsPage } from '../measurements/measurements';
-import { NutritionPage } from '../nutrition/nutrition';
 
 @Component({
   selector: 'page-home',
@@ -16,7 +13,7 @@ import { NutritionPage } from '../nutrition/nutrition';
 })
 export class HomePage {
 
-  constructor(public navCtrl: NavController, public appCtrl: App, public actionCtrl: ActionSheetController, public storage: Storage) {
+  constructor(public navCtrl: NavController, public actionCtrl: ActionSheetController, public storage: Storage) {
   }
   /**
    * [goTo description]

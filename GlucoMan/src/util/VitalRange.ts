@@ -1,6 +1,4 @@
 
-import { MeasurementsPage } from '../pages/measurements/measurements';
-
 /**************************************************
 
 **************************************************/
