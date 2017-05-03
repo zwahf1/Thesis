@@ -87,6 +87,7 @@ export class NutritionPage {
     for (let entry of this.nutritionDetailList) {
       //date of the current entry
       let dateEntry = new Date(entry.date);
+      dateEntry.setTime(dateEntry.getTime()-10800000);
       dateEntry.setHours(0, 0, 0, 0);
       //variable for last date in nutritionList, default 0, so it isn't the same day
       let dateLastInList = new Date(0);
@@ -94,6 +95,7 @@ export class NutritionPage {
       try {
         //date of the last entry
         dateLastInList = new Date(this.nutritionList[this.nutritionList.length - 1][0]);
+        dateLastInList.setTime(dateLastInList.getTime()-10800000);
         dateLastInList.setHours(0, 0, 0, 0);
       } catch (Error) {
       }
@@ -118,17 +120,17 @@ export class NutritionPage {
   this method returns the index of the
   time of day of a given date.
 
-  index 1 for morning: 4:00-08:59
+  index 1 for morning: 3:00-08:59
   index 2 for forenoon: 9:00-10:59
   index 3 for midday: 11:00-13:59
   index 4 for afternoon: 14:00-16:59
   index 5 for evening: 17:00-21:59
-  index 6 for nigth: 22:00-03:59
+  index 6 for nigth: 22:00-02:59
   **/
   getTimeOfDay(date: Date) {
     let d = date;
     let h = d.getHours();
-    if (h < 4) {
+    if (h < 3) {
       //if at night
       return 6;
     } else if (h < 9) {
@@ -405,6 +407,7 @@ export class NutritionPage {
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log('xhr state ready');
         //response of the http request
         let art = JSON.parse(xhr.responseText);
         //try to get product information, otherwise try with the database Open Food
@@ -475,6 +478,7 @@ export class NutritionPage {
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log('xhr state ready');
         //response of the http request
         let art = JSON.parse(xhr.responseText);
         try {
@@ -534,25 +538,33 @@ export class NutritionPage {
     //if the request is done
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+        console.log('xhr state ready');
         //response of the http request
         let xml = xhr.responseXML;
         try {
           //results of the mentioned nutrition
           let result = xml.getElementsByTagName("result")[0].getElementsByTagName("items")[0].getElementsByTagName('item');
+          console.log('Results1a: ');
+          console.log(result);
+          console.log('Results1b: ');
+          console.log(result);
           //navigate to the value of carbohydrates of 100 gram and store it to the variable
           let kh_gram = result[0].getElementsByTagName('data')[0].getElementsByTagName('kh_gram')[0].textContent;
           carbo = kh_gram;
           port = 100;
-          //navigate to the value of a portion and store it to the variable
-          let weight_gram = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
-          carbo = (kh_gram / 100 * weight_gram);
-          port = weight_gram;
           //navigate to the description of the product and store it to the variable
           let description = result[0].getElementsByTagName('description');
           let name = description[0].getElementsByTagName('name')[0].textContent;
           desc = name;
+          console.log('checkpoint after 100g');
+          console.log(result[0].getElementsByTagName('servings')[0]);
+          console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1]);
+          console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0]);
+          //navigate to the value of a portion and store it to the variable
+          let weight_gram = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
+          carbo = (kh_gram / 100 * weight_gram);
+          port = weight_gram;
         } catch (Error) {
-          alert("Kein vollständiger Datensatz vorhanden");
         } finally {
           this.showDataDetailsBarcode(desc, port, carbo);
         }

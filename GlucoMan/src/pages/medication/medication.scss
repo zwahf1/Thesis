@@ -2,7 +2,9 @@ page-medication {
   .mediList {
     padding: 0px;
   }
-
+  p {
+        text-align: center;
+  }
   .medi {
     background-color: color($colors, primaryLight);
   }

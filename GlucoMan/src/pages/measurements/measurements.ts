@@ -128,7 +128,7 @@ export class MeasurementsPage {
         //if there's a value in 'NutritionDetailList', load it to local variable
         if (val == 'Blutzucker') {
           this.openActionSheetGlucose();
-        } else if(val != "") {
+        } else if(val != "" && val != undefined) {
           this.openAddAlert(val);
         }
         this.storage.set('addNewValueFromHome',"");
@@ -279,12 +279,14 @@ it's called by clicking on a divider above the table
   **/
   hideCharts() {
     for (var key in this.visibleList) {
-      var x = document.getElementById(key);
-      if (this.visibleList[key]) {
-        x.style.display = 'block';
-      } else {
-        x.style.display = 'none';
-      }
+      let  elements = (<HTMLElement[]><any>document.getElementsByClassName(key));
+      for(let e of elements ){
+        if (this.visibleList[key]) {
+          e.style.display = 'block';
+        } else {
+          e.style.display = 'none';
+        }
+    }
     }
   }
   /**
