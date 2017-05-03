@@ -3,20 +3,25 @@ import { AlertController } from 'ionic-angular';
 
 import { Storage } from '@ionic/storage';
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
-/*
-  Generated class for the Bluetooth page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+/**
+ * bluetooth page for settings
+ * @param  {'page-bluetooth'}  {selector   [description]
+ * @param  {'bluetooth.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-bluetooth',
   templateUrl: 'bluetooth.html'
 })
+
 export class BluetoothPage {
 
   devices = [];
-
+  /**
+   * create the bluetooth page and get registered devices from storage and save it local
+   * @param  {BluetoothSerial} publicbls       connection to device
+   * @param  {Storage}         publicstorage   ionic storage from phone
+   * @param  {AlertController} publicalertCtrl handle alerts
+   */
   constructor(public bls: BluetoothSerial, public storage: Storage,
               public alertCtrl: AlertController) {
 
@@ -29,6 +34,9 @@ export class BluetoothPage {
     });
   }
 
+  /**
+   * register new bluetooth devices for import measurements
+   */
   registerNewDevice() {
     this.bls.list().then((val) => {
       this.devices = val;

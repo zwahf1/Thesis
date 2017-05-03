@@ -7,11 +7,13 @@ import { Storage } from '@ionic/storage';
 declare var cordova: any;
 
 /**
-NutritionPage
-to manage the daily nutrition and their carbohydrates.
-it shows a chart with the categories of the six times of a day.
-it's possible to import data with the barcode of a product or to make an entry manually
-**/
+ * nutrition page for tabs page
+ * to manage the daily nutrition and their carbohydrates.
+ * it shows a chart with the categories of the six times of a day.
+ * it's possible to import data with the barcode of a product or to make an entry manually
+ * @param  {'page-nutrition'}  {selector   [description]
+ * @param  {'nutrition.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-nutrition',
   templateUrl: 'nutrition.html'
@@ -28,29 +30,12 @@ export class NutritionPage {
   chartCarbo: any;
 
   /**
-                    constructor NutritionPage
-
-  create the nutrition page with parameters
-    - navCtrl: navigation controller to navigate between pages
-    - platform: platform for using plugins
-    - storage: local storage
-    - alertCtrl: alert controller to handle alerts (popups)
-
-  storage SET:
-    - nutritionDetailList: list with all nutritions and dates
-
-  external tools:
-    - barcodeScanner
-    - API openFoodFacts
-    - API openFood
-    - API FDDB
-
-  If there's a value in storage, create the nutritionList.
-  createNutritionList() invokes createTimeOfDayList(), that creates
-  lists of all days per time of day.
-  createTimeOfDayList() invokes createNutritionChart(), that creates
-  the stacked column chart of the NutritionPage.
-  **/
+   * get nutrition detail list from storage and create the nutrition list
+   * @param  {Platform}              publicplatform   platform of app
+   * @param  {Storage}               publicstorage    ionic storage from phone
+   * @param  {AlertController}       publicalertCtrl  handle alerts
+   * @param  {ActionSheetController} publicactionCtrl handle action sheets
+   */
   constructor(public platform: Platform, public storage: Storage, public alertCtrl: AlertController,
     public actionCtrl: ActionSheetController) {
 
@@ -66,6 +51,9 @@ export class NutritionPage {
     });
   }
 
+  /**
+   * if page is load and a new value will be added
+   */
   ionViewDidEnter() {
     this.storage.ready().then(() => {
       this.storage.get('addNewValueFromHome').then((val) => {
@@ -77,6 +65,7 @@ export class NutritionPage {
       });
     });
   }
+
   /**
   create nutrition list from nutritionDetailList
   **/
@@ -116,17 +105,14 @@ export class NutritionPage {
   }
 
   /**
-  this method returns the index of the
-  time of day of a given date.
-
-  index 1 for morning: 3:00-08:59
-  index 2 for forenoon: 9:00-10:59
-  index 3 for midday: 11:00-13:59
-  index 4 for afternoon: 14:00-16:59
-  index 5 for evening: 17:00-21:59
-  index 6 for nigth: 22:00-02:59
-  **/
-  getTimeOfDay(date: Date) {
+   * get the index of time category for the given date
+   * return
+   * index 1 for morning: 3:00-08:59 | index 2 for forenoon: 9:00-10:59 | index 3 for midday: 11:00-13:59
+   * index 4 for afternoon: 14:00-16:59 | index 5 for evening: 17:00-21:59 | index 6 for nigth: 22:00-02:59
+   * @param  {Date}   date date to check
+   * @return {number}      index representing category
+   */
+  getTimeOfDay(date: Date): number {
     let d = date;
     let h = d.getHours();
     if (h < 3) {
@@ -152,12 +138,10 @@ export class NutritionPage {
       return 6;
     }
   }
-  /**
-    create nutritionTimeOfDayList from nutritionList
 
-  list includes 6 arrays, for every time of day one.
-  this is needed for creating the chart.
-  **/
+  /**
+  *  create nutritionTimeOfDayList from nutritionList
+  */
   createTimeOfDayList() {
     //initialize the nutritionTimeOfDayList with 6 empty arrays
     this.nutritionTimeOfDayList = [[], [], [], [], [], []];
@@ -183,10 +167,8 @@ export class NutritionPage {
   }
 
   /**
-  create nutrition chart from nutritionTimeOfDayList
-
-  it's a column chart
-  **/
+  * create nutrition chart from nutritionTimeOfDayList
+  */
   createNutritionChart() {
     this.chartCarbo = {
       chart: {
@@ -277,10 +259,11 @@ export class NutritionPage {
         }]
     };
   }
+
   /**
-  open an action sheet to choose an entry with barcode
-  or a manually entry.
-  **/
+  * open an action sheet to choose an entry with barcode
+  * or a manually entry.
+  */
   openActionSheet() {
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Neuer Eintrag');
@@ -307,15 +290,15 @@ export class NutritionPage {
     // present the alert popup
     actionSheet.present();
   }
-  /**
-  alert to type in product information for a new nutrition.
 
-  the alert shows three input fields, for description,
-  portion quantity and carbohydrate value.
-  there are two buttons:
-  -to cancel the alert
-  -to confirm and insert the new nutrition
-  **/
+  /**
+  * alert to type in product information for a new nutrition.
+  *
+  * the alert shows three input fields, for description,
+  * portion quantity and carbohydrate value.
+  * there are two buttons:
+  * to cancel the alert | to confirm and insert the new nutrition
+  */
   insertNewProduct() {
     //create alert to customize nutrition information
     let alert = this.alertCtrl.create({});
@@ -353,17 +336,16 @@ export class NutritionPage {
     // present the alert popup
     alert.present();
   }
+
   /**
-    scan method to import the values of a nutriiton
-    from an online database.
-
-    the result of the barcodeScanner is shown for 50 ms.
-    the orientation of the camera doesn't rotate, it's fixed to portrait
-
-    1. priority: Open Food Facts
-    2. priority: Open Food
-    3. priority: FDDB
-  **/
+  * scan method to import the values of a nutriiton
+  * from an online database.
+  *
+  * the result of the barcodeScanner is shown for 50 ms.
+  * the orientation of the camera doesn't rotate, it's fixed to portrait
+  *
+  * 1. priority: Open Food Facts | 2. priority: Open Food | 3. priority: FDDB
+  */
   scan() {
     //plugin barcodeScanner to get the text of a printed barcode
     this.platform.ready().then(() => {
@@ -386,14 +368,12 @@ export class NutritionPage {
       );
     });
   }
-  /**
-  get the nutrition information from Open Food Facts
-  1. priority
 
-  the method loads the carbohydrates value and portion quantity
-  from the database Open Food Facts.
-  **/
-  getDataFromOpenFoodFacts(barcode) {
+  /**
+   * get the nutrition information from Open Food Facts
+   * @param  {string} barcode barcode of product
+   */
+  getDataFromOpenFoodFacts(barcode: string) {
     let desc = null;
     let port = null;
     let carbo = null;
@@ -451,14 +431,15 @@ export class NutritionPage {
     //send the request
     xhr.send();
   }
-  /**
-  get the nutrition information from Open Food
-  2. priority
 
-  the method loads the carbohydrates value and portion quantity
-  from the database Open Food.
-  **/
-  getDataFromOpenFood(barcode, pDesc, pPort, pCarbo) {
+  /**
+   * get the nutrition information from Open Food
+   * @param  {string} barcode barcode of product
+   * @param  {string} pDesc   description from request before
+   * @param  {number} pPort   portion from request before
+   * @param  {number} pCarbo  carbohydrates from request before
+   */
+  getDataFromOpenFood(barcode: string, pDesc: string, pPort: number, pCarbo: number) {
     //set the key for the API of Open Food
     let key = 'e30f2ff2fdc37588275626f176966ea6';
     let desc = pDesc;
@@ -515,14 +496,15 @@ export class NutritionPage {
     //send the request
     xhr.send();
   }
-  /**
-  get the nutrition information from FDDB
-  3. priority
 
-  the method loads the carbohydrates value and portion quantity
-  from the database FDDB.
-  **/
-  getDataFromFDDB(barcode, pDesc, pPort, pCarbo) {
+  /**
+   * get the nutrition information from FDDB
+   * @param  {string} barcode barcode of product
+   * @param  {string} pDesc   description from request before
+   * @param  {number} pPort   portion from request before
+   * @param  {number} pCarbo  carbohydrates from request before
+   */
+  getDataFromFDDB(barcode: string, pDesc: string, pPort: number, pCarbo: number) {
     let desc = pDesc;
     let port = pPort;
     let carbo = pCarbo;
@@ -578,18 +560,14 @@ export class NutritionPage {
     //send the request
     xhr.send();
   }
-  /**
-  alert with all details with the imported product information
-  to add a nutrition.
 
-  the alert shows three input fields, for description,
-  portion quantity and carbohydrate value.
-  there are three buttons:
-  -to calculate the new carbo value based on the portion quantity.
-  -to cancel the alert
-  -to confirm and insert the new nutrition
-  **/
-  showDataDetailsBarcode(desc, port, carbo) {
+  /**
+   * alert with all details with the imported product information to add a nutrition.
+   * @param  {string} desc  description of product
+   * @param  {number} port  portion of product
+   * @param  {number} carbo carbohydrates of product
+   */
+  showDataDetailsBarcode(desc: string, port: any, carbo: any) {
     //create alert to customize nutrition information
     let alert = this.alertCtrl.create({});
     // set title of the alert
@@ -641,20 +619,25 @@ export class NutritionPage {
       cordova.plugins.Keyboard.close();
     }, 300);
   }
+
   /**
-  insert nutrition into nutritionDetailList and set the
-  variables of the page to null.
-  afterwards store the list to the storage and create the nutrition overview.
-  **/
-  newNutrition(desc, port, carbo) {
+   * insert nutrition into nutritionDetailList and set the variables of the page to null.
+   * afterwards store the list to the storage and create the nutrition overview.
+   * @param  {string} desc  description of product
+   * @param  {number} port  portion of product
+   * @param  {number} carbo carbohydrates of product
+   */
+  newNutrition(desc: string, port: number, carbo: number) {
     this.nutritionDetailList.push(new DetailNutrition(desc, port, carbo));
     //save the updated list and create the new nutrition list
     this.saveDetailList();
   }
+
   /**
-  method to edit or remove a clicked entry of the nutritionDetailList
-  **/
-  edit(item) {
+   * method to edit or remove a clicked entry of the nutritionDetailList
+   * @param  {DetailNutrition} item detail nutrition class
+   */
+  edit(item: any) {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle("Details eingeben");
@@ -713,6 +696,7 @@ export class NutritionPage {
       cordova.plugins.Keyboard.close();
     }, 300);
   }
+
   /**
   store the detail list to the storage as NutritionDetailList
   **/
@@ -722,11 +706,12 @@ export class NutritionPage {
     });
     this.createNutritionList();
   }
+
   /**
-  method to hide and show the chart container.
-  it sets the property 'display' to none or inline
-  **/
-  expand(src) {
+   * method to hide and show the chart container. it sets the property 'display' to none or inline
+   * @param  {any}    src div to expand/collapse
+   */
+  expand(src: any) {
     try {
       //source navigate to the chart tag and store it to 'element'
       let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];

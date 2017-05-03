@@ -1,24 +1,27 @@
 import { Component } from '@angular/core';
 import {ViewController } from 'ionic-angular';
 
-/*****************************************************************************
-DisclaimerPage - shows the data privacy statement.
-*****************************************************************************/
+/**
+ * disclaimer page for login & settings page
+ * @param  {'page-disclaimer'}  {selector   [description]
+ * @param  {'disclaimer.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-disclaimer',
   templateUrl: 'disclaimer.html'
 })
 export class DisclaimerPage {
 
+  /**
+   *
+   * @param  {ViewController} publicviewCtrl handle view
+   */
   constructor(public viewCtrl: ViewController) { }
 
   /**
-   *   method to close the popover of
-   *   the data privacy statement
-   * @return {[type]} [description]
+   *   method to close the popover of the data privacy statement
    */
   close() {
     this.viewCtrl.dismiss();
   }
-
 }

@@ -4,13 +4,15 @@ import { AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 /**
-TargetrangePage
-it's the settings page to config the target range of every vital sign.
-**/
+ * target range page for settings page
+ * @param  {'page-targetrange'}  {selector   [description]
+ * @param  {'targetrange.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-targetrange',
   templateUrl: 'targetrange.html'
 })
+
 export class TargetrangePage {
 
   dateGlucose: any;
@@ -20,13 +22,12 @@ export class TargetrangePage {
   glucoseRange: any;
   vitalRangeList = [];
   changeFlag = false;
+
   /**
-   * constructor of TargetrangePage
    * loads default values as target range. if there's a value in the storage,
    * the default will be overwritten.
-   * @param  {Storage}         publicstorage    [description]
-   * @param  {AlertController} publicalertCtrl [description]
-   * @return {[type]}                           [description]
+   * @param  {Storage}         publicstorage    ionic storage from phone
+   * @param  {AlertController} publicalertCtrl  handle alerts
    */
   constructor(public storage: Storage, public alertCtrl: AlertController) {
     this.vitalRangeList.push(new VitalRange('Glukose', 3.6, 7.7, 'mmol/L', new Date));
@@ -45,7 +46,7 @@ export class TargetrangePage {
   }
 
   /**
-loads the latest vitalRangeList from the storage
+  * loads the latest vitalRangeList from the storage when page is loaded
   **/
   ionViewDidEnter() {
     this.storage.ready().then(() => {
@@ -56,32 +57,32 @@ loads the latest vitalRangeList from the storage
       })
     });
   }
+
   /**
-   * after an input changed, this number field has the color 'whitesmoke'
-   * @param  {[type]} item [description]
-   * @return {[type]}      [description]
-   */
-  inputChange(item) {
+  * after an input changed, this number field has the color 'whitesmoke'
+  * @param  {any}    item target range item
+  */
+  inputChange(item: any) {
     this.changeFlag = true;
     item.changeFlag = true;
     var d = new Date;
     item.date = d;
   }
-/**
-*back method for the customized back navigate.
-*it calls the confirm alert to save the data, if the changeFlag is true,
-*before the navCtrl pops the current view.
-* @return {[type]} [description]
-*/
+
+  /**
+  * back method for the customized back navigate.
+  * it calls the confirm alert to save the data, if the changeFlag is true,
+  * before the navCtrl pops the current view.
+  */
   ionViewWillLeave() {
     if (this.changeFlag) {
       this.presentConfirm();
     }
   }
+
   /**
-   *   method to confirm and save the edited values.
-   * @return {[type]} [description]
-   */
+  * method to confirm and save the edited values.
+  */
   presentConfirm() {
     let alert = this.alertCtrl.create({
       title: 'Speichern',
@@ -110,5 +111,4 @@ loads the latest vitalRangeList from the storage
     });
     alert.present();
   }
-
 }

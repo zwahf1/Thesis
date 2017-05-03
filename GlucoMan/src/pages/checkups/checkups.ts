@@ -2,12 +2,11 @@ import { Component } from '@angular/core';
 import { AlertController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
-/*
-  Generated class for the Checkups page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+/**
+ * checkups page for home page
+ * @param  {'page-checkups'}  {selector   [description]
+ * @param  {'checkups.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-checkups',
   templateUrl: 'checkups.html'
@@ -17,6 +16,12 @@ export class CheckupsPage {
   arrayCheckups = [];
   arrayControls = [];
 
+  /**
+   * get all checkups and controls from storage and save it local.
+   * if nothing is saved, define it (empty)
+   * @param  {Storage}         publicstorage   ionic storage from phone
+   * @param  {AlertController} publicalertCtrl handle alerts
+   */
   constructor(public storage: Storage, public alertCtrl: AlertController) {
     this.storage.ready().then(() => {
 
@@ -51,7 +56,11 @@ export class CheckupsPage {
     });
   }
 
-  clickCheckBox(control) {
+  /**
+   * if the checkbox of the givencontrol is clicked
+   * @param  {any}    control clicked control
+   */
+  clickCheckBox(control: any) {
     if(!control[0]) {
       this.openClearControlAlert(control);
 
@@ -65,7 +74,11 @@ export class CheckupsPage {
     });
   }
 
-  openClearControlAlert(control) {
+  /**
+   * open an alert if you want to delete the given control
+   * @param  {any}    control control to delete
+   */
+  openClearControlAlert(control: any) {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle('Löschen');
@@ -91,7 +104,11 @@ export class CheckupsPage {
     alert.present();
   }
 
-  openClearCheckupsAlert(checkup) {
+  /**
+   * open an alert if you want to delete the given checkup from list
+   * @param  {any}    checkup checkup to delete
+   */
+  openClearCheckupsAlert(checkup: any) {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle('Löschen');
@@ -119,7 +136,11 @@ export class CheckupsPage {
     alert.present();
   }
 
-  openEntryNote(control) {
+  /**
+   * open an alert for enter a description to the given control
+   * @param  {any}    control control to add description
+   */
+  openEntryNote(control: any) {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle('Bemerkung hinzufügen');
@@ -150,6 +171,9 @@ export class CheckupsPage {
     alert.present();
   }
 
+  /**
+   * open an alert to add a new checkup to the list
+   */
   openEntryCheckup() {
     let alert = this.alertCtrl.create({});
     // set title of popup

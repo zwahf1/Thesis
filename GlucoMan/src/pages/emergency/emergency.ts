@@ -2,19 +2,22 @@ import { Component } from '@angular/core';
 
 declare var cordova: any;
 
-/*
- Generated class for the Emergency page.
-
- See http://ionicframework.com/docs/v2/components/#navigation for more info on
- Ionic pages and navigation.
-*/
+/**
+ * emergenca page for home page
+ * @param  {'page-emergency'}  {selector   [description]
+ * @param  {'emergency.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-emergency',
   templateUrl: 'emergency.html'
 })
 export class EmergencyPage {
 
+  /**
+   *
+   */
   constructor() { }
+
   /**
    * toggle the visibility of the langauges german an english
    * @param  {string} langShow the language to set visible
@@ -24,12 +27,11 @@ export class EmergencyPage {
     document.getElementById(langShow).style.display = 'block';
     document.getElementById(langHide).style.display = 'none';
   }
-/**
- * Method to copy the emergency information in the language
- * which is given by the parameter
- * @param  {string} lang language of the text.
- * @return {[type]}      [description]
- */
+
+  /**
+   * Method to copy the emergency information in the language which is given by the parameter
+   * @param  {string} lang language of the text.
+   */
   copyText(lang: string) {
     if (lang == 'german') {
       cordova.plugins.clipboard.copy('Falls ich mich ungewöhnlich verhalte und den Eindruck erwecke, als wäre ich betrunken, kann das ein Zeichen einer Unterzuckerung sein.\n\n' +

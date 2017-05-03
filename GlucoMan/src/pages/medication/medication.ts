@@ -10,7 +10,11 @@ import { HciHospAPI } from 'hci-hospindex-api';
 import { Http } from '@angular/http';
 
 declare var cordova: any;
-
+/**
+ * medication page for tabs page
+ * @param  {'page-medication'}  {selector   [description]
+ * @param  {'medication.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-medication',
   templateUrl: 'medication.html'
@@ -28,13 +32,12 @@ export class MedicationPage {
   intolerances: [TYPES.LOCAL_MedicationStatementRes];
 
   /**
-   * constructor
    * refresh the page for show all saved medications from storage
    * @param  {NavController}     publicnavCtrl     navigation of app
    * @param  {Platform}          publicplatform    platform of app
    * @param  {Storage}           publicstorage     ionic storage from phone
    * @param  {Http}              publichttp        http requests
-   * @param  {AlertController}   publicalertCtrl   show alerts
+   * @param  {AlertController}   publicalertCtrl   handle alerts
    * @param  {LoadingController} publicloadingCtrl show loading
    */
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
@@ -45,7 +48,6 @@ export class MedicationPage {
   }
 
   /**
-   * refreshPage
    * refresh the medication list by save the medication from storage
    * into the category (arrays) of the html-lists.
    */
@@ -95,7 +97,6 @@ export class MedicationPage {
   }
 
   /**
-   * detailMedi
    * shows the page to the given medication with details
    * @param  {Array<TYPES.LOCAL_MedicationStatementRes>} medis medication array from the detail
    * @param  {TYPES.LOCAL_MedicationStatementRes}        medi  medication from the detail
@@ -108,7 +109,6 @@ export class MedicationPage {
   }
 
   /**
-   * scan
    * conneciton to cordova plugin scanner to get the barcode.
    * Get the medication data from the hospINDEX and
    * store it ith the storage
@@ -123,7 +123,6 @@ export class MedicationPage {
   }
 
   /**
-   * saveMIDATAMedication
    * save the given medication on the midata account
    * @param  {TYPES.LOCAL_MedicationStatementRes} medi medication to save
    */
@@ -132,7 +131,6 @@ export class MedicationPage {
   }
 
   /**
-   * getMIDATAMedications
    * get all medications of the given category from the midata account
    * @param  {string}                                    category medication category |
    *                                                              chronicMedis, selfMedis, insulin, intolerances
@@ -153,7 +151,6 @@ export class MedicationPage {
   }
 
   /**
-   * saveMedicationFromHCI
    * get the medication of the given barcode from the HCI Solutions DB and
    * save the result if possible in storage and midata.
    * open alerts for medication category and route
@@ -279,7 +276,6 @@ export class MedicationPage {
   }
 
   /**
-   * showMedicationCategory
    * open an alert for choosing the category of the given medication.
    * save the category to the medication and open next alert if necessary or save it
    * @param  {TYPES.LOCAL_MedicationStatementRes} medication medication to save
@@ -364,10 +360,9 @@ export class MedicationPage {
   }
 
   /**
-   * [showTakingMedication
    * open an alert for choosing the route of the given medication (category: chronicMedis & selfMedis).
-   * save the route to the medication and save it]
-   * @param  {TYPES.LOCAL_MedicationStatementRes} result [description]
+   * save the route to the medication and save it
+   * @param  {TYPES.LOCAL_MedicationStatementRes} result medication to save
    */
   showTakingMedication(result: TYPES.LOCAL_MedicationStatementRes) {
     let alert = this.alertCtrl.create({});
@@ -460,7 +455,6 @@ export class MedicationPage {
   /**
    * method to collapse and expand the charts. it's called by clicking on a divider between the charts.
    * @param  {any} src source element of the click
-   * @return {[type]}     [description]
    */
   expand(src: any) {
     try {

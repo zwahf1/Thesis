@@ -2,18 +2,22 @@ import { Component } from '@angular/core';
 import { NavParams } from 'ionic-angular';
 
 /**
-page to present the information about a choosen thema in the informationpage
-**/
+ * information detail page for information page
+ * @param  {'page-information-details'}  {selector   [description]
+ * @param  {'information-details.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-information-details',
   templateUrl: 'information-details.html'
 })
 
 export class InformationDetailsPage {
-  item;
+  item: any;
+
   /**
-  constructor loads the navParams into loval variable.
-  **/
+   * save the given information item over navigation parameters local
+   * @param  {NavParams} publicnavParams navigation parameters with item
+   */
   constructor(public navParams: NavParams) {
     this.item = navParams.data.item;
   }

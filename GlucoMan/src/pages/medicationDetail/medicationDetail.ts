@@ -5,6 +5,11 @@ import { Storage } from '@ionic/storage';
 
 import * as TYPES from '../../util/typings/MIDATA_Types';
 
+/**
+ * medication detail page for medication page
+ * @param  {'page-medicationDetail'}  {selector   [description]
+ * @param  {'medicationDetail.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-medicationDetail',
   templateUrl: 'medicationDetail.html'
@@ -14,18 +19,25 @@ export class MedicationDetailPage {
   medication: TYPES.LOCAL_MedicationStatementRes;
   category: string;
   array: [TYPES.LOCAL_MedicationStatementRes];
-/**************************************************
-                  constructor
 
-create the detail page for the given medication
-***************************************************/
+  /**
+   * get navigation parameters and save them local
+   * @param  {NavController}   publicnavCtrl   navigation of app
+   * @param  {NavParams}       publicparams    navigation parameters
+   * @param  {Storage}         publicstorage   ionic storage from phone
+   * @param  {AlertController} publicalertCtrl handle alerts
+   */
   constructor(public navCtrl: NavController, public params: NavParams, public storage: Storage,
     public alertCtrl: AlertController) {
-      
+
     this.medication = params.get('medi');
     this.array = params.get('array');
   }
 
+  /**
+   * delete a the medication from the detail view
+   * open an alert to confirm delete
+   */
   deleteMedi() {
     let alert = this.alertCtrl.create({});
     // set title of popup

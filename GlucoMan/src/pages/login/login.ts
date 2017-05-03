@@ -5,16 +5,30 @@ import { MidataPersistence } from '../../util/midataPersistence';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
 import { Storage } from '@ionic/storage';
 
+/**
+ * login page for start page
+ * @param  {'page-login'}  {selector   [description]
+ * @param  {'login.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
 })
+
 export class LoginPage {
 
   private mp = MidataPersistence.getInstance();
 
   private input = {username: 'mia.egger@mail.com', password : 'PW4mia17'};
 
+  /**
+   * auto log in if user credentials are saved and show tabs page.
+   * otherwise show login page
+   * @param  {NavController}     publicnavCtrl     navigation of app
+   * @param  {AlertController}   publicalertCtrl   handle alerts
+   * @param  {Storage}           publicstorage     ionic storage from phone
+   * @param  {PopoverController} publicpopoverCtrl handle popovers
+   */
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage,
                 public popoverCtrl: PopoverController) {
     this.storage.ready().then(() => {
@@ -34,12 +48,19 @@ export class LoginPage {
       });
     });
   }
-  //PopoverController to present the DisclaimerPage
+
+  /**
+   * present the popover with the disclaimer page
+   */
   presentPopover() {
     let popover = this.popoverCtrl.create(DisclaimerPage);
     popover.present();
   }
 
+  /**
+   * login to midata account and show tabs page, if correct username and password.
+   * otherwise show alert to reenter credentials
+   */
   login() {
     this.mp.login(this.input.username, this.input.password).then((res) => {
       if(this.mp.loggedIn() == true){

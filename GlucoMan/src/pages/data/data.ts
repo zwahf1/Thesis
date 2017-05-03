@@ -6,10 +6,11 @@ import { Storage } from '@ionic/storage';
 
 import { MidataPersistence } from '../../util/midataPersistence';
 
-/*****************************************************************************
-DataPage - listet in the settings menu.
-It includes the disclaimer information and the option to clear the storage.
-*****************************************************************************/
+/**
+ * data page for settings page
+ * @param  {'page-data'}  {selector   [description]
+ * @param  {'data.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-data',
   templateUrl: 'data.html'
@@ -18,19 +19,25 @@ export class DataPage {
 
   private mp = MidataPersistence.getInstance();
 
+  /**
+   *
+   * @param  {App}               publicappCtrl     handle root page
+   * @param  {PopoverController} publicpopoverCtrl handle popovers
+   * @param  {AlertController}   publicalertCtrl   handle alerts
+   * @param  {Storage}           publicstorage     ionic storage from phone
+   */
   constructor(public appCtrl: App, public popoverCtrl: PopoverController, public alertCtrl: AlertController, public storage: Storage) { }
 
   /**
-   * PopoverController to present the DisclaimerPage
-   *  @return {[type]} [description]
+   * create popover to present the DisclaimerPage
    */
   presentPopover() {
     let popover = this.popoverCtrl.create(DisclaimerPage);
     popover.present();
   }
+
   /**
-   * an alet is presented to confirm the deletion of the storage. after the confirm, the storage wil lbe cleared
-   * @return {[type]} [description]
+   * open an alert  to confirm the deletion of the storage. after the confirm, the storage will be cleared
    */
   deleteAllData() {
     //Alert to confirm the deletion of the data
@@ -59,9 +66,9 @@ export class DataPage {
     });
     confirm.present();
   }
+
   /**
    * log out and navigate to the LoginPage
-   * @return {[type]} [description]
    */
   logout() {
     this.mp.logout();

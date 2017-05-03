@@ -7,20 +7,32 @@ import { EmergencyPage } from '../emergency/emergency';
 import { MeasureplanPage } from '../measureplan/measureplan';
 import { CheckupsPage } from '../checkups/checkups';
 
+/**
+ * home page for tabs page
+ * @param  {'page-home'}  {selector   [description]
+ * @param  {'home.html'}} templateUrl [description]
+ * @return {[type]}                   [description]
+ */
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
 })
 export class HomePage {
 
+  /**
+   *
+   * @param  {NavController}         publicnavCtrl    navigation of app
+   * @param  {ActionSheetController} publicactionCtrl handle action sheets
+   * @param  {Storage}               publicstorage    ionic storage from phone
+   */
   constructor(public navCtrl: NavController, public actionCtrl: ActionSheetController, public storage: Storage) {
   }
+
   /**
-   * [goTo description]
-   * @param  {[type]} target [description]
-   * @return {[type]}        [description]
+   * change view to given target
+   * @param  {string} target name of page to load
    */
-  goTo(target) {
+  goTo(target: string) {
     switch (target) {
       case 'Settings':
         this.navCtrl.push(SettingsPage);
@@ -39,9 +51,9 @@ export class HomePage {
         break;
     }
   }
+
   /**
-   * open an action sheet to choose the vital sign for a new entry.
-   * @return {[type]} [description]
+   * open an action sheet to choose the category for a new entry
    */
   openActionSheet() {
     let actionSheet = this.actionCtrl.create({});
@@ -94,9 +106,14 @@ export class HomePage {
     // present the alert popup
     actionSheet.present();
   }
-  addVitalSign(param: string){
+
+  /**
+   * add a new vital sign to the given category and open the page
+   * @param  {string} category category of new vital sign
+   */
+  addVitalSign(category: string){
     this.storage.ready().then(() => {
-      this.storage.set('addNewValueFromHome', param);
+      this.storage.set('addNewValueFromHome', category);
       this.navCtrl.parent.select(1);
     });
   }

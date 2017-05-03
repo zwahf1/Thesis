@@ -2,16 +2,17 @@ import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
-/*
-  Generated class for the Measureplan page.
-
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+/**
+ * measureplan page for home page
+ * @param  {'page-measureplan'}  {selector   [description]
+ * @param  {'measureplan.html'}} templateUrl [description]
+ * @return {[type]}                          [description]
+ */
 @Component({
   selector: 'page-measureplan',
   templateUrl: 'measureplan.html'
 })
+
 export class MeasureplanPage {
 
   arrayValues: string[][];
@@ -55,6 +56,12 @@ export class MeasureplanPage {
     ["So", "X", "", "X", "", "X", "X", "X"]
   ];
 
+  /**
+   * get the actual selected schema and individual schema from storage if saved
+   * otherwise load empty and default schema
+   * @param  {NavController} publicnavCtrl navigation of app
+   * @param  {Storage}       publicstorage ionic storage of phone
+   */
   constructor(public navCtrl: NavController, public storage: Storage) {
     this.storage.ready().then(() => {
       this.storage.get('schemaIndividual').then((val) => {
@@ -83,18 +90,20 @@ export class MeasureplanPage {
       this.storage.get('Schema').then((val) => {
         if (val) {
           this.actualSchema = val;
-        //  this.loadSchema(this.actualSchema);
         } else {
           this.actualSchema = 'Individuell';
           this.aValBefore = true;
-        //  this.loadSchema(this.actualSchema);
         }
         this.loadSchema(this.actualSchema);
       });
     });
   }
 
-  loadSchema(schema){
+  /**
+   * load the given schema into the page
+   * @param  {string} schema schema to show | Individuell, Tief, Mittel, Hoch
+   */
+  loadSchema(schema: string){
     switch (schema) {
       case 'Individuell':
         this.setIndividualValues();
@@ -113,6 +122,14 @@ export class MeasureplanPage {
     }
   }
 
+  /**
+   * toggle the clicked grid field in the schema from given array and position
+   * only possible if schema individual is selectes
+   * if clicked
+   * first: X | second: (X) | third: 'empty'
+   * @param  {any}    x array from schema value array
+   * @param  {number} y field position in the array
+   */
   toogleValue(x: any, y: number) {
     if (this.actualSchema === "Individuell") {
 
@@ -127,36 +144,47 @@ export class MeasureplanPage {
     }
   }
 
+  /**
+   * set the actual schema to individual
+   */
   setIndividualValues() {
-    //  this.actualSchema = "Individual";
     this.arrayValues = this.arrayIndividualValues;
     this.arrayValuesBefore = this.arrayIndividualValuesBefore;
     this.aValBefore = true;
   }
 
-  saveIndividualValues() {
-    this.storage.ready().then(() => {
-      this.storage.set('schemaIndividual', this.arrayIndividualValues);
-      this.storage.set('schemaIndividualBefore', this.arrayIndividualValuesBefore);
-    });
-  }
-
+  /**
+   * set the actual schema to low
+   */
   setLowValues() {
-    //  this.actualSchema = "Low";
     this.arrayValues = this.arrayLowValues;
     this.arrayValuesBefore = this.arrayLowValuesBefore;
     this.aValBefore = true;
   }
 
+  /**
+   * set the actual schema to medium
+   */
   setMediumValues() {
-    //    this.actualSchema = "Medium";
     this.arrayValues = this.arrayMediumValues;
     this.aValBefore = false;
   }
 
+  /**
+   * set the actual schema to high
+   */
   setHighValues() {
-    //  this.actualSchema = "High";
     this.arrayValues = this.arrayHighValues;
     this.aValBefore = false;
+  }
+
+  /**
+   * save the individual values to storage
+   */
+  saveIndividualValues() {
+    this.storage.ready().then(() => {
+      this.storage.set('schemaIndividual', this.arrayIndividualValues);
+      this.storage.set('schemaIndividualBefore', this.arrayIndividualValuesBefore);
+    });
   }
 }

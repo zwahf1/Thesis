@@ -2,14 +2,15 @@ import { Component } from '@angular/core';
 import { Storage } from '@ionic/storage';
 
 /**
-page of the display settings
-it includes a list of all vital signs, with the boolean of the visibility.
-it allows to set the schema of the frequency (individual, low, middle, high)
-**/
+ * display page for settings page
+ * @param  {'page-display'}  {selector   [description]
+ * @param  {'display.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-display',
   templateUrl: 'display.html'
 })
+
 export class DisplayPage {
 
   visibleList = [];
@@ -17,8 +18,9 @@ export class DisplayPage {
   schema = this.schemaList[0];
 
 /**
-constructor overwrites the default values of the visibility and schema with the values of the storage
-**/
+ * get list of which charts are visible and which schema to show
+ * @param  {Storage} publicstorage ionic storage from phone
+ */
   constructor(public storage: Storage) {
     this.visibleList['all'] = true;
     this.visibleList['glucose'] = true;
@@ -39,18 +41,20 @@ constructor overwrites the default values of the visibility and schema with the 
       })
     });
   }
+
   /**
-  method to store the new visibleList
-  **/
+   * store changed visible list of charts
+   */
   visibleChange() {
     this.storage.ready().then(() => {
       this.storage.set('VisibleList', this.visibleList);
     });
   }
+
   /**
-  method to store the new schema
-  **/
-  schemaChange(entry){
+   * store changed schema of measureplan
+   */
+  schemaChange(){
     this.storage.ready().then(() => {
       this.storage.set('Schema', this.schema);
     });

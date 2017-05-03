@@ -5,6 +5,11 @@ import { MeasurementsPage } from '../measurements/measurements';
 import { MedicationPage } from '../medication/medication';
 import { NutritionPage } from '../nutrition/nutrition';
 
+/**
+ * tabs page for the app
+ * @param  {'tabs.html'}} {templateUrl [description]
+ * @return {[type]}                    [description]
+ */
 @Component({
   templateUrl: 'tabs.html'
 })

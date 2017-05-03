@@ -9,11 +9,16 @@ import * as  TYPES from '../../util/typings/MIDATA_Types';
 
 import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
-
+/**
+ * measurements page for tabs page
+ * @param  {'page-measurements'}  {selector   [description]
+ * @param  {'measurements.html'}} templateUrl [description]
+ */
 @Component({
   selector: 'page-measurements',
   templateUrl: 'measurements.html'
 })
+
 export class MeasurementsPage {
 
   private mp = MidataPersistence.getInstance();
@@ -35,18 +40,16 @@ export class MeasurementsPage {
   valuesWeight = [];
 
   /**
-                    constructor
-
-  create the medication page with parameters
-    - navCtrl: navigation controller to navigate between pages
-    - storage: local storage
-
-  storage SET:
-    -glucoseValues: the measurements of the blood glucose
-    -bpValues: the measurements of the blood pressure
-    -pulseValues: the measurements of the pulse
-    -weightValues: the measurements of the scale
-**/
+   * get all values, visible list and targetrange list form storage and create all charts.
+   * if no values are saved, get from midata
+   * @param  {NavController}         publicnavCtrl     navigation of app
+   * @param  {NavParams}             publicnavParams   navigation parameters
+   * @param  {Storage}               publicstorage     ionic storage from phone
+   * @param  {LoadingController}     publicloadingCtrl show loading
+   * @param  {AlertController}       publicalertCtrl   handle alerts
+   * @param  {ActionSheetController} publicactionCtrl  handle action sheets
+   * @param  {BluetoothSerial}       publicbls         connection to bluetooth devices
+   */
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
     public loadingCtrl: LoadingController, public alertCtrl: AlertController, public actionCtrl: ActionSheetController,
     public bls: BluetoothSerial) {
@@ -118,11 +121,11 @@ export class MeasurementsPage {
       });
     });
   }
+
   /**
-  if the view did enter, the latest stored visibleList and target range list
-  loads to local variables.
-  if there's no vitalRangeList available, the default values loads, they're 0.
-  **/
+   * when page was entered, get visible list and targetrange list.
+   * update charts if changes are made
+   */
   ionViewDidEnter() {
     this.storage.ready().then(() => {
       this.storage.get('addNewValueFromHome').then((val) => {
@@ -160,11 +163,11 @@ export class MeasurementsPage {
       });
     });
   }
-  /**
-  method to refresh the page and redraw the charts.
 
-  while the charts are creating, the loading indicator is presented.
-  **/
+  /**
+   * refresh all charts of given typ
+   * @param  {string} typ chart typ to refresh | all, g, p, bp, w
+   */
   refreshPage(typ: string) {
     let loading = this.loadingCtrl.create();
     loading.present();
@@ -207,11 +210,12 @@ export class MeasurementsPage {
 
     loading.dismiss();
   }
+
   /**
-  method to collapse and expand the charts.
-  it's called by clicking on a divider between the charts
-  **/
-  expand(src) {
+   * expand or collapse the given chart
+   * @param  {any} src div of chart to collapse/expand
+   */
+  expand(src: any) {
     try {
       //source navigate to the chart tag and store it to 'element'
       let element = src.parentNode.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
@@ -240,11 +244,12 @@ export class MeasurementsPage {
       }
     }
   }
+
   /**
-method to collapse and expand the measurement values.
-it's called by clicking on a divider above the table
-**/
-  expandValues(src) {
+   * expand or collapse the given measurements
+   * @param  {any}    src div of measurements to collapse/expand
+   */
+  expandValues(src: any) {
     try {
       let element = src.parentNode.parentNode.parentNode.nextElementSibling;
       //mode is the style attribute of the chart element
@@ -274,10 +279,10 @@ it's called by clicking on a divider above the table
       }
     }
   }
+
   /**
-  method to hide and show the charts.
-  it's based on the visibleList, which is editable in the settings.
-  **/
+   * show all charts from visible list
+   */
   hideCharts() {
     for (var key in this.visibleList) {
       let  elements = (<HTMLElement[]><any>document.getElementsByClassName(key));
@@ -290,10 +295,10 @@ it's called by clicking on a divider above the table
     }
     }
   }
+
   /**
-  method to create the general chart with all vital signs.
-  it's a combine chart with multiple chart types
-  **/
+   * create a chart with all measurements
+   */
   createAllChart() {
     this.chartAll = {
       chart: {
@@ -400,10 +405,10 @@ it's called by clicking on a divider above the table
       },
     }
   }
+
   /**
-  method to choose the vital sign for the new measurement value.
-  after the selection it calls the method openAddAlert() with the vital sign as parameter
-  **/
+   * open an action sheet for choosing a category to add a new value
+   */
   openActionSheet() {
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Neuer Messwert hinzufügen');
@@ -445,6 +450,9 @@ it's called by clicking on a divider above the table
     actionSheet.present();
   }
 
+  /**
+   * open an action sheet to choose between import or manual input of glucose values
+   */
   openActionSheetGlucose() {
     let actionSheet = this.actionCtrl.create({});
     actionSheet.setTitle('Glukose');
@@ -471,10 +479,16 @@ it's called by clicking on a divider above the table
     // present the alert popup
     actionSheet.present();
   }
+
   /**
-  method to entry the new value
-  **/
-  openAddAlert(typ, glucoVal?) {
+   * open an alert to add a new value of the given typ
+   * if typ is 'Blutzucker', 'Gewicht' or 'Puls', take default alert
+   * if glucose measure category (Mess-Art) is choosen, optional given value would be saved
+   * @param  {string} typ      typ of saved value | Blutdruck, Import, Mess-Art, Blutzucker, Gewicht, Puls
+   * @param  {number} glucoVal value to store for glucose | optional
+   * @return {[type]}          [description]
+   */
+  openAddAlert(typ: string, glucoVal?: number) {
     let alert = this.alertCtrl.create({});
     alert.setTitle(typ);
     switch (typ) {
@@ -743,7 +757,12 @@ it's called by clicking on a divider above the table
     alert.present();
   }
 
-  importFromDevice(id) {
+  /**
+   * import measurements from bluetooth device with given id.
+   * get number of saved values and open method getBluetoothValues()
+   * @param  {string} id mac or uuid from bluetooth device
+   */
+  importFromDevice(id: string) {
     console.log("start import");
     var dataLength = new Uint8Array(6);
     var index: number = 0;
@@ -781,9 +800,12 @@ it's called by clicking on a divider above the table
       });
     });
   }
+
   /**
-method to add weight value into weightlist, chart and MIDATA
-  **/
+   * get given number of glucose values and save them.
+   * disconnect from device after response with all values
+   * @param  {number} num number of values on device
+   */
   getBluetoothValues(num: number) {
     var dataValues = new Uint8Array((num * 7));
     var result = new Uint8Array((num * 13));
@@ -848,44 +870,64 @@ method to add weight value into weightlist, chart and MIDATA
     });
   }
 
-  addWeight(v, d) {
+  /**
+   * add new weight to chart and midata with given value and date
+   * the value will be parsed to float and sorted
+   * @param  {string} v value of weight
+   * @param  {Date}   d date of measurement
+   */
+  addWeight(v: string, d: Date) {
     let val: number = parseFloat(v);
     this.valuesWeight.push([d.getTime(), val]);
     this.storage.ready().then(() => {
       this.storage.set('weightValues', this.valuesWeight.sort());
-      this.saveMIDATAWeight(v, d);
+      this.saveMIDATAWeight(val, d);
       this.refreshPage("w");
     });
   }
+
   /**
-method to add pulse value into weightlist, chart and MIDATA
-  **/
-  addPulse(v, d) {
+   * add new pulse to chart and midata with given value and date
+   * the value will be parsed to integer and sorted
+   * @param  {any} v value of pulse
+   * @param  {Date}   d date of measurement
+   */
+  addPulse(v: any, d: Date) {
     let val: number = parseInt(v);
     this.valuesPulse.push([d.getTime(), val]);
     this.storage.ready().then(() => {
       this.storage.set('pulseValues', this.valuesPulse.sort());
-      this.saveMIDATAPulse(v, d);
+      this.saveMIDATAPulse(val, d);
       this.refreshPage("p");
     });
   }
+
   /**
-method to add blood pressure values into weightlist, chart and MIDATA
-  **/
-  addBloodPressure(v1, v2, d) {
+   * add new blood pressure to chart and midata with given systolic and diastolic value and date
+   * the values will be parsed to integer and sorted
+   * @param  {any}    v1 systolic value of blood pressure
+   * @param  {any}    v2 diastolic value of blood pressure
+   * @param  {Date}   d  date of measurement
+   */
+  addBloodPressure(v1: any, v2: any, d: Date) {
     let val1: number = parseInt(v1);
     let val2: number = parseInt(v2);
     this.valuesBP.push([d.getTime(), val1, val2]);
     this.storage.ready().then(() => {
       this.storage.set('bpValues', this.valuesBP.sort());
-      this.saveMIDATABloodPressure(v2, v1, d);
+      this.saveMIDATABloodPressure(val1, val2, d);
       this.refreshPage("bp");
     });
   }
+
   /**
-method to add glucose value into weightlist, chart and MIDATA
-  **/
-  addGlucose(v, d, e) {
+   * add new glucose to chart and midata with given value, Date and event
+   * the value will be parsed to float and sorted
+   * @param  {any}    v value of glucose
+   * @param  {Date}   d date of measurement
+   * @param  {string} e event of measurement | Vor dem Essen, Nach dem Essen, Nach Medikation, Nach dem Sport
+   */
+  addGlucose(v: any, d: Date, e: string) {
     let gluco: TYPES.LOCAL_Glucose = {
       date: d,
       value: parseFloat(v),
@@ -894,11 +936,17 @@ method to add glucose value into weightlist, chart and MIDATA
     this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
-      this.saveMIDATAGlucose(v, d);
+      this.saveMIDATAGlucose(gluco.value, d);
       this.refreshPage("g");
     });
   }
 
+  /**
+   * add new glucose values to chart and midata with given array
+   * the array contains valuesets from device myglucohealth
+   * method: getBluetoothValues()
+   * @param  {Uint8Array} array uint8 array with valuesets of glucose
+   */
   addGlucoseValues(array: Uint8Array) {
     var gluco: TYPES.LOCAL_Glucose;
     var num = array.length / 6;
@@ -920,17 +968,24 @@ method to add glucose value into weightlist, chart and MIDATA
         console.log("Value already exist");
       } else {
         this.valuesGlucose.push(gluco);
-        this.saveMIDATAGlucose(val, gluco.date);
+        this.saveMIDATAGlucose(val, date);
         console.log("Added new Value");
       }
     }
-    console.log(this.valuesGlucose);
+
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
       this.refreshPage("g");
     });
   }
 
+  /**
+   * compare 2 given glucose values and return
+   * -1 for a<b | 0 for a=b | 1 for a>b
+   * @param  {TYPES.LOCAL_Glucose} a glucose value to compare
+   * @param  {TYPES.LOCAL_Glucose} b glucose value to compare
+   * @return {number}                number representing compare
+   */
   compareGlucoseValues(a: TYPES.LOCAL_Glucose, b: TYPES.LOCAL_Glucose): number {
     if (a.date.getTime() > b.date.getTime()) {
       return 1;
@@ -947,6 +1002,13 @@ method to add glucose value into weightlist, chart and MIDATA
     }
   }
 
+  /**
+   * check the given glucose value for already existing in glucose values
+   * used for myglucohealth import to prevent dublicates
+   * return true, if already existing, otherwise false
+   * @param  {TYPES.LOCAL_Glucose} glucose glucose value to proof
+   * @return {boolean}                     status existing
+   */
   checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
     var match: boolean = false;
     for (var i = 0; i < this.valuesGlucose.length; i++) {
@@ -957,9 +1019,19 @@ method to add glucose value into weightlist, chart and MIDATA
     return match;
   }
 
-  getGlucoseRepresentation(byte1, byte2, byte3, byte4, byte5, byte6) {
-    var result: {value, date, event};
-    var event: any = ((byte5 & 0xf8) >> 3);
+  /**
+   * get the glucose representation of the given 6 byte valueset
+   * @param  {any}                                 byte1 byte 1 of valueset
+   * @param  {any}                                 byte2 byte 2 of valueset
+   * @param  {any}                                 byte3 byte 3 of valueset
+   * @param  {any}                                 byte4 byte 4 of valueset
+   * @param  {any}                                 byte5 byte 5 of valueset
+   * @param  {any}                                 byte6 byte 6 of valueset
+   * @return {{value: any, date: any, event: any}}       glucose representation of valueset
+   */
+  getGlucoseRepresentation(byte1: any, byte2: any, byte3: any, byte4: any, byte5: any, byte6: any): {value: any, date: any, event: any} {
+    let result: {value: any, date: any, event: any};
+    let event: any = ((byte5 & 0xf8) >> 3);
     if (event == 2) {
       event = "Nach dem Sport";
     } else if (event == 4) {
@@ -978,45 +1050,97 @@ method to add glucose value into weightlist, chart and MIDATA
     return result;
   }
 
-  saveMIDATAWeight(v, d) {
+  /**
+   * save given weight value and date as FHIR weight resource
+   * us for saving midataPersistence
+   * @param  {number} v value of weight
+   * @param  {Date}   d date of measurement
+   */
+  saveMIDATAWeight(v: number, d: Date) {
     this.mp.save(this.getWeightRes(v, d));
   }
 
-  saveMIDATAPulse(v, d) {
+  /**
+   * save given pulse value and date as FHIR pulse resource
+   * us for saving midataPersistence
+   * @param  {number} v value of pulse
+   * @param  {Date}   d date of measurement
+   */
+  saveMIDATAPulse(v: number, d: Date) {
     this.mp.save(this.getPulseRes(v, d));
   }
 
-  saveMIDATABloodPressure(v1, v2, d) {
+  /**
+   * save given blood pressure values and date as FHIR blood pressure resource
+   * us for saving midataPersistence
+   * @param  {number} v1 systolic blood pressure
+   * @param  {number} v2 diastolic blood pressure
+   * @param  {Date}   d  date of measurement
+   */
+  saveMIDATABloodPressure(v1: number, v2: number, d: Date) {
     this.mp.save(this.getBloodPressureRes(v1, v2, d));
   }
 
-  saveMIDATAGlucose(v, d) {
+  /**
+   * save given glucose value and date as FHIR glucose resource
+   * us for saving midataPersistence
+   * @param  {number} v value of glucose
+   * @param  {Date}   d date of measurement
+   */
+  saveMIDATAGlucose(v: number, d: Date) {
     this.mp.save(this.getGlucoseRes(v, d));
   }
 
-  getMIDATAObservations() {
+  /**
+   * get all observations of the logged in midata account
+   * @return {any} all observations
+   */
+  getMIDATAObservations(): any {
     var o = this.mp.search("Observation");
     console.log(o);
     return o;
   }
 
-  getMIDATAWeight() {
+  /**
+   * get all weights of the logged in midata account
+   * @return {any} all weights
+   */
+  getMIDATAWeight(): any {
 
   }
 
-  getMIDATAPulse() {
+  /**
+   * get all pulses of the logged in midata account
+   * @return {any} all pulses
+   */
+  getMIDATAPulse(): any {
 
   }
 
-  getMIDATABloodPressure() {
+  /**
+   * get all blood pressures of the logged in midata account
+   * @return {any} all blood pressures
+   */
+  getMIDATABloodPressure(): any {
 
   }
 
-  getMIDATAGlucose() {
+  /**
+   * get all glucoses of the logged in midata account
+   * @return {any} all glucoses
+   */
+  getMIDATAGlucose(): any {
 
   }
 
-  getWeightRes(v, d) {
+  /**
+   * get a representation of a FHIR resource for weight with given value and Date
+   * return JSON of FHIR resource
+   * @param  {number}                           v value of weight
+   * @param  {Date}                             d date of measurement
+   * @return {TYPES.FHIR_ObservationRes_1Value}   JSON of FHIR resource
+   */
+  getWeightRes(v: number, d: Date): TYPES.FHIR_ObservationRes_1Value {
     var weight: TYPES.FHIR_ObservationRes_1Value;
     weight = {
       resourceType: 'Observation',
@@ -1046,7 +1170,14 @@ method to add glucose value into weightlist, chart and MIDATA
     return weight;
   }
 
-  getPulseRes(v, d) {
+  /**
+   * get a representation of a FHIR resource for pulse with given value and Date
+   * return JSON of FHIR resource
+   * @param  {number}                           v value of pulse
+   * @param  {Date}                             d date of measurement
+   * @return {TYPES.FHIR_ObservationRes_1Value}   JSON of FHIR resource
+   */
+  getPulseRes(v: number, d: Date): TYPES.FHIR_ObservationRes_1Value {
     var pulse: TYPES.FHIR_ObservationRes_1Value;
     pulse = {
       resourceType: 'Observation',
@@ -1076,7 +1207,15 @@ method to add glucose value into weightlist, chart and MIDATA
     return pulse;
   }
 
-  getBloodPressureRes(v1, v2, d) {
+  /**
+   * get a representation of a FHIR resource for blood pressure with given values and Date
+   * return JSON of FHIR resource
+   * @param  {number}                           v1 value of systolic blood pressure
+   * @param  {number}                           v2 value of diastolic blood pressure
+   * @param  {Date}                             d  date of measurement
+   * @return {TYPES.FHIR_ObservationRes_2Value}    JSON of FHIR resource
+   */
+  getBloodPressureRes(v1: number, v2: number, d: Date): TYPES.FHIR_ObservationRes_2Value {
     var bp: TYPES.FHIR_ObservationRes_2Value;
     bp = {
       resourceType: 'Observation',
@@ -1108,7 +1247,7 @@ method to add glucose value into weightlist, chart and MIDATA
             }]
           },
           valueQuantity: {
-            value: v2,
+            value: v1,
             unit: 'mmHg',
             system: 'http://unitsofmeasure.org'
           }
@@ -1123,7 +1262,7 @@ method to add glucose value into weightlist, chart and MIDATA
             }]
           },
           valueQuantity: {
-            value: v1,
+            value: v2,
             unit: 'mmHg',
             system: 'http://unitsofmeasure.org'
           }
@@ -1133,7 +1272,14 @@ method to add glucose value into weightlist, chart and MIDATA
     return bp;
   }
 
-  getGlucoseRes(v, d) {
+  /**
+   * get a representation of a FHIR resource for glucose with given value and Date
+   * return JSON of FHIR resource
+   * @param  {number}                           v value of glucose
+   * @param  {Date}                             d date of measurement
+   * @return {TYPES.FHIR_ObservationRes_1Value}   JSON of FHIR resource
+   */
+  getGlucoseRes(v: number, d: Date): TYPES.FHIR_ObservationRes_1Value {
     var glucose: TYPES.FHIR_ObservationRes_1Value;
     glucose = {
       resourceType: 'Observation',

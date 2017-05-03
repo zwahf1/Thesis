@@ -1,12 +1,12 @@
 import { Component } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import { InformationDetailsPage } from '../information-details/information-details';
-/*
-  Generated class for the Information page.
 
-  See http://ionicframework.com/docs/v2/components/#navigation for more info on
-  Ionic pages and navigation.
-*/
+/**
+ * information page for home page
+ * @param  {'page-information'} {selector   [description]
+ * @param  {'information.html'} templateUrl [description]
+ */
 @Component({
   selector: 'page-information',
   templateUrl: 'information.html',
@@ -28,9 +28,14 @@ import { InformationDetailsPage } from '../information-details/information-detai
     </ion-content>
     `
 })
+
 export class InformationPage {
   informationList = [];
 
+  /**
+   * save the diffrent information in a list
+   * @param  {NavController} publicnavCtrl navigation of app
+   */
   constructor(public navCtrl: NavController) {
     this.informationList = [
       {
@@ -56,7 +61,11 @@ export class InformationPage {
     ]
   }
 
-  openNavDetailsPage(item) {
+  /**
+   * open information detail page for given item of information list
+   * @param  {any}    item [description]
+   */
+  openNavDetailsPage(item: any) {
     this.navCtrl.push(InformationDetailsPage, { item: item });
   }
 }
