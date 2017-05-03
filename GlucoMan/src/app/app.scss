@@ -14,10 +14,20 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+ion-header{
+  ion-icon{
+    font-size: 2.5em;
+  }
+  .customIcon{
+    font-size: 2.4rem;
+  }
+  .toolbar-title{
+    font-size: 1.7em !important;
+  }
+}
 .highcharts-credits {
   display: none;
 }
-
 .divider {
   background-color: color($colors, primary);
   color: black;
@@ -29,17 +39,6 @@ ion-item-divider {
     height: 100%;
     width: 100%;
     align-self: inherit;
-  }
-}
-ion-header{
-  ion-icon{
-    font-size: 2.5em;
-  }
-  .customIcon{
-    font-size: 2.4rem;
-  }
-  .toolbar-title{
-    font-size: 1.7em !important;
   }
 }
 .swiper-container{
