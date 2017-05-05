@@ -525,10 +525,6 @@ export class NutritionPage {
         try {
           //results of the mentioned nutrition
           let result = xml.getElementsByTagName("result")[0].getElementsByTagName("items")[0].getElementsByTagName('item');
-          console.log('Results1a: ');
-          console.log(result);
-          console.log('Results1b: ');
-          console.log(result);
           //navigate to the value of carbohydrates of 100 gram and store it to the variable
           let kh_gram: any = result[0].getElementsByTagName('data')[0].getElementsByTagName('kh_gram')[0].textContent;
           carbo = kh_gram;
@@ -537,10 +533,6 @@ export class NutritionPage {
           let description = result[0].getElementsByTagName('description');
           let name = description[0].getElementsByTagName('name')[0].textContent;
           desc = name;
-          console.log('checkpoint after 100g');
-          console.log(result[0].getElementsByTagName('servings')[0]);
-          console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1]);
-          console.log(result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0]);
           //navigate to the value of a portion and store it to the variable
           let weight_gram: any = result[0].getElementsByTagName('servings')[0].getElementsByTagName('serving')[1].getElementsByTagName('weight_gram')[0].textContent;
           carbo = (kh_gram / 100 * weight_gram);
