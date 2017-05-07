@@ -7,7 +7,7 @@
 <ion-header>
 
   <ion-navbar>
-    <ion-title>Datensicherheit</ion-title>
+    <ion-title>Datenverwaltung</ion-title>
   </ion-navbar>
 </ion-header>
 
@@ -16,6 +16,9 @@
   <ion-list>
     <button ion-item (click)="presentPopover()">
       Datenschutzerklärung
+    </button>
+    <button ion-item (click)="openMIDATAImport()">
+      Importieren von MIDATA
     </button>
     <button ion-item red (click)="deleteAllData()">
       Alle Daten löschen

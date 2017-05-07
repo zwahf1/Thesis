@@ -29,7 +29,7 @@ export class MeasurementsPage {
   chartPulse: Chart;
   chartWeight: Chart;
   glucoseUnit: string = 'mmol/L';
-  valuesGlucose: [TYPES.LOCAL_Glucose];
+  valuesGlucose: TYPES.LOCAL_Glucose[] = [];
 
   visibleList = [];
   vitalRangeList = [];
@@ -76,47 +76,51 @@ export class MeasurementsPage {
       this.storage.get('glucoseValues').then((val) => {
         if (val) {
           this.valuesGlucose = val;
-        } else {
-          this.valuesGlucose = [{ date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 5), value: 5.2, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 7), value: 6.3, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 8), value: 4.3, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 10), value: 7.6, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 14), value: 5.0, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 17), value: 3.3, event: "Nicht verfügbar" },
-            { date: new Date(2017, 3, 20), value: 5.7, event: "Nicht verfügbar" }];
-          this.storage.set('glucoseValues', this.valuesGlucose);
         }
+        // else {
+          // this.valuesGlucose = [{ date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 5), value: 5.2, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 7), value: 6.3, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 8), value: 4.3, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 10), value: 7.6, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 14), value: 5.0, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 17), value: 3.3, event: "Nicht verfügbar" },
+          //   { date: new Date(2017, 3, 20), value: 5.7, event: "Nicht verfügbar" }];
+        //   this.storage.set('glucoseValues', this.valuesGlucose);
+        // }
       });
       this.storage.get('bpValues').then((val) => {
         if (val) {
           this.valuesBP = val;
-        } else {
-          this.valuesBP = [[Date.UTC(2017, 3, 4), 132, 71], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
-            [Date.UTC(2017, 3, 9), 110, 65], [Date.UTC(2017, 3, 11), 119, 66], [Date.UTC(2017, 3, 12), 128, 57], [Date.UTC(2017, 3, 14), 129, 68],
-            [Date.UTC(2017, 3, 17), 130, 79], [Date.UTC(2017, 3, 18), 121, 60]];
-          this.storage.set('bpValues', this.valuesBP);
         }
+        // else {
+          // this.valuesBP = [[Date.UTC(2017, 3, 4), 132, 71], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
+          //   [Date.UTC(2017, 3, 9), 110, 65], [Date.UTC(2017, 3, 11), 119, 66], [Date.UTC(2017, 3, 12), 128, 57], [Date.UTC(2017, 3, 14), 129, 68],
+          //   [Date.UTC(2017, 3, 17), 130, 79], [Date.UTC(2017, 3, 18), 121, 60]];
+        //   this.storage.set('bpValues', this.valuesBP);
+        // }
       });
       this.storage.get('pulseValues').then((val) => {
         if (val) {
           this.valuesPulse = val;
-        } else {
-          this.valuesPulse = [[Date.UTC(2017, 3, 4), 66], [Date.UTC(2017, 3, 5), 77], [Date.UTC(2017, 3, 7), 65], [Date.UTC(2017, 3, 8), 61],
-            [Date.UTC(2017, 3, 9), 62], [Date.UTC(2017, 3, 11), 75], [Date.UTC(2017, 3, 12), 83], [Date.UTC(2017, 3, 14), 59],
-            [Date.UTC(2017, 3, 17), 65], [Date.UTC(2017, 3, 18), 73]];
-          this.storage.set('pulseValues', this.valuesPulse);
         }
+        // else {
+          // this.valuesPulse = [[Date.UTC(2017, 3, 4), 66], [Date.UTC(2017, 3, 5), 77], [Date.UTC(2017, 3, 7), 65], [Date.UTC(2017, 3, 8), 61],
+          //   [Date.UTC(2017, 3, 9), 62], [Date.UTC(2017, 3, 11), 75], [Date.UTC(2017, 3, 12), 83], [Date.UTC(2017, 3, 14), 59],
+          //   [Date.UTC(2017, 3, 17), 65], [Date.UTC(2017, 3, 18), 73]];
+        //   this.storage.set('pulseValues', this.valuesPulse);
+        // }
       });
       this.storage.get('weightValues').then((val) => {
         if (val) {
           this.valuesWeight = val;
-        } else {
-          this.valuesWeight = [[Date.UTC(2017, 3, 4), 76.5], [Date.UTC(2017, 3, 5), 77.6], [Date.UTC(2017, 3, 7), 75.0], [Date.UTC(2017, 3, 8), 76.3],
-            [Date.UTC(2017, 3, 9), 76.7], [Date.UTC(2017, 3, 11), 77.5], [Date.UTC(2017, 3, 12), 77.8], [Date.UTC(2017, 3, 14), 78.1],
-            [Date.UTC(2017, 3, 17), 74.9], [Date.UTC(2017, 3, 18), 75.7]];
-          this.storage.set('weightValues', this.valuesWeight);
         }
+        // else {
+          // this.valuesWeight = [[Date.UTC(2017, 3, 4), 76.5], [Date.UTC(2017, 3, 5), 77.6], [Date.UTC(2017, 3, 7), 75.0], [Date.UTC(2017, 3, 8), 76.3],
+          //   [Date.UTC(2017, 3, 9), 76.7], [Date.UTC(2017, 3, 11), 77.5], [Date.UTC(2017, 3, 12), 77.8], [Date.UTC(2017, 3, 14), 78.1],
+          //   [Date.UTC(2017, 3, 17), 74.9], [Date.UTC(2017, 3, 18), 75.7]];
+        //   this.storage.set('weightValues', this.valuesWeight);
+        // }
         this.refreshPage("all");
       });
     });
@@ -153,6 +157,26 @@ export class MeasurementsPage {
           this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
           this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
           this.storage.set('VitalRangeList', this.vitalRangeList);
+        }
+      });
+      this.storage.get('glucoseValues').then((val) => {
+        if (val) {
+          this.valuesGlucose = val;
+        }
+      });
+      this.storage.get('bpValues').then((val) => {
+        if (val) {
+          this.valuesBP = val;
+        }
+      });
+      this.storage.get('pulseValues').then((val) => {
+        if (val) {
+          this.valuesPulse = val;
+        }
+      });
+      this.storage.get('weightValues').then((val) => {
+        if (val) {
+          this.valuesWeight = val;
         }
       });
       this.storage.get('changeTheMeasurementsView').then((val) => {
@@ -438,6 +462,13 @@ export class MeasurementsPage {
       icon: 'speedometer',
       handler: () => {
         this.openAddAlert("Gewicht");
+      }
+    });
+    actionSheet.addButton({
+      text: 'Import von MIDATA',
+      icon: 'download',
+      handler: () => {
+        // this.openAddAlert("Gewicht");
       }
     });
     actionSheet.addButton({
@@ -1089,48 +1120,6 @@ export class MeasurementsPage {
    */
   saveMIDATAGlucose(v: number, d: Date) {
     this.mp.save(this.getGlucoseRes(v, d));
-  }
-
-  /**
-   * get all observations of the logged in midata account
-   * @return {any} all observations
-   */
-  getMIDATAObservations(): any {
-    var o = this.mp.search("Observation");
-    console.log(o);
-    return o;
-  }
-
-  /**
-   * get all weights of the logged in midata account
-   * @return {any} all weights
-   */
-  getMIDATAWeight(): any {
-
-  }
-
-  /**
-   * get all pulses of the logged in midata account
-   * @return {any} all pulses
-   */
-  getMIDATAPulse(): any {
-
-  }
-
-  /**
-   * get all blood pressures of the logged in midata account
-   * @return {any} all blood pressures
-   */
-  getMIDATABloodPressure(): any {
-
-  }
-
-  /**
-   * get all glucoses of the logged in midata account
-   * @return {any} all glucoses
-   */
-  getMIDATAGlucose(): any {
-
   }
 
   /**

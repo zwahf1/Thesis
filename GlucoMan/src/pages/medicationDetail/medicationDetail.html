@@ -26,11 +26,26 @@
       <ion-col>
         <ion-card style="height: 100%">
           <ion-card-header style="font-size: 5vw">
+            Blister
+          </ion-card-header>
+          <ion-card-content>
+            <img src="{{medication.article.imgFrontBlister}}"/>
+            <img src="{{medication.article.imgBackBlister}}"/>
+          </ion-card-content>
+        </ion-card>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="medication.article.img">
+      <ion-col col12>
+        <ion-card style="height: 100%">
+          <ion-card-header style="font-size: 5vw">
             Medikament
           </ion-card-header>
           <ion-card-content>
-            <img src="{{medication.article.imgFrontDrug}}"/>
-            <img src="{{medication.article.imgBackDrug}}"/>
+            <div style="floating: left">
+              <img src="{{medication.article.imgFrontDrug}}"/>
+              <img src="{{medication.article.imgBackDrug}}"/>
+            </div>
           </ion-card-content>
         </ion-card>
       </ion-col>

@@ -26,10 +26,10 @@ export class MedicationPage {
 
   hciapi = HciHospAPI;
   // medication arrays
-  chronicMedis: [TYPES.LOCAL_MedicationStatementRes];
-  selfMedis: [TYPES.LOCAL_MedicationStatementRes];
-  insulin: [TYPES.LOCAL_MedicationStatementRes];
-  intolerances: [TYPES.LOCAL_MedicationStatementRes];
+  chronicMedis: TYPES.LOCAL_MedicationStatementRes[] = [];
+  selfMedis: TYPES.LOCAL_MedicationStatementRes[] = [];
+  insulin: TYPES.LOCAL_MedicationStatementRes[] = [];
+  intolerances: TYPES.LOCAL_MedicationStatementRes[] = [];
 
   /**
    * refresh the page for show all saved medications from storage
@@ -52,48 +52,41 @@ export class MedicationPage {
    * into the category (arrays) of the html-lists.
    */
   refreshPage() {
+    // create loading and show it
     let loading = this.loadingCtrl.create();
-
     loading.present();
-
+    // if storage is ready to use
     this.storage.ready().then(() => {
-
+      // get all chronic medis, empty array if undefined
       this.storage.get('chronicMedis').then((val) => {
-        this.chronicMedis = val;
-        if (this.chronicMedis == undefined) {
-          console.log("MIDATA chronicMedis");
-          this.storage.set('chronicMedis', []);
+        if (val != undefined) {
+          this.chronicMedis = val;
         }
-        console.log(this.chronicMedis);
+        this.storage.set('chronicMedis', this.chronicMedis);
       });
+      // get all self medis, empty array if undefined
       this.storage.get('selfMedis').then((val) => {
-        this.selfMedis = val;
-        if (this.selfMedis == undefined) {
-          console.log("MIDATA selfMedis");
-          this.storage.set('selfMedis', []);
+        if (val != undefined) {
+          this.selfMedis = val;
         }
-        console.log(this.selfMedis);
+        this.storage.set('selfMedis', this.selfMedis);
       });
+      // get all insulin medis, empty array if undefined
       this.storage.get('insulin').then((val) => {
-        this.insulin = val;
-        if (this.insulin == undefined) {
-          console.log("MIDATA insulin");
-          this.storage.set('insulin', []);
+        if (val != undefined) {
+          this.insulin = val;
         }
-        console.log(this.insulin);
+        this.storage.set('insulin', this.insulin);
       });
+      // get all intolerances, empty array if undefined
       this.storage.get('intolerances').then((val) => {
-        this.intolerances = val;
-        if (this.intolerances == undefined) {
-          console.log("MIDATA intolerances");
-          this.storage.set('intolerances', []);
+        if (val != undefined) {
+          this.intolerances = val;
         }
-        console.log(this.intolerances);
+        this.storage.set('intolerances', this.intolerances);
       });
     });
-
     loading.dismiss();
-
   }
 
   /**
@@ -131,26 +124,6 @@ export class MedicationPage {
   }
 
   /**
-   * get all medications of the given category from the midata account
-   * @param  {string}                                    category medication category |
-   *                                                              chronicMedis, selfMedis, insulin, intolerances
-   * @return {Array<TYPES.LOCAL_MedicationStatementRes>}          array with all medications from category
-   */
-  getMIDATAMedications(category: string): Array<TYPES.LOCAL_MedicationStatementRes> {
-    var m = this.mp.search("MedicationStatement");
-    var result = [];
-    console.log(m);
-    // for(var i = 0; i < m.length; i++) {
-    //
-    //   if(m[i].note[0].text == category) {
-    //     result.push(m[i]);
-    //   }
-    // }
-    console.log(result);
-    return result;
-  }
-
-  /**
    * get the medication of the given barcode from the HCI Solutions DB and
    * save the result if possible in storage and midata.
    * open alerts for medication category and route
@@ -181,12 +154,11 @@ export class MedicationPage {
     //if the request is done and the authorization was successfull
     xhr.onreadystatechange = () => {
       if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-
         //save in localstorage as LOCAL medi res
         this.storage.ready().then(() => {
           var xml = xhr.responseXML;
           var art = xml.getElementsByTagName("ART");
-          // for each children (xml tag) in the article
+          // for each children (xml tag) in the article get relevant data
           for (var i = 0; i < art[0].children.length; i++) {
             if (art[0].children[i].nodeName === "GTIN")
               gtin = art[0].children[i].innerHTML;
@@ -200,7 +172,7 @@ export class MedicationPage {
               img = art[0].children[i].innerHTML;
           };
           title = dscrd.split(" ")[0];
-
+          // create result JSON
           result = {
             resourceType: "MedicationStatement",
             status: "active",
@@ -238,24 +210,31 @@ export class MedicationPage {
               title: title,
               imgFrontPack: "",
               imgBackPack: "",
+              imgFrontBlister: "",
+              imgBackBlister: "",
               imgFrontDrug: "",
               imgBackDrug: ""
             }
-          };
-
+          } as TYPES.LOCAL_MedicationStatementRes;
+          // if imgages are available get them with hci-api and save them
           if (img === "true") {
             this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val: any) => {
               console.log(val);
               var all = val;
               result.article.imgFrontPack = all.front;
               result.article.imgBackPack = all.back;
-              result.article.imgFrontDrug = all.detailFront;
-              result.article.imgBackDrug = all.detailBack;
+              result.article.imgFrontBlister = all.detailFront;
+              result.article.imgBackBlister = all.detailBack;
+              // result.article.imgFrontDrug = all.drugFront;
+              // result.article.imgBackDrug = all.drugBack;
             });
           }
+          // show medication category befor saving
           this.showMedicationCategory(result);
+          // if an error occurs
         }).catch(() => {
           console.log("Artikel nicht gefunden");
+          // create alert for info
           let alert = this.alertCtrl.create({
             title: 'Artikel nicht gefunden',
             subTitle: "Der gescannte Artikel ist nicht verfügbar!",
@@ -263,7 +242,7 @@ export class MedicationPage {
           });
           alert.present();
         });
-        //if not ready
+      //if no response yet but authorized
       } else if (xhr.readyState != XMLHttpRequest.DONE && xhr.status === 200) {
         console.log("XMLHTTPRequest not ready");
         //if bad authorization
@@ -329,25 +308,26 @@ export class MedicationPage {
           navTransition.then(() => {
             // get the actual medication of the choosen category
             medication.note.push({ text: data });
-
+            // if medi category is insulin or intolerances
             if((data == "insulin") || (data == "intolerances")) {
+              // get choosen category
               this.storage.get(data).then((val) => {
                 // save medis in local variable (array)
                 medis = val;
-
                 // add the new medication to the current medication
                 medis.push(medication);
                 // save the current medication to the storage
                 this.storage.set(data, medis);
                 // save the medication in MIDATA
                 this.saveMIDATAMedication(medication);
-
+                // refresh page
                 navTransition.then(() => {
-                  // refresh page
                   this.refreshPage();
                 });
               });
+            // if category chronic and self medis
             } else {
+              // show taking alert
               this.showTakingMedication(medication);
             }
           });
@@ -368,23 +348,26 @@ export class MedicationPage {
     let alert = this.alertCtrl.create({});
     // set title of popup
     alert.setTitle('Wirkstoffaufnahme');
-
+    // radio buttom
     alert.addInput({
       type: 'radio',
       label: 'Mund',
       value: 'Mund',
       checked: true
     });
+    // radio button
     alert.addInput({
       type: 'radio',
       label: 'Augen',
       value: 'Augen'
     });
+    // radio button
     alert.addInput({
       type: 'radio',
       label: 'Spritzen',
       value: 'Spritzen'
     });
+    // radio button
     alert.addInput({
       type: 'radio',
       label: 'Eincremen',
@@ -396,15 +379,15 @@ export class MedicationPage {
     alert.addButton({
       text: 'Ok',
       // handle the click event for the OK button
-      // data: choosen category
+      // data: choosen taking
       handler: (data) => {
-        // user has clicked the new medication button
         // begin the alert's dismiss transition
         let navTransition = alert.dismiss();
-        // if the category is choosed
+        // if the taking is choosed
         navTransition.then(() => {
           let coding = "";
           let codingDisplay = "";
+          // check which is selected and store the code and display for it
           if (data === "Mund") {
             coding = "26643006";
             codingDisplay = "Oral";
@@ -423,23 +406,21 @@ export class MedicationPage {
           }
           // save the new parameter in the medication (JSON)
           this.storage.ready().then(() => {
-            // if the category is choosed
             navTransition.then(() => {
               result.dosage[0].route.coding[0].code = coding;
               result.dosage[0].route.coding[0].display = codingDisplay;
               result.dosage[0].route.text = data;
-
+              // get category of medication
               this.storage.get(result.note[0].text).then((val) => {
                 // save medis in local variable (array)
                 var medis = val;
-
                 // add the new medication to the current medication
                 medis.push(result);
                 // save the current medication to the storage
                 this.storage.set(result.note[0].text, medis);
                 // save the medication in MIDATA
                 this.saveMIDATAMedication(result);
-
+                // refresh page
                 this.refreshPage();
               });
             });

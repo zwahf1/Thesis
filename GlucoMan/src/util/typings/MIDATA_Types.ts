@@ -61,16 +61,18 @@ export interface DateToValue
  }
 
  export interface Article {
-   gtin: string,
-   pharmaCode: string,
-   prodNo: string,
-   description: string,
-   title?: string
-   img: string,
-   imgFrontPack?: string,
-   imgBackPack?: string,
-   imgFrontDrug?: string,
-   imgBackDrug?: string,
+   gtin: string;
+   pharmaCode: string;
+   prodNo: string;
+   description: string;
+   title?: string;
+   img: string;
+   imgFrontPack?: string;
+   imgBackPack?: string;
+   imgFrontBlister?: string;
+   imgBackBlister?: string;
+   imgFrontDrug?: string;
+   imgBackDrug?: string;
  }
 
  export interface FHIR_MedicationStatementRes {
