@@ -23,4 +23,14 @@ page-measurements {
   .centerText {
     align-items: center;
   }
+
+  .glucose{
+    ion-row{
+      height: 38px;
+    }
+  }
+
+  img, ion-img{
+        height: 1.7em !important;
+  }
 }

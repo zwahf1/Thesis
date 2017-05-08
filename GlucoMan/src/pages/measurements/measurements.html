@@ -73,7 +73,13 @@
                 {{entry.value}} mmol/l
               </ion-col>
               <ion-col col-3>
-                {{entry.event}}
+                <img *ngIf="entry.event == 'Nach dem Essen'" src="assets/apple-empty.png">
+                <img *ngIf="entry.event == 'Vor dem Essen'" src="assets/apple-full.png">
+                <img *ngIf="entry.event == 'Nach Medikation'" src="assets/injection.png">
+                <img *ngIf="entry.event == 'Nach dem Sport'" src="assets/sport.png">
+                <ion-icon *ngIf="entry.event == 'Nicht verfügbar'" name="remove"></ion-icon>
+
+                <!-- {{entry.event}} -->
               </ion-col>
             </ion-row>
           </div>
