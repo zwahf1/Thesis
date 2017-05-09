@@ -58,7 +58,7 @@ input parameters:
         },
         min: 0,
         max: maxY,
-        opposite: true,
+        opposite: false,
         plotBands: [{
           from: from1,
           to: to1,

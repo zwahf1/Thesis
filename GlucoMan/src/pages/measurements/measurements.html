@@ -78,6 +78,7 @@
                 <img *ngIf="entry.event == 'Nach Medikation'" src="assets/injection.png">
                 <img *ngIf="entry.event == 'Nach dem Sport'" src="assets/sport.png">
                 <ion-icon *ngIf="entry.event == 'Nicht verfügbar'" name="remove"></ion-icon>
+                <ion-icon *ngIf="entry.event == null" name="remove"></ion-icon>
 
                 <!-- {{entry.event}} -->
               </ion-col>
