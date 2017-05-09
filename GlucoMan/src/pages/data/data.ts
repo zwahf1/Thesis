@@ -1,11 +1,13 @@
 import { Component } from '@angular/core';
-import { App, PopoverController, AlertController, ActionSheetController } from 'ionic-angular';
+import { App, PopoverController, AlertController, ActionSheetController, LoadingController } from 'ionic-angular';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
 import { LoginPage } from '../login/login';
 import { Storage } from '@ionic/storage';
 
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as TYPES from '../../util/typings/MIDATA_Types';
+
+import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
 
 /**
  * data page for settings page
@@ -39,8 +41,8 @@ export class DataPage {
    * @param  {ActionSheetController}   publicactionSheetCtrl   handle action sheets
    */
   constructor(public appCtrl: App, public popoverCtrl: PopoverController, public alertCtrl: AlertController,
-    public storage: Storage, public actionSheetCtrl: ActionSheetController) {
-      console.log("construct settings");
+    public storage: Storage, public actionSheetCtrl: ActionSheetController, public loadingCtrl: LoadingController,
+    public bls: BluetoothSerial) {
     }
 
   /**
@@ -52,7 +54,61 @@ export class DataPage {
   }
 
   /**
+   * check if devices are registered, otherwise show alert to register it
+   */
+  openMyGlucoHealthImport() {
+    this.storage.ready().then(() => {
+      this.storage.get('deviceId').then((val) => {
+        if (val) {
+          for (var i = 0; i < val.length; i++) {
+            if (val[i].name === "myglucohealth") {
+              this.openActivationImport(val[i].id);
+            }
+          }
+        } else {
+          let alert = this.alertCtrl.create({
+            title: 'Kein Gerät registriert',
+            subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: " + "Einstellungen > Bluetooth".bold(),
+            buttons: ['OK']
+          });
+          alert.present();
+        }
+      });
+    });
+  }
+
+  /**
+   * open an alert to show activation of bluetooth
+   */
+  openActivationImport(id: string) {
+    this.storage.ready().then(() => {
+      let alert = this.alertCtrl.create({
+        title: 'Aktivierung Bluetooth',
+        subTitle: "Bitte aktivieren Sie Bluetooth auf dem Blutzucker-Messgerät durch klicken auf den linken Knopf"+
+        " (Pfeil nach oben)".bold(),
+        buttons: [
+          {text: 'OK',
+          handler: () => {
+            this.storage.get('glucoseValues').then((val) => {
+              if(val)
+                this.glucose = val;
+            });
+            this.importFromDevice(id);
+          }
+        }]
+      });
+      alert.present();
+    });
+  }
+
+  /**
    * open the action sheet to choose the import from MIDATA
+   * Alle         | all observations and medications
+   * Medikamente  | all medications
+   * Blutzucker   | all glucoses
+   * Blutdruck    | all blood pressures
+   * Puls         | all pulses
+   * Gewicht      | all weights
    */
   openMIDATAImport() {
     let actionSheet = this.actionSheetCtrl.create({});
@@ -79,7 +135,7 @@ export class DataPage {
           this.storage.get('intolerances').then((val) => {
             if(val)
               this.medis4 = val;
-            this.getMIDATAMedications();
+            this.saveMIDATAMedications();
           });
           this.storage.get('glucoseValues').then((val) => {
             if(val)
@@ -100,7 +156,7 @@ export class DataPage {
             console.log(this.pulse);
             console.log(this.bp);
             console.log(this.weight);
-            this.getMIDATAObservations();
+            this.saveMIDATAObservations({});
           });
         });
       }
@@ -127,7 +183,7 @@ export class DataPage {
           this.storage.get('intolerances').then((val) => {
             if(val)
               this.medis4 = val;
-            this.getMIDATAMedications();
+            this.saveMIDATAMedications();
           });
         });
       }
@@ -141,7 +197,7 @@ export class DataPage {
           this.storage.get('glucoseValues').then((val) => {
             if(val)
               this.glucose = val;
-            this.getMIDATAGlucose();
+            this.saveMIDATAObservations({});
           });
         });
       }
@@ -155,7 +211,7 @@ export class DataPage {
           this.storage.get('bpValues').then((val) => {
             if(val)
               this.bp = val;
-            this.getMIDATABloodPressure();
+            this.saveMIDATAObservations({});
           });
         });
       }
@@ -169,7 +225,7 @@ export class DataPage {
           this.storage.get('pulseValues').then((val) => {
             if(val)
               this.pulse = val;
-            this.getMIDATAPulse();
+            this.saveMIDATAObservations({});
           });
         });
       }
@@ -183,7 +239,7 @@ export class DataPage {
           this.storage.get('weightValues').then((val) => {
             if(val)
               this.weight = val;
-            this.getMIDATAWeight();
+            this.saveMIDATAObservations({});
           });
         });
       }
@@ -199,9 +255,9 @@ export class DataPage {
   }
 
   /**
-   * get all medications from the midata account
+   * save all medications from the midata account to storage
    */
-  getMIDATAMedications() {
+  saveMIDATAMedications() {
 
     let m = this.mp.search("MedicationStatement");
     let fails = 0;
@@ -249,24 +305,27 @@ export class DataPage {
         }
       }
       // if storage is ready to use
-      this.storage.ready().then(() => {
-        this.storage.set('chronicMedis', this.medis1);
-        this.storage.set('selfMedis', this.medis2);
-        this.storage.set('insulin', this.medis3);
-        this.storage.set('intolerances', this.medis4);
-      });
+      if(imports > 0) {
+        this.storage.ready().then(() => {
+          this.storage.set('chronicMedis', this.medis1);
+          this.storage.set('selfMedis', this.medis2);
+          this.storage.set('insulin', this.medis3);
+          this.storage.set('intolerances', this.medis4);
+        });
+      }
       this.showImportAlert(val.length, imports, fails, 0, "Medikamente");
     });
   }
 
   /**
-   * get all observations from the midata account
+   * save all new resources of given type from MIDATA to storage
+   * @param  {any} res type of resource in JSON | {}, {}, {}, {}, {}
    */
-  getMIDATAObservations() {
+  saveMIDATAObservations(res: any) {
     let fails = 0;
     let imports = 0;
     let others = 0;
-    var o = this.mp.search("Observation");
+    var o = this.mp.search("Observation", res);
     o.then((val) => {
       for(let i = 0; i < val.length; i++) {
         try {
@@ -277,10 +336,12 @@ export class DataPage {
                 let g: TYPES.LOCAL_Glucose = {
                   date: new Date(val[i].effectiveDateTime),
                   value: parseFloat(val[i].valueQuantity.value),
-                  event: "Nicht verfügbar"
+                  event: val[i].comment
                 };
                 this.glucose.push(g);
                 imports++;
+                console.log("glu ---------");
+                console.log(imports);
               }
               break;
             }
@@ -288,6 +349,8 @@ export class DataPage {
               if(!this.checkWeight(val[i], this.weight)) {
                 this.weight.push([new Date(val[i].effectiveDateTime).getTime(), val[i].valueQuantity.value]);
                 imports++;
+                console.log("gew ---------");
+                console.log(imports);
               }
               break;
             }
@@ -306,94 +369,118 @@ export class DataPage {
           }
 
         } catch(Error) {
-          switch(val[i]._fhir.code.coding[0].display) {
-            case "Herzfrequenz": {
-              if(!this.checkPulse(val[i]._fhir, this.pulse)) {
-                this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                imports++;
+          try {
+            switch(val[i]._fhir.code.coding[0].display) {
+              case "Blutdruck": {
+                if(!this.checkBlutdruck(val[i]._fhir, this.bp)) {
+                  this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
+                                val[i]._fhir.component[1].valueQuantity.value,
+                                val[i]._fhir.component[0].valueQuantity.value]);
+                  imports++;
+                  console.log("bp ---------");
+                  console.log(imports);
+                }
+                break;
               }
-              break;
-            }
-            case "Herzschlag": {
-              if(!this.checkPulse(val[i]._fhir, this.pulse)) {
-                this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                imports++;
+              case "Herzfrequenz": {
+                if(!this.checkPulse(val[i]._fhir, this.pulse)) {
+                  this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
+                  imports++;
+                  console.log("herzf ---------");
+                  console.log(imports);
+                }
+                break;
               }
-              break;
-            }
-            case "Blood Pressure": {
-              if(!this.checkBloodPressure(val[i]._fhir, this.bp)) {
-                this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
-                              val[i]._fhir.component[0].valueQuantity.value,
-                              val[i]._fhir.component[1].valueQuantity.value]);
-                imports++;
+              case "Herzschlag": {
+                if(!this.checkPulse(val[i]._fhir, this.pulse)) {
+                  this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
+                  imports++;
+                  console.log("herzs ---------");
+                  console.log(imports);
+                }
+                break;
               }
-              break;
-            }
-            case "Weight Measured": {
-              if(!this.checkWeight(val[i]._fhir, this.weight)) {
-                this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                imports++;
+              case "Blood Pressure": {
+                if(!this.checkBloodPressure(val[i]._fhir, this.bp)) {
+                  this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
+                                val[i]._fhir.component[0].valueQuantity.value,
+                                val[i]._fhir.component[1].valueQuantity.value]);
+                  imports++;
+                  console.log("bp ---------");
+                  console.log(imports);
+                }
+                break;
               }
-              break;
-            }
-            case "Gewicht": {
-              if(!this.checkWeight(val[i]._fhir, this.weight)) {
-                this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                imports++;
+              case "Weight Measured": {
+                if(!this.checkWeight(val[i]._fhir, this.weight)) {
+                  this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
+                  imports++;
+                  console.log("wei ---------");
+                  console.log(imports);
+                }
+                break;
               }
-              break;
+              case "Gewicht": {
+                if(!this.checkWeight(val[i]._fhir, this.weight)) {
+                  this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
+                  imports++;
+                  console.log("gew2 ---------");
+                  console.log(imports);
+                }
+                break;
+              }
+              default: {
+                others++;
+                break;
+              }
             }
-            default: {
-              others++;
-              break;
-            }
+          } catch(Error) {
+            fails++;
+            console.log("fail ---------");
+            console.log(fails);
           }
         }
       }
+      console.log("------------------------------")
+      console.log(imports);
+      console.log(others);
+      console.log(fails);
       // if storage is ready to use
       imports += this.getBloodPressure2(this.bpSys, this.bpDia);
-      this.storage.ready().then(() => {
-        this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
-        this.storage.set('pulseValues', this.pulse.sort());
-        this.storage.set('bpValues', this.bp.sort());
-        this.storage.set('weightValues', this.weight.sort());
-        this.storage.set('changeTheMeasurementsView', true);
-      });
+      console.log(imports);
+      if(imports > 0) {
+        this.storage.ready().then(() => {
+          this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+          this.storage.set('pulseValues', this.pulse.sort());
+          this.storage.set('bpValues', this.bp.sort());
+          this.storage.set('weightValues', this.weight.sort());
+          this.storage.set('changeTheMeasurementsView', true);
+        });
+      }
       this.showImportAlert(val.length, imports, fails, others, "Messwerte");
 
     });
   }
 
   /**
-   * get all weights of the logged in midata account
+   * save given glucose value and date as FHIR glucose resource
+   * us for saving midataPersistence
+   * @param  {number} v value of glucose
+   * @param  {Date}   d date of measurement
+   * @param  {string} e event of measurement
+   *
    */
-  getMIDATAWeight() {
-
+  saveMIDATAGlucose(v: number, d: Date, e: string) {
+    this.mp.save(this.getGlucoseRes(v, d, e));
   }
 
   /**
-   * get all pulses of the logged in midata account
+   * check if given medication already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.LOCAL_MedicationStatementRes}        medi  medi to check
+   * @param  {Array<TYPES.LOCAL_MedicationStatementRes>} medis array to proof
+   * @return {boolean}                                         exist status
    */
-  getMIDATAPulse() {
-
-  }
-
-  /**
-   * get all blood pressures of the logged in midata account
-   */
-  getMIDATABloodPressure() {
-
-  }
-
-  /**
-   * get all glucoses of the logged in midata account
-   */
-  getMIDATAGlucose() {
-
-  }
-
-
   checkMedication(medi: TYPES.LOCAL_MedicationStatementRes, medis: Array<TYPES.LOCAL_MedicationStatementRes>):boolean {
     for(let i = 0; i < medis.length; i++) {
       if(medi.effectiveDateTime == medis[i].effectiveDateTime) {
@@ -405,7 +492,14 @@ export class DataPage {
     return false;
   }
 
-  checkGlucose(val: TYPES.FHIR_ObservationRes_1Value, vals) {
+  /**
+   * check if given glucose already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.FHIR_ObservationRes_1Value} val  value to check
+   * @param  {any}                              vals array to proof
+   * @return {boolean}                                exist status
+   */
+  checkGlucose(val: TYPES.FHIR_ObservationRes_1Value, vals: any): boolean {
     for(let i = 0; i < vals.length; i++) {
       if(val.valueQuantity.value == vals[i].value) {
         if(new Date(val.effectiveDateTime).getTime() == vals[i].date.getTime()) {
@@ -416,7 +510,14 @@ export class DataPage {
     return false;
   }
 
-  checkBloodPressure(val: TYPES.FHIR_ObservationRes_2Value, vals) {
+  /**
+   * check if given blood presure already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.FHIR_ObservationRes_2Value} val  value to check
+   * @param  {any}                              vals array to proof
+   * @return {boolean}                                exist status
+   */
+  checkBloodPressure(val: TYPES.FHIR_ObservationRes_2Value, vals: any): boolean {
     for(let i = 0; i < vals.length; i++) {
       if(val.component[0].valueQuantity.value == vals[i][1]) {
         if(val.component[1].valueQuantity.value == vals[i][2]) {
@@ -429,7 +530,33 @@ export class DataPage {
     return false;
   }
 
-  getBloodPressure2(valSys, valDia): number {
+  /**
+   * check if given blood presure already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.FHIR_ObservationRes_2Value} val  value to check
+   * @param  {any}                              vals array to proof
+   * @return {boolean}                                exist status
+   */
+  checkBlutdruck(val: TYPES.FHIR_ObservationRes_2Value, vals: any): boolean {
+    for(let i = 0; i < vals.length; i++) {
+      if(val.component[0].valueQuantity.value == vals[i][2]) {
+        if(val.component[1].valueQuantity.value == vals[i][1]) {
+          if(new Date(val.effectiveDateTime).getTime() == vals[i][0]) {
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+
+  /**
+   * get number of blood pressure values which not already exist
+   * @param  {any}    valSys array with systolic values
+   * @param  {any}    valDia array with diastolic values
+   * @return {number}        count of successful imported values
+   */
+  getBloodPressure2(valSys: any, valDia: any): number {
     let count = 0;
     for(let i = 0; i < valSys.length; i++) {
       for(let y = 0; y < valDia.length; y++) {
@@ -437,6 +564,8 @@ export class DataPage {
           if(!this.checkBloodPressure2(valSys[i][0], valSys[i][1], valDia[y][1], this.bp)) {
             this.bp.push([valSys[i][0], valSys[i][1], valDia[y][1]]);
             count = count + 2;
+            console.log("bp2 ---------")
+            console.log(count);
           }
         }
       }
@@ -444,7 +573,17 @@ export class DataPage {
     return count;
   }
 
-  checkBloodPressure2(date, valSys, valDia, vals) {
+  /**
+   * check if given blood presure already exist in given array
+   * method is used for handling seperate resorces for systolic and diastolic bp
+   * return true if exist, otherwise false
+   * @param  {any} date   date
+   * @param  {any} valSys systolic
+   * @param  {any} valDia diastolic
+   * @param  {any} vals   array
+   * @return {boolean}        exist status
+   */
+  checkBloodPressure2(date: any, valSys: any, valDia: any, vals: any): boolean {
     for(let i = 0; i < vals.length; i++) {
       if(valSys == vals[i][1]) {
         if(valDia == vals[i][2]) {
@@ -457,7 +596,14 @@ export class DataPage {
     return false;
   }
 
-  checkPulse(val: TYPES.FHIR_ObservationRes_1Value, vals) {
+  /**
+   * check if given pulse already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.FHIR_ObservationRes_1Value} val  value to check
+   * @param  {any}                              vals array to proof
+   * @return {boolean}                               exist status
+   */
+  checkPulse(val: TYPES.FHIR_ObservationRes_1Value, vals: any): boolean {
     for(let i = 0; i < vals.length; i++) {
       if(val.valueQuantity.value == vals[i][1]) {
         if(new Date(val.effectiveDateTime).getTime() == vals[i][0]) {
@@ -468,7 +614,14 @@ export class DataPage {
     return false;
   }
 
-  checkWeight(val: TYPES.FHIR_ObservationRes_1Value, vals) {
+  /**
+   * check if given weight already exist in given array
+   * return true if exist, otherwise false
+   * @param  {TYPES.FHIR_ObservationRes_1Value} val  value to check
+   * @param  {any}                              vals array to proof
+   * @return {boolean}                               exist status
+   */
+  checkWeight(val: TYPES.FHIR_ObservationRes_1Value, vals: any): boolean {
     for(let i = 0; i < vals.length; i++) {
       if(val.valueQuantity.value == vals[i][1]) {
         if(new Date(val.effectiveDateTime).getTime() == vals[i][0]) {
@@ -478,7 +631,6 @@ export class DataPage {
     }
     return false;
   }
-
 
   /**
    * open an alert  to confirm the deletion of the storage. after the confirm, the storage will be cleared
@@ -519,6 +671,14 @@ export class DataPage {
     this.appCtrl.getRootNav().setRoot(LoginPage);
   }
 
+  /**
+   * show an alert with the given information about a data import from MIDATA
+   * @param  {number} all     all values imported
+   * @param  {number} imports successful imported
+   * @param  {number} fails   faild imported
+   * @param  {number} others  not necessary resources
+   * @param  {string} title   title of import
+   */
   showImportAlert(all: number, imports: number, fails: number, others: number, title: string) {
     let message = this.getMessageRepresentation(all, imports, fails, others);
     let confirm = this.alertCtrl.create({
@@ -534,6 +694,14 @@ export class DataPage {
     confirm.present();
   }
 
+  /**
+   * get an alert message for a data import
+   * @param  {number} all     all values imported
+   * @param  {number} imports successful imported
+   * @param  {number} fails   faild imported
+   * @param  {number} others  not necessary resources
+   * @param  {string} title   title of import
+   */
   getMessageRepresentation(all: number, imports: number, fails: number, others: number): string {
     let message = "";
     if(all == 0) {
@@ -551,7 +719,7 @@ export class DataPage {
         }
       }
       else if(imports == 1) {
-        message += "ist eine importiert worden."
+        message += "ist 1 importiert worden."
       }
     }
     else {
@@ -560,7 +728,7 @@ export class DataPage {
         message += "ist keine importiert worden. ";
       }
       else if(imports == 1) {
-        message += "ist eine importiert worden. "
+        message += "ist 1 importiert worden. "
       }
       else {
         message += "sind "+imports+" importiert worden. ";
@@ -573,12 +741,7 @@ export class DataPage {
         message += "Es sind "+fails+" Ressourcen fehlerhaft und "+(all - fails - imports - others)+" bereits vorhanden. ";
       }
 
-      if(others == 1) {
-        message += "Es ist 1 nicht relevante Ressource auf MIDATA gespeichert. ";
-      }
-      else {
-        message += "Es sind "+others+" nicht relevante Ressourcen auf MIDATA gespeichert. ";
-      }
+      message += "Nicht relevant: "+others;
     }
     return message;
   }
@@ -604,5 +767,247 @@ export class DataPage {
     } else {
       return -1;
     }
+  }
+
+  /**
+   * check the given glucose value for already existing in glucose values
+   * used for myglucohealth import to prevent dublicates
+   * return true, if already existing, otherwise false
+   * @param  {TYPES.LOCAL_Glucose} glucose glucose value to proof
+   * @return {boolean}                     status existing
+   */
+  checkValueGlucose(glucose: TYPES.LOCAL_Glucose): boolean {
+    var match: boolean = false;
+    for (var i = 0; i < this.glucose.length; i++) {
+      if (this.compareGlucoseValues(glucose, this.glucose[i]) == 0) {
+        match = true;
+      }
+    }
+    return match;
+  }
+
+  /**
+   * import measurements from bluetooth device with given id.
+   * get number of saved values and open method getBluetoothValues()
+   * @param  {string} id mac or uuid from bluetooth device
+   */
+  importFromDevice(id: string) {
+    console.log("start import");
+    var dataLength = new Uint8Array(6);
+    var index: number = 0;
+    var result = new Uint8Array(7);
+    dataLength[0] = 0x80;
+    dataLength[1] = 0x01;
+    dataLength[2] = 0xFE;
+    dataLength[3] = 0x00;
+    dataLength[4] = 0x81;
+    dataLength[5] = 0xFE;
+
+    let loading = this.loadingCtrl.create();
+
+    loading.present();
+
+    this.bls.enable().then(() => {
+      this.bls.connect(id).subscribe(() => {
+
+        this.bls.write(dataLength).then(() => {
+        });
+
+        this.bls.subscribeRawData().subscribe((subs) => {
+          var a = new Uint8Array(subs);
+          for (var i = 0; i < a.length; i++) {
+            result[index] = a[i];
+            index++;
+          }
+
+          if (index == 7) {
+            console.log(result);
+            loading.dismiss();
+            this.getBluetoothValues(result[4]);
+          }
+        });
+      });
+    });
+  }
+
+  /**
+   * get given number of glucose values and save them.
+   * disconnect from device after response with all values
+   * @param  {number} num number of values on device
+   */
+  getBluetoothValues(num: number) {
+    var dataValues = new Uint8Array((num * 7));
+    var result = new Uint8Array((num * 13));
+    var byteArray = new Uint8Array((num * 6));
+    var byteRead = 0;
+    var saveBytes: boolean = false;
+    var savedByte: number = 0;
+
+    let loading = this.loadingCtrl.create();
+
+    loading.present();
+
+    for (var i = 0; i < num; i++) {
+      dataValues[(0 + (i * 7))] = 0x80;
+      dataValues[(1 + (i * 7))] = 0x02;
+      dataValues[(2 + (i * 7))] = 0xFD;
+      dataValues[(3 + (i * 7))] = 0x01;
+      dataValues[(4 + (i * 7))] = i;
+      dataValues[(5 + (i * 7))] = (((0x80 ^ 0xFD) ^ i) ^ 0xFF);
+      dataValues[(6 + (i * 7))] = 0xFC;
+    }
+
+    this.bls.write(dataValues).then(() => {
+    });
+
+    this.bls.subscribeRawData().subscribe((subs) => {
+
+      var a = new Uint8Array(subs);
+
+      for (var i = 0; i < a.length; i++) {
+        result[byteRead] = a[i];
+        byteRead++;
+      }
+
+      console.log(byteRead);
+
+      if (byteRead == (num * 13)) {
+        byteRead = 0;
+        console.log(result);
+        for (var i = 0; i < result.length; i++) {
+
+          if (saveBytes) {
+            byteArray[savedByte] = result[i];
+            savedByte++;
+            if ((savedByte % 6) == 0) {
+              saveBytes = false;
+              byteRead++;
+            }
+          } else if (result[i] == byteRead) {
+            if (result[(i - 1)] == 0x01) {
+              saveBytes = true;
+            }
+          }
+        }
+        console.log(byteArray);
+        loading.dismiss();
+        this.addGlucoseValues(byteArray);
+        this.bls.disconnect().then(() => {
+          console.log("disconnect");
+        });
+      }
+    });
+  }
+
+  /**
+   * add new glucose values to chart and midata with given array
+   * the array contains valuesets from device myglucohealth
+   * method: getBluetoothValues()
+   * @param  {Uint8Array} array uint8 array with valuesets of glucose
+   */
+  addGlucoseValues(array: Uint8Array) {
+    let gluco: TYPES.LOCAL_Glucose;
+    let num = array.length / 6;
+    let imports = 0;
+
+    for (var i = 0; i < num; i++) {
+
+      console.log("input: " + array[(i * 6)] + " | " + array[((i * 6) + 1)] + " | " + array[((i * 6) + 2)] + " | " + array[((i * 6) + 3)] + " | " + array[((i * 6) + 4)] + " | " + array[((i * 6) + 5)]);
+      let glucoRep = this.getGlucoseRepresentation(array[(i * 6)], array[((i * 6) + 1)], array[((i * 6) + 2)], array[((i * 6) + 3)], array[((i * 6) + 4)], array[((i * 6) + 5)]);
+
+      let val: number = parseFloat(glucoRep.value);
+      let date: Date = glucoRep.date;
+      let event: string = glucoRep.event;
+      gluco = {
+        date: date,
+        value: val,
+        event: event
+      }
+
+      if (this.checkValueGlucose(gluco)) {
+        console.log("Value already exist");
+      } else {
+        imports++;
+        this.glucose.push(gluco);
+        this.saveMIDATAGlucose(val, date, event);
+        console.log("Added new Value");
+      }
+    }
+    this.showImportAlert(num, imports, 0, 0, "MyGlucoHealth");
+
+    this.storage.ready().then(() => {
+      this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+      this.storage.set('changeTheMeasurementsView', true);
+    });
+  }
+
+  /**
+   * get the glucose representation of the given 6 byte valueset
+   * @param  {any}                                 byte1 byte 1 of valueset
+   * @param  {any}                                 byte2 byte 2 of valueset
+   * @param  {any}                                 byte3 byte 3 of valueset
+   * @param  {any}                                 byte4 byte 4 of valueset
+   * @param  {any}                                 byte5 byte 5 of valueset
+   * @param  {any}                                 byte6 byte 6 of valueset
+   * @return {{value: any, date: any, event: any}}       glucose representation of valueset
+   */
+  getGlucoseRepresentation(byte1: any, byte2: any, byte3: any, byte4: any, byte5: any, byte6: any): {value: any, date: any, event: any} {
+    let result: {value: any, date: any, event: any};
+    let event: any = ((byte5 & 0xf8) >> 3);
+    if (event == 2) {
+      event = "Nach dem Sport";
+    } else if (event == 4) {
+      event = "Nach Medikation";
+    } else if (event == 8) {
+      event = "Nach dem Essen";
+    } else if (event == 16) {
+      event = "Vor dem Essen";
+    }
+
+    result = {
+      value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
+      date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
+      event: event
+    }
+    return result;
+  }
+
+  /**
+   * get a representation of a FHIR resource for glucose with given value and Date
+   * return JSON of FHIR resource
+   * @param  {number}                           v value of glucose
+   * @param  {Date}                             d date of measurement
+   * @param  {string}                           e event of measurement
+   * @return {TYPES.FHIR_ObservationRes_1Value}   JSON of FHIR resource
+   */
+  getGlucoseRes(v: number, d: Date, e: string): TYPES.FHIR_ObservationRes_1Value {
+    var glucose: TYPES.FHIR_ObservationRes_1Value;
+    glucose = {
+      resourceType: 'Observation',
+      status: "preliminary",
+      effectiveDateTime: d,
+      category: {
+        coding: [{
+          system: "http://hl7.org/fhir/observation-category",
+          code: "laboratory",
+          display: "Laboratory"
+        }]
+      },
+      code: {
+        text: "Glukose",
+        coding: [{
+          system: 'http://loinc.org',
+          code: '15074-8',
+          display: 'Glucose [Moles/volume] in blood'
+        }]
+      },
+      valueQuantity: {
+        value: v,
+        unit: 'mmol/l',
+        system: 'http://unitsofmeasure.org'
+      },
+      comment: e
+    } as TYPES.FHIR_ObservationRes_1Value;
+    return glucose;
   }
 }

@@ -32,7 +32,6 @@ export class MedicationPage {
   intolerances: TYPES.LOCAL_MedicationStatementRes[] = [];
 
   /**
-   * refresh the page for show all saved medications from storage
    * @param  {NavController}     publicnavCtrl     navigation of app
    * @param  {Platform}          publicplatform    platform of app
    * @param  {Storage}           publicstorage     ionic storage from phone
@@ -43,8 +42,6 @@ export class MedicationPage {
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
     public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
 
-    // refresh page (load list)
-    this.refreshPage();
   }
 
   /**
@@ -87,6 +84,13 @@ export class MedicationPage {
       });
     });
     loading.dismiss();
+  }
+
+  /**
+   * refresh if page is loaded
+   */
+  ionViewDidEnter() {
+    this.refreshPage();
   }
 
   /**
@@ -178,7 +182,7 @@ export class MedicationPage {
             status: "active",
             medicationCodeableConcept: {
               coding: [{
-                system: "hospINDEX",
+                system: "http://hcisolutions.ch/hospINDEX",
                 code: gtin,
                 display: title
               }]
@@ -227,6 +231,8 @@ export class MedicationPage {
               result.article.imgBackBlister = all.detailBack;
               // result.article.imgFrontDrug = all.drugFront;
               // result.article.imgBackDrug = all.drugBack;
+              result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F";
+              result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F";
             });
           }
           // show medication category befor saving

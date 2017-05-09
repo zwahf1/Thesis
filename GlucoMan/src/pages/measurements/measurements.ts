@@ -7,8 +7,6 @@ import { Storage } from '@ionic/storage';
 import { MidataPersistence } from '../../util/midataPersistence';
 import * as  TYPES from '../../util/typings/MIDATA_Types';
 
-import { BluetoothSerial } from '@ionic-native/bluetooth-serial';
-
 /**
  * measurements page for tabs page
  * @param  {'page-measurements'}  {selector   [description]
@@ -51,78 +49,9 @@ export class MeasurementsPage {
    * @param  {BluetoothSerial}       publicbls         connection to bluetooth devices
    */
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
-    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public actionCtrl: ActionSheetController,
-    public bls: BluetoothSerial) {
-
+    public loadingCtrl: LoadingController, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
     this.storage.ready().then(() => {
-      this.storage.get('VisibleList').then((val) => {
-        if (val) {
-          this.visibleList = val;
-          this.hideCharts();
-        }
-      });
-      this.storage.get('VitalRangeList').then((val) => {
-        if (val) {
-          this.vitalRangeList = val;
-        } else {
-          this.vitalRangeList.push(new VitalRange('Glukose', 0, 0, 'mmol/L', new Date));
-          this.vitalRangeList.push(new VitalRange('Diastolischer BD', 0, 0, 'mmHg', new Date));
-          this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
-          this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
-          this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
-          this.storage.set('VitalRangeList', this.vitalRangeList);
-        }
-      });
-      this.storage.get('glucoseValues').then((val) => {
-        if (val) {
-          this.valuesGlucose = val;
-        }
-        // else {
-          // this.valuesGlucose = [{ date: new Date(2017, 3, 3), value: 2.2, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 5), value: 5.2, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 7), value: 6.3, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 8), value: 4.3, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 10), value: 7.6, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 14), value: 5.0, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 17), value: 3.3, event: "Nicht verfügbar" },
-          //   { date: new Date(2017, 3, 20), value: 5.7, event: "Nicht verfügbar" }];
-        //   this.storage.set('glucoseValues', this.valuesGlucose);
-        // }
-      });
-      this.storage.get('bpValues').then((val) => {
-        if (val) {
-          this.valuesBP = val;
-        }
-        // else {
-          // this.valuesBP = [[Date.UTC(2017, 3, 4), 132, 71], [Date.UTC(2017, 3, 5), 124, 62], [Date.UTC(2017, 3, 7), 126, 73], [Date.UTC(2017, 3, 8), 118, 54],
-          //   [Date.UTC(2017, 3, 9), 110, 65], [Date.UTC(2017, 3, 11), 119, 66], [Date.UTC(2017, 3, 12), 128, 57], [Date.UTC(2017, 3, 14), 129, 68],
-          //   [Date.UTC(2017, 3, 17), 130, 79], [Date.UTC(2017, 3, 18), 121, 60]];
-        //   this.storage.set('bpValues', this.valuesBP);
-        // }
-      });
-      this.storage.get('pulseValues').then((val) => {
-        if (val) {
-          this.valuesPulse = val;
-        }
-        // else {
-          // this.valuesPulse = [[Date.UTC(2017, 3, 4), 66], [Date.UTC(2017, 3, 5), 77], [Date.UTC(2017, 3, 7), 65], [Date.UTC(2017, 3, 8), 61],
-          //   [Date.UTC(2017, 3, 9), 62], [Date.UTC(2017, 3, 11), 75], [Date.UTC(2017, 3, 12), 83], [Date.UTC(2017, 3, 14), 59],
-          //   [Date.UTC(2017, 3, 17), 65], [Date.UTC(2017, 3, 18), 73]];
-        //   this.storage.set('pulseValues', this.valuesPulse);
-        // }
-      });
-      this.storage.get('weightValues').then((val) => {
-        if (val) {
-          this.valuesWeight = val;
-        }
-        // else {
-          // this.valuesWeight = [[Date.UTC(2017, 3, 4), 76.5], [Date.UTC(2017, 3, 5), 77.6], [Date.UTC(2017, 3, 7), 75.0], [Date.UTC(2017, 3, 8), 76.3],
-          //   [Date.UTC(2017, 3, 9), 76.7], [Date.UTC(2017, 3, 11), 77.5], [Date.UTC(2017, 3, 12), 77.8], [Date.UTC(2017, 3, 14), 78.1],
-          //   [Date.UTC(2017, 3, 17), 74.9], [Date.UTC(2017, 3, 18), 75.7]];
-        //   this.storage.set('weightValues', this.valuesWeight);
-        // }
-        this.refreshPage("all");
-      });
+      this.storage.set('changeTheMeasurementsView', true);
     });
   }
 
@@ -134,9 +63,7 @@ export class MeasurementsPage {
     this.storage.ready().then(() => {
       this.storage.get('addNewValueFromHome').then((val) => {
         //if there's a value in 'NutritionDetailList', load it to local variable
-        if (val == 'Blutzucker') {
-          this.openActionSheetGlucose();
-        } else if(val != "" && val != undefined) {
+        if(val != "" && val != undefined) {
           this.openAddAlert(val);
         }
         this.storage.set('addNewValueFromHome',"");
@@ -440,7 +367,7 @@ export class MeasurementsPage {
       text: 'Glukose',
       icon: 'water',
       handler: () => {
-        this.openActionSheetGlucose();
+        this.openAddAlert("Blutzucker");
       }
     });
     actionSheet.addButton({
@@ -462,43 +389,6 @@ export class MeasurementsPage {
       icon: 'speedometer',
       handler: () => {
         this.openAddAlert("Gewicht");
-      }
-    });
-    actionSheet.addButton({
-      text: 'Import von MIDATA',
-      icon: 'download',
-      handler: () => {
-        // this.openAddAlert("Gewicht");
-      }
-    });
-    actionSheet.addButton({
-      text: 'Cancel',
-      icon: 'close',
-      role: 'destructive'
-    });
-
-    // present the alert popup
-    actionSheet.present();
-  }
-
-  /**
-   * open an action sheet to choose between import or manual input of glucose values
-   */
-  openActionSheetGlucose() {
-    let actionSheet = this.actionCtrl.create({});
-    actionSheet.setTitle('Glukose');
-    actionSheet.addButton({
-      text: 'Import von Gerät',
-      icon: 'download',
-      handler: () => {
-        this.openAddAlert("Import");
-      }
-    });
-    actionSheet.addButton({
-      text: 'Manuelle Eingabe',
-      icon: 'create',
-      handler: () => {
-        this.openAddAlert("Blutzucker");
       }
     });
     actionSheet.addButton({
@@ -538,24 +428,17 @@ export class MeasurementsPage {
         break;
       }
 
-      case "Import": {
-        alert.setMessage("Bitte aktivieren Sie Bluetooth vom Blutzucker-Messgerät durch klicken auf den linken Knopf"+
-        " (Pfeil nach oben)");
-        // alert.
-        break;
-      }
-
       case "Mess-Art": {
         alert.addInput({
           type: 'radio',
           label: 'Vor dem Essen',
-          value: 'Vor dem Essen'
+          value: 'Vor dem Essen',
+          checked: true
         });
         alert.addInput({
           type: 'radio',
           label: 'Nach dem Essen',
-          value: 'Nach dem Essen',
-          checked: true
+          value: 'Nach dem Essen'
         });
         alert.addInput({
           type: 'radio',
@@ -759,25 +642,6 @@ export class MeasurementsPage {
                 this.addGlucose(glucoVal, new Date(), data);
                 break;
               }
-              case "Import": {
-                this.storage.get('deviceId').then((val) => {
-                  if (val) {
-                    for (var i = 0; i < val.length; i++) {
-                      if (val[i].name === "myglucohealth") {
-                        this.importFromDevice(val[i].id);
-                      }
-                    }
-                  } else {
-                    let alert = this.alertCtrl.create({
-                      title: 'Kein Gerät registriert',
-                      subTitle: "Bitte registrieren Sie ihr Glukose-Messgerät unter: " + "Einstellungen > Bluetooth".bold(),
-                      buttons: ['OK']
-                    });
-                    alert.present();
-                  }
-                })
-                break;
-              }
             }
           });
         });
@@ -786,119 +650,6 @@ export class MeasurementsPage {
     });
     // present the alert popup
     alert.present();
-  }
-
-  /**
-   * import measurements from bluetooth device with given id.
-   * get number of saved values and open method getBluetoothValues()
-   * @param  {string} id mac or uuid from bluetooth device
-   */
-  importFromDevice(id: string) {
-    console.log("start import");
-    var dataLength = new Uint8Array(6);
-    var index: number = 0;
-    var result = new Uint8Array(7);
-    dataLength[0] = 0x80;
-    dataLength[1] = 0x01;
-    dataLength[2] = 0xFE;
-    dataLength[3] = 0x00;
-    dataLength[4] = 0x81;
-    dataLength[5] = 0xFE;
-
-    let loading = this.loadingCtrl.create();
-
-    loading.present();
-
-    this.bls.enable().then(() => {
-      this.bls.connect(id).subscribe(() => {
-
-        this.bls.write(dataLength).then(() => {
-        });
-
-        this.bls.subscribeRawData().subscribe((subs) => {
-          var a = new Uint8Array(subs);
-          for (var i = 0; i < a.length; i++) {
-            result[index] = a[i];
-            index++;
-          }
-
-          if (index == 7) {
-            console.log(result);
-            loading.dismiss();
-            this.getBluetoothValues(result[4]);
-          }
-        });
-      });
-    });
-  }
-
-  /**
-   * get given number of glucose values and save them.
-   * disconnect from device after response with all values
-   * @param  {number} num number of values on device
-   */
-  getBluetoothValues(num: number) {
-    var dataValues = new Uint8Array((num * 7));
-    var result = new Uint8Array((num * 13));
-    var byteArray = new Uint8Array((num * 6));
-    var byteRead = 0;
-    var saveBytes: boolean = false;
-    var savedByte: number = 0;
-
-    let loading = this.loadingCtrl.create();
-
-    loading.present();
-
-    for (var i = 0; i < num; i++) {
-      dataValues[(0 + (i * 7))] = 0x80;
-      dataValues[(1 + (i * 7))] = 0x02;
-      dataValues[(2 + (i * 7))] = 0xFD;
-      dataValues[(3 + (i * 7))] = 0x01;
-      dataValues[(4 + (i * 7))] = i;
-      dataValues[(5 + (i * 7))] = (((0x80 ^ 0xFD) ^ i) ^ 0xFF);
-      dataValues[(6 + (i * 7))] = 0xFC;
-    }
-
-    this.bls.write(dataValues).then(() => {
-    });
-
-    this.bls.subscribeRawData().subscribe((subs) => {
-
-      var a = new Uint8Array(subs);
-
-      for (var i = 0; i < a.length; i++) {
-        result[byteRead] = a[i];
-        byteRead++;
-      }
-
-      console.log(byteRead);
-
-      if (byteRead == (num * 13)) {
-        byteRead = 0;
-        console.log(result);
-        for (var i = 0; i < result.length; i++) {
-
-          if (saveBytes) {
-            byteArray[savedByte] = result[i];
-            savedByte++;
-            if ((savedByte % 6) == 0) {
-              saveBytes = false;
-              byteRead++;
-            }
-          } else if (result[i] == byteRead) {
-            if (result[(i - 1)] == 0x01) {
-              saveBytes = true;
-            }
-          }
-        }
-        console.log(byteArray);
-        loading.dismiss();
-        this.addGlucoseValues(byteArray);
-        this.bls.disconnect().then(() => {
-          console.log("disconnect");
-        });
-      }
-    });
   }
 
   /**
@@ -967,45 +718,7 @@ export class MeasurementsPage {
     this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
       this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
-      this.saveMIDATAGlucose(gluco.value, d);
-      this.refreshPage("g");
-    });
-  }
-
-  /**
-   * add new glucose values to chart and midata with given array
-   * the array contains valuesets from device myglucohealth
-   * method: getBluetoothValues()
-   * @param  {Uint8Array} array uint8 array with valuesets of glucose
-   */
-  addGlucoseValues(array: Uint8Array) {
-    var gluco: TYPES.LOCAL_Glucose;
-    var num = array.length / 6;
-    for (var i = 0; i < num; i++) {
-
-      console.log("input: " + array[(i * 6)] + " | " + array[((i * 6) + 1)] + " | " + array[((i * 6) + 2)] + " | " + array[((i * 6) + 3)] + " | " + array[((i * 6) + 4)] + " | " + array[((i * 6) + 5)]);
-      let glucoRep = this.getGlucoseRepresentation(array[(i * 6)], array[((i * 6) + 1)], array[((i * 6) + 2)], array[((i * 6) + 3)], array[((i * 6) + 4)], array[((i * 6) + 5)]);
-
-      let val: number = parseFloat(glucoRep.value);
-      let date: Date = glucoRep.date;
-      let event: string = glucoRep.event;
-      gluco = {
-        date: date,
-        value: val,
-        event: event
-      }
-
-      if (this.checkValue(gluco)) {
-        console.log("Value already exist");
-      } else {
-        this.valuesGlucose.push(gluco);
-        this.saveMIDATAGlucose(val, date);
-        console.log("Added new Value");
-      }
-    }
-
-    this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
+      this.saveMIDATAGlucose(gluco.value, d, e);
       this.refreshPage("g");
     });
   }
@@ -1031,54 +744,6 @@ export class MeasurementsPage {
     } else {
       return -1;
     }
-  }
-
-  /**
-   * check the given glucose value for already existing in glucose values
-   * used for myglucohealth import to prevent dublicates
-   * return true, if already existing, otherwise false
-   * @param  {TYPES.LOCAL_Glucose} glucose glucose value to proof
-   * @return {boolean}                     status existing
-   */
-  checkValue(glucose: TYPES.LOCAL_Glucose): boolean {
-    var match: boolean = false;
-    for (var i = 0; i < this.valuesGlucose.length; i++) {
-      if (this.compareGlucoseValues(glucose, this.valuesGlucose[i]) == 0) {
-        match = true;
-      }
-    }
-    return match;
-  }
-
-  /**
-   * get the glucose representation of the given 6 byte valueset
-   * @param  {any}                                 byte1 byte 1 of valueset
-   * @param  {any}                                 byte2 byte 2 of valueset
-   * @param  {any}                                 byte3 byte 3 of valueset
-   * @param  {any}                                 byte4 byte 4 of valueset
-   * @param  {any}                                 byte5 byte 5 of valueset
-   * @param  {any}                                 byte6 byte 6 of valueset
-   * @return {{value: any, date: any, event: any}}       glucose representation of valueset
-   */
-  getGlucoseRepresentation(byte1: any, byte2: any, byte3: any, byte4: any, byte5: any, byte6: any): {value: any, date: any, event: any} {
-    let result: {value: any, date: any, event: any};
-    let event: any = ((byte5 & 0xf8) >> 3);
-    if (event == 2) {
-      event = "Nach dem Sport";
-    } else if (event == 4) {
-      event = "Nach Medikation";
-    } else if (event == 8) {
-      event = "Nach dem Essen";
-    } else if (event == 16) {
-      event = "Vor dem Essen";
-    }
-
-    result = {
-      value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
-      date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
-      event: event
-    }
-    return result;
   }
 
   /**
@@ -1117,9 +782,11 @@ export class MeasurementsPage {
    * us for saving midataPersistence
    * @param  {number} v value of glucose
    * @param  {Date}   d date of measurement
+   * @param  {string} e event of measurement
+   *
    */
-  saveMIDATAGlucose(v: number, d: Date) {
-    this.mp.save(this.getGlucoseRes(v, d));
+  saveMIDATAGlucose(v: number, d: Date, e: string) {
+    this.mp.save(this.getGlucoseRes(v, d, e));
   }
 
   /**
@@ -1266,9 +933,10 @@ export class MeasurementsPage {
    * return JSON of FHIR resource
    * @param  {number}                           v value of glucose
    * @param  {Date}                             d date of measurement
+   * @param  {string}                           e event of measurement
    * @return {TYPES.FHIR_ObservationRes_1Value}   JSON of FHIR resource
    */
-  getGlucoseRes(v: number, d: Date): TYPES.FHIR_ObservationRes_1Value {
+  getGlucoseRes(v: number, d: Date, e: string): TYPES.FHIR_ObservationRes_1Value {
     var glucose: TYPES.FHIR_ObservationRes_1Value;
     glucose = {
       resourceType: 'Observation',
@@ -1293,7 +961,8 @@ export class MeasurementsPage {
         value: v,
         unit: 'mmol/l',
         system: 'http://unitsofmeasure.org'
-      }
+      },
+      comment: e
     } as TYPES.FHIR_ObservationRes_1Value;
     return glucose;
   }

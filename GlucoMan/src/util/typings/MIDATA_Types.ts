@@ -65,7 +65,7 @@ export interface DateToValue
    pharmaCode: string;
    prodNo: string;
    description: string;
-   title?: string;
+   title: string;
    img: string;
    imgFrontPack?: string;
    imgBackPack?: string;
@@ -106,6 +106,7 @@ export interface DateToValue
    category: CodeableConcept;
    code: CodeableConcept;
    valueQuantity: Value;
+   comment?: string;
  }
 
  export interface FHIR_ObservationRes_2Value {
