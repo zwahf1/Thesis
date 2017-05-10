@@ -38,25 +38,14 @@ export class MidataPersistence {
     return this.mp;
   }
 
-  // Set the role of the user to login.
-  setRole(r: string) {
-    this.role = r;
-  }
-
-  getRole() : string {
-    return this.role;
-  }
-
-  // Login function (call it with MidataPersistence.login(un, pw, role))
+  // Login function (call it with MidataPersistence.login(un, pw))
   // Returns the authResponse
   // -->  un:   Unsername
   // -->  pw:   Passwort
-  // -->  role: User-role
-  //            The user Role can be 'member', 'provider', 'developer' or 'research'
   login(un: string, pw: string){
     this.username = un;
     this.password = pw;
-    // Casting role from string to UserRole with "<UserRole> role"
+    // login as member
     return this.md.login(un, pw , 'member').then(result => {
       console.log("login successful");
 
@@ -67,12 +56,6 @@ export class MidataPersistence {
         status: result.status,
         owner: result.owner
       };
-
-      console.log("the result:");
-      console.log(result);
-      console.log("Bearer " + result.authToken);
-      console.log("mapped:");
-
       return this.authResponse;
     })
   }
@@ -111,6 +94,6 @@ export class MidataPersistence {
 
   save(res: any) {
     return this.md.save(res);
-}
+  }
 
 }

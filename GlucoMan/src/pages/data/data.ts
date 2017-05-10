@@ -333,15 +333,15 @@ export class DataPage {
 
             case "Glucose [Moles/volume] in blood": {
               if(!this.checkGlucose(val[i], this.glucose)) {
+                // create typ for glucose with date, value and event
                 let g: TYPES.LOCAL_Glucose = {
                   date: new Date(val[i].effectiveDateTime),
                   value: parseFloat(val[i].valueQuantity.value),
                   event: val[i].comment
                 };
+                // save glucose in array
                 this.glucose.push(g);
                 imports++;
-                console.log("glu ---------");
-                console.log(imports);
               }
               break;
             }
@@ -349,8 +349,6 @@ export class DataPage {
               if(!this.checkWeight(val[i], this.weight)) {
                 this.weight.push([new Date(val[i].effectiveDateTime).getTime(), val[i].valueQuantity.value]);
                 imports++;
-                console.log("gew ---------");
-                console.log(imports);
               }
               break;
             }
@@ -436,18 +434,11 @@ export class DataPage {
             }
           } catch(Error) {
             fails++;
-            console.log("fail ---------");
-            console.log(fails);
           }
         }
       }
-      console.log("------------------------------")
-      console.log(imports);
-      console.log(others);
-      console.log(fails);
       // if storage is ready to use
       imports += this.getBloodPressure2(this.bpSys, this.bpDia);
-      console.log(imports);
       if(imports > 0) {
         this.storage.ready().then(() => {
           this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
@@ -793,15 +784,15 @@ export class DataPage {
    */
   importFromDevice(id: string) {
     console.log("start import");
-    var dataLength = new Uint8Array(6);
     var index: number = 0;
     var result = new Uint8Array(7);
-    dataLength[0] = 0x80;
-    dataLength[1] = 0x01;
-    dataLength[2] = 0xFE;
-    dataLength[3] = 0x00;
-    dataLength[4] = 0x81;
-    dataLength[5] = 0xFE;
+    var dataLength = new Uint8Array(6);
+    dataLength[0] = 0x80; // start
+    dataLength[1] = 0x01; // size
+    dataLength[2] = 0xFE; // size invert
+    dataLength[3] = 0x00; // command
+    dataLength[4] = 0x81; // checksum low
+    dataLength[5] = 0xFE; // checksum high
 
     let loading = this.loadingCtrl.create();
 
@@ -846,30 +837,27 @@ export class DataPage {
     let loading = this.loadingCtrl.create();
 
     loading.present();
-
+    // for all measurements
     for (var i = 0; i < num; i++) {
-      dataValues[(0 + (i * 7))] = 0x80;
-      dataValues[(1 + (i * 7))] = 0x02;
-      dataValues[(2 + (i * 7))] = 0xFD;
-      dataValues[(3 + (i * 7))] = 0x01;
-      dataValues[(4 + (i * 7))] = i;
-      dataValues[(5 + (i * 7))] = (((0x80 ^ 0xFD) ^ i) ^ 0xFF);
-      dataValues[(6 + (i * 7))] = 0xFC;
+      dataValues[(0 + (i * 7))] = 0x80; // start
+      dataValues[(1 + (i * 7))] = 0x02; // size
+      dataValues[(2 + (i * 7))] = 0xFD; // size invert
+      dataValues[(3 + (i * 7))] = 0x01; // comand
+      dataValues[(4 + (i * 7))] = i;    // data (number of value)
+      dataValues[(5 + (i * 7))] = (((0x80 ^ 0xFD) ^ i) ^ 0xFF); // checksum low
+      dataValues[(6 + (i * 7))] = 0xFC; // checksum high
     }
 
     this.bls.write(dataValues).then(() => {
     });
 
     this.bls.subscribeRawData().subscribe((subs) => {
-
       var a = new Uint8Array(subs);
-
+      // for every recived value save it
       for (var i = 0; i < a.length; i++) {
         result[byteRead] = a[i];
         byteRead++;
       }
-
-      console.log(byteRead);
 
       if (byteRead == (num * 13)) {
         byteRead = 0;
@@ -912,8 +900,12 @@ export class DataPage {
 
     for (var i = 0; i < num; i++) {
 
-      console.log("input: " + array[(i * 6)] + " | " + array[((i * 6) + 1)] + " | " + array[((i * 6) + 2)] + " | " + array[((i * 6) + 3)] + " | " + array[((i * 6) + 4)] + " | " + array[((i * 6) + 5)]);
-      let glucoRep = this.getGlucoseRepresentation(array[(i * 6)], array[((i * 6) + 1)], array[((i * 6) + 2)], array[((i * 6) + 3)], array[((i * 6) + 4)], array[((i * 6) + 5)]);
+      let glucoRep = this.getGlucoseRepresentation(array[(i * 6)],
+                                                    array[((i * 6) + 1)],
+                                                    array[((i * 6) + 2)],
+                                                    array[((i * 6) + 3)],
+                                                    array[((i * 6) + 4)],
+                                                    array[((i * 6) + 5)]);
 
       let val: number = parseFloat(glucoRep.value);
       let date: Date = glucoRep.date;
@@ -954,6 +946,7 @@ export class DataPage {
   getGlucoseRepresentation(byte1: any, byte2: any, byte3: any, byte4: any, byte5: any, byte6: any): {value: any, date: any, event: any} {
     let result: {value: any, date: any, event: any};
     let event: any = ((byte5 & 0xf8) >> 3);
+    // match the event typ with description
     if (event == 2) {
       event = "Nach dem Sport";
     } else if (event == 4) {
@@ -963,10 +956,14 @@ export class DataPage {
     } else if (event == 16) {
       event = "Vor dem Essen";
     }
-
+    // crate the result to return with params
     result = {
       value: ((((byte3 & 0x03) << 8) + byte4) / 18).toFixed(1),
-      date: new Date(((byte1 >> 1) + 2000), (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), (byte2 & 0x1f), (((byte5 & 0x07) << 2) + (byte6 >> 6)), (byte6 & 0x3f)),
+      date: new Date( ((byte1 >> 1) + 2000), // year (after 2000 => 20017 = 17)
+                    (((byte1 & 0x01) << 3) + (byte2 >> 5) - 1), // month (begin by 0)
+                    (byte2 & 0x1f), // day
+                    (((byte5 & 0x07) << 2) + (byte6 >> 6)), // hour
+                    (byte6 & 0x3f)), // minute
       event: event
     }
     return result;
