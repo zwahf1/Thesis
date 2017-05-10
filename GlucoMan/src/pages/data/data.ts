@@ -431,33 +431,33 @@ export class DataPage {
       imports += this.getBloodPressure2(this.bpSys, this.bpDia);
       if(imports > 0) {
         this.storage.ready().then(() => {
-          try {
-            switch(res.code) {
-              case "15074-8":
-                this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
-                this.storage.set('changeTheMeasurementsView', true);
-                break;
-              case "8867-4":
-                this.storage.set('pulseValues', this.pulse.sort());
-                this.storage.set('changeTheMeasurementsView', true);
-                break;
-              case "29463-7":
-                this.storage.set('weightValues', this.weight.sort());
-                this.storage.set('changeTheMeasurementsView', true);
-                break;
-              case "55417-0":
-                this.storage.set('bpValues', this.bp.sort());
-                this.storage.set('changeTheMeasurementsView', true);
-                break;
-            }
-          } catch(Error) {
-            console.log("All values stored");
+          console.log(res.code);
+          // save only the values with the code from the function mp.search() given params
+          switch(res.code) {
+            case "15074-8":
+              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+              this.storage.set('changeTheMeasurementsView', true);
+              break;
+            case "8867-4":
+              this.storage.set('pulseValues', this.pulse.sort());
+              this.storage.set('changeTheMeasurementsView', true);
+              break;
+            case "29463-7":
+              this.storage.set('weightValues', this.weight.sort());
+              this.storage.set('changeTheMeasurementsView', true);
+              break;
+            case "55417-0":
+              this.storage.set('bpValues', this.bp.sort());
+              this.storage.set('changeTheMeasurementsView', true);
+              break;
+            default:
             this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
             this.storage.set('pulseValues', this.pulse.sort());
             this.storage.set('bpValues', this.bp.sort());
             this.storage.set('weightValues', this.weight.sort());
             this.storage.set('changeTheMeasurementsView', true);
           }
+
         });
       }
       this.showImportAlert(val.length, imports, fails, others, "Messwerte");
