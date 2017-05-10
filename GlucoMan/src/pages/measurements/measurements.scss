@@ -33,4 +33,8 @@ page-measurements {
   img, ion-img{
         height: 1.7em !important;
   }
+  .valueList{
+    height: 262px;
+    overflow-y: auto;
+  }
 }

@@ -75,6 +75,7 @@ export class NutritionPage {
     for (let entry of this.nutritionDetailList) {
       //date of the current entry
       let dateEntry = new Date(entry.date);
+      //negativ offset caused daily change at midnight
       dateEntry.setTime(dateEntry.getTime()-10800000);
       dateEntry.setHours(0, 0, 0, 0);
       //variable for last date in nutritionList, default 0, so it isn't the same day

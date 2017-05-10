@@ -19,7 +19,7 @@ input parameters:
     -data (any): the data to feed the chart
 **************************************************/
 
-  constructor(type: string, title: string, unit: string, data: any, maxY: number, from1: number, to1: number, from2: number, to2: number){
+  constructor(type: string, title: string, unit: string, data: any, maxY: number, from1: number, to1: number, from2: number, to2: number) {
     this.chart = {
       chart: {
         //type of the chart. spline for blood glucose, weight and pulse,
@@ -29,6 +29,9 @@ input parameters:
         height: 300,
         width: window.innerWidth,
         spacingRight: 20,
+        zoomType: 'x',
+        pinchType: 'x',
+        panning: true,
         resetZoomButton: {
           position: {
             verticalAlign: 'bottom', // by default
@@ -63,11 +66,11 @@ input parameters:
           from: from1,
           to: to1,
           color: 'lightgreen',
-        },{
-          from: from2,
-          to: to2,
-          color: 'lightgreen',
-        }]
+        }, {
+            from: from2,
+            to: to2,
+            color: 'lightgreen',
+          }]
       },
       //the unit is also shown on the tooltip of each mark.
       //followTouchMove and followPointer has to be disabled to move the chart on touch device
@@ -75,7 +78,7 @@ input parameters:
         valueSuffix: ' ' + unit,
         //xDateFormat: ' %d.%m.%Y %H:%M',
         followTouchMove: false,
-        followPointer: false
+        followPointer: true
       },
       //navigator, range selector and scrollbar aren't visible - reason of usability
 
