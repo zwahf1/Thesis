@@ -51,6 +51,16 @@ export class MeasurementsPage {
   constructor(public navCtrl: NavController, public navParams: NavParams, public storage: Storage,
     public loadingCtrl: LoadingController, public alertCtrl: AlertController, public actionCtrl: ActionSheetController) {
     this.storage.ready().then(() => {
+      this.storage.get('VitalRangeList').then((val) => {
+        if (val == undefined) {
+          this.vitalRangeList.push(new VitalRange('Glukose', 0, 0, 'mmol/L', new Date));
+          this.vitalRangeList.push(new VitalRange('Diastolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
+          this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
+          this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
+          this.storage.set('VitalRangeList', this.vitalRangeList);
+        }
+      });
       this.storage.set('changeTheMeasurementsView', true);
     });
   }
@@ -74,42 +84,36 @@ export class MeasurementsPage {
           this.hideCharts();
         }
       });
-      this.storage.get('VitalRangeList').then((val) => {
-        if (val) {
-          this.vitalRangeList = val;
-        } else {
-          this.vitalRangeList.push(new VitalRange('Glukose', 0, 0, 'mmol/L', new Date));
-          this.vitalRangeList.push(new VitalRange('Diastolischer BD', 0, 0, 'mmHg', new Date));
-          this.vitalRangeList.push(new VitalRange('Systolischer BD', 0, 0, 'mmHg', new Date));
-          this.vitalRangeList.push(new VitalRange('Puls', 0, 0, '/min', new Date));
-          this.vitalRangeList.push(new VitalRange('Gewicht', 0, 0, 'kg', new Date));
-          this.storage.set('VitalRangeList', this.vitalRangeList);
-        }
-      });
-      this.storage.get('glucoseValues').then((val) => {
-        if (val) {
-          this.valuesGlucose = val;
-        }
-      });
-      this.storage.get('bpValues').then((val) => {
-        if (val) {
-          this.valuesBP = val;
-        }
-      });
-      this.storage.get('pulseValues').then((val) => {
-        if (val) {
-          this.valuesPulse = val;
-        }
-      });
-      this.storage.get('weightValues').then((val) => {
-        if (val) {
-          this.valuesWeight = val;
-        }
-      });
+
       this.storage.get('changeTheMeasurementsView').then((val) => {
         if (val) {
           this.storage.set('changeTheMeasurementsView', false);
-          this.refreshPage("all");
+          this.storage.get('VitalRangeList').then((val) => {
+            if (val) {
+              this.vitalRangeList = val;
+            }
+          });
+          this.storage.get('glucoseValues').then((val) => {
+            if (val) {
+              this.valuesGlucose = val;
+            }
+          });
+          this.storage.get('bpValues').then((val) => {
+            if (val) {
+              this.valuesBP = val;
+            }
+          });
+          this.storage.get('pulseValues').then((val) => {
+            if (val) {
+              this.valuesPulse = val;
+            }
+          });
+          this.storage.get('weightValues').then((val) => {
+            if (val) {
+              this.valuesWeight = val;
+            }
+            this.refreshPage("all");
+          });
         }
       });
     });
@@ -813,7 +817,7 @@ export class MeasurementsPage {
         text: "Gewicht",
         coding: [{
           system: 'http://loinc.org',
-          code: '3141-9',
+          code: '29463-7',
           display: 'Weight Measured'
         }]
       },

@@ -152,10 +152,6 @@ export class DataPage {
           this.storage.get('weightValues').then((val) => {
             if(val)
               this.weight = val;
-            console.log(this.glucose);
-            console.log(this.pulse);
-            console.log(this.bp);
-            console.log(this.weight);
             this.saveMIDATAObservations({});
           });
         });
@@ -197,7 +193,7 @@ export class DataPage {
           this.storage.get('glucoseValues').then((val) => {
             if(val)
               this.glucose = val;
-            this.saveMIDATAObservations({});
+            this.saveMIDATAObservations({code:"15074-8"});
           });
         });
       }
@@ -211,7 +207,7 @@ export class DataPage {
           this.storage.get('bpValues').then((val) => {
             if(val)
               this.bp = val;
-            this.saveMIDATAObservations({});
+            this.saveMIDATAObservations({code:"55417-0"});
           });
         });
       }
@@ -225,7 +221,7 @@ export class DataPage {
           this.storage.get('pulseValues').then((val) => {
             if(val)
               this.pulse = val;
-            this.saveMIDATAObservations({});
+            this.saveMIDATAObservations({code:"8867-4"});
           });
         });
       }
@@ -239,7 +235,7 @@ export class DataPage {
           this.storage.get('weightValues').then((val) => {
             if(val)
               this.weight = val;
-            this.saveMIDATAObservations({});
+            this.saveMIDATAObservations({code:"29463-7"});
           });
         });
       }
@@ -319,7 +315,12 @@ export class DataPage {
 
   /**
    * save all new resources of given type from MIDATA to storage
-   * @param  {any} res type of resource in JSON | {}, {}, {}, {}, {}
+   * @param  {any} res type of resource in JSON |
+   * Alle: {},
+   * Glukose: {code:"15074-8"},
+   * Puls: {code:"8867-4"},
+   * Gewicht: {code:"29463-7"},
+   * Blutdruck: {code:"55417-0"}
    */
   saveMIDATAObservations(res: any) {
     let fails = 0;
@@ -328,6 +329,7 @@ export class DataPage {
     var o = this.mp.search("Observation", res);
     o.then((val) => {
       for(let i = 0; i < val.length; i++) {
+
         try {
           switch(val[i].code.coding[0].display) {
 
@@ -375,8 +377,6 @@ export class DataPage {
                                 val[i]._fhir.component[1].valueQuantity.value,
                                 val[i]._fhir.component[0].valueQuantity.value]);
                   imports++;
-                  console.log("bp ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -384,8 +384,6 @@ export class DataPage {
                 if(!this.checkPulse(val[i]._fhir, this.pulse)) {
                   this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
-                  console.log("herzf ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -393,8 +391,6 @@ export class DataPage {
                 if(!this.checkPulse(val[i]._fhir, this.pulse)) {
                   this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
-                  console.log("herzs ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -404,8 +400,6 @@ export class DataPage {
                                 val[i]._fhir.component[0].valueQuantity.value,
                                 val[i]._fhir.component[1].valueQuantity.value]);
                   imports++;
-                  console.log("bp ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -413,8 +407,6 @@ export class DataPage {
                 if(!this.checkWeight(val[i]._fhir, this.weight)) {
                   this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
-                  console.log("wei ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -422,8 +414,6 @@ export class DataPage {
                 if(!this.checkWeight(val[i]._fhir, this.weight)) {
                   this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
-                  console.log("gew2 ---------");
-                  console.log(imports);
                 }
                 break;
               }
@@ -441,11 +431,33 @@ export class DataPage {
       imports += this.getBloodPressure2(this.bpSys, this.bpDia);
       if(imports > 0) {
         this.storage.ready().then(() => {
-          this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
-          this.storage.set('pulseValues', this.pulse.sort());
-          this.storage.set('bpValues', this.bp.sort());
-          this.storage.set('weightValues', this.weight.sort());
-          this.storage.set('changeTheMeasurementsView', true);
+          try {
+            switch(res.code) {
+              case "15074-8":
+                this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+                this.storage.set('changeTheMeasurementsView', true);
+                break;
+              case "8867-4":
+                this.storage.set('pulseValues', this.pulse.sort());
+                this.storage.set('changeTheMeasurementsView', true);
+                break;
+              case "29463-7":
+                this.storage.set('weightValues', this.weight.sort());
+                this.storage.set('changeTheMeasurementsView', true);
+                break;
+              case "55417-0":
+                this.storage.set('bpValues', this.bp.sort());
+                this.storage.set('changeTheMeasurementsView', true);
+                break;
+            }
+          } catch(Error) {
+            console.log("All values stored");
+            this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+            this.storage.set('pulseValues', this.pulse.sort());
+            this.storage.set('bpValues', this.bp.sort());
+            this.storage.set('weightValues', this.weight.sort());
+            this.storage.set('changeTheMeasurementsView', true);
+          }
         });
       }
       this.showImportAlert(val.length, imports, fails, others, "Messwerte");
