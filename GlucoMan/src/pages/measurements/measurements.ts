@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { VitalRange } from '../../util/VitalRange';
-import { NavController, NavParams, LoadingController, AlertController, ActionSheetController, Slides } from 'ionic-angular';
+import { NavController, NavParams, LoadingController, AlertController, ActionSheetController, Slides, Content } from 'ionic-angular';
 import { Chart } from '../../util/Chart';
 import { Storage } from '@ionic/storage';
 
@@ -19,6 +19,7 @@ import * as  TYPES from '../../util/typings/MIDATA_Types';
 
 export class MeasurementsPage {
   @ViewChild(Slides) slides: Slides;
+  @ViewChild(Content) content: Content;
 
   private mp = MidataPersistence.getInstance();
 
@@ -71,6 +72,10 @@ export class MeasurementsPage {
   }
   focusLeave(){
     this.slides.lockSwipes(false);
+  }
+
+  slideChanged() {
+    this.content.scrollToTop();
   }
 
   /**

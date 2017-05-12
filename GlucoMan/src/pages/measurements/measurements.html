@@ -9,11 +9,11 @@
   </ion-navbar>
 </ion-header>
 <ion-content id="slides">
-  <ion-slides pager>
+  <ion-slides pager (ionSlideDidChange)="slideChanged()">
     <ion-slide>
       <div class="all">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartAll"></chart>
+        <chart (touchstart)="focusOver();" (touchend)="focusLeave();" class='c' [options]="chartAll"></chart>
       </div>
       <!--
           Chart for blood glucose, provided by Highcharts.com
@@ -21,7 +21,7 @@
         -->
       <div class="glucose">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
+        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
       </div>
       <!--
           Chart for blood pressure, provided by Highcharts.com
@@ -29,7 +29,7 @@
         -->
       <div class="bloodpressure">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartBP"></chart>
+        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartBP"></chart>
       </div>
       <!--
           Chart for pulse, provided by Highcharts.com
@@ -37,7 +37,7 @@
         -->
       <div class="pulse">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartPulse"></chart>
+        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartPulse"></chart>
       </div>
       <!--
           Chart for weight, provided by Highcharts.com
@@ -45,7 +45,7 @@
         -->
       <div class="weight">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
-        <chart class='c' type="StockChart" [options]="chartWeight"></chart>
+        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartWeight"></chart>
       </div>
     </ion-slide>
     <ion-slide>
@@ -65,24 +65,26 @@
                 Art
               </ion-col>
             </ion-row>
-            <ion-row class="borderTop centerText" *ngFor="let entry of valuesGlucose">
-              <ion-col col-5 class="borderRight">
-                {{entry.date | date:'dd.MM.yyyy HH:mm'}}
-              </ion-col>
-              <ion-col col-4 class="borderRight">
-                {{entry.value}} mmol/l
-              </ion-col>
-              <ion-col col-3>
-                <img *ngIf="entry.event == 'Nach dem Essen'" src="assets/apple-empty.png">
-                <img *ngIf="entry.event == 'Vor dem Essen'" src="assets/apple-full.png">
-                <img *ngIf="entry.event == 'Nach Medikation'" src="assets/injection.png">
-                <img *ngIf="entry.event == 'Nach dem Sport'" src="assets/sport.png">
-                <ion-icon *ngIf="entry.event == 'Nicht verfügbar'" name="remove"></ion-icon>
-                <ion-icon *ngIf="entry.event == null" name="remove"></ion-icon>
+            <div class="valueList">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesGlucose">
+                <ion-col col-5 class="borderRight">
+                  {{entry.date | date:'dd.MM.yyyy HH:mm'}}
+                </ion-col>
+                <ion-col col-4 class="borderRight">
+                  {{entry.value}} mmol/l
+                </ion-col>
+                <ion-col col-3>
+                  <img *ngIf="entry.event == 'Nach dem Essen'" src="assets/apple-empty.png">
+                  <img *ngIf="entry.event == 'Vor dem Essen'" src="assets/apple-full.png">
+                  <img *ngIf="entry.event == 'Nach Medikation'" src="assets/injection.png">
+                  <img *ngIf="entry.event == 'Nach dem Sport'" src="assets/sport.png">
+                  <ion-icon *ngIf="entry.event == 'Nicht verfügbar'" name="remove"></ion-icon>
+                  <ion-icon *ngIf="entry.event == null" name="remove"></ion-icon>
 
-                <!-- {{entry.event}} -->
-              </ion-col>
-            </ion-row>
+                  <!-- {{entry.event}} -->
+                </ion-col>
+              </ion-row>
+            </div>
           </div>
         </div>
         <div class="bloodpressure">
@@ -97,14 +99,14 @@
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="borderTop centerText" *ngFor="let entry of valuesBP">
-              <ion-col col-6 class="borderRight">
-                {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
-              </ion-col>
-              <ion-col col-6>
-                {{entry[1]}} / {{entry[2]}} mmHg
-              </ion-col>
-            </ion-row>
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesBP">
+                <ion-col col-6 class="borderRight">
+                  {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
+                </ion-col>
+                <ion-col col-6>
+                  {{entry[1]}} / {{entry[2]}} mmHg
+                </ion-col>
+              </ion-row>
           </div>
         </div>
         <div class="pulse">
@@ -119,14 +121,16 @@
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="borderTop centerText" *ngFor="let entry of valuesPulse">
-              <ion-col col-6 class="borderRight">
-                {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
-              </ion-col>
-              <ion-col col-6>
-                {{entry[1]}} / min
-              </ion-col>
-            </ion-row>
+            <div class="valueList">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesPulse">
+                <ion-col col-6 class="borderRight">
+                  {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
+                </ion-col>
+                <ion-col col-6>
+                  {{entry[1]}} / min
+                </ion-col>
+              </ion-row>
+            </div>
           </div>
         </div>
         <div class="weight">
@@ -141,14 +145,16 @@
                 Wert
               </ion-col>
             </ion-row>
-            <ion-row class="borderTop centerText" *ngFor="let entry of valuesWeight">
-              <ion-col col-6 class="borderRight">
-                {{entry[0] | date:'dd.MM.yyyy'}}
-              </ion-col>
-              <ion-col col-6>
-                {{entry[1]}} kg
-              </ion-col>
-            </ion-row>
+            <div class="valueList">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesWeight">
+                <ion-col col-6 class="borderRight">
+                  {{entry[0] | date:'dd.MM.yyyy'}}
+                </ion-col>
+                <ion-col col-6>
+                  {{entry[1]}} kg
+                </ion-col>
+              </ion-row>
+            </div>
           </div>
         </div>
       </ion-grid>
