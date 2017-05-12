@@ -258,6 +258,8 @@ export class DataPage {
     let m = this.mp.search("MedicationStatement");
     let fails = 0;
     let imports = 0;
+    let loading = this.loadingCtrl.create();
+    loading.present();
     console.log(m);
     m.then((val) => {
       for(let i = 0; i < val.length; i++) {
@@ -309,6 +311,7 @@ export class DataPage {
           this.storage.set('intolerances', this.medis4);
         });
       }
+      loading.dismiss();
       this.showImportAlert(val.length, imports, fails, 0, "Medikamente");
     });
   }
@@ -326,7 +329,10 @@ export class DataPage {
     let fails = 0;
     let imports = 0;
     let others = 0;
+    let loading = this.loadingCtrl.create();
+    loading.present();
     var o = this.mp.search("Observation", res);
+    console.log(o);
     o.then((val) => {
       for(let i = 0; i < val.length; i++) {
 
@@ -451,15 +457,17 @@ export class DataPage {
               this.storage.set('changeTheMeasurementsView', true);
               break;
             default:
-            this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
-            this.storage.set('pulseValues', this.pulse.sort());
-            this.storage.set('bpValues', this.bp.sort());
-            this.storage.set('weightValues', this.weight.sort());
-            this.storage.set('changeTheMeasurementsView', true);
+              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+              this.storage.set('pulseValues', this.pulse.sort());
+              this.storage.set('bpValues', this.bp.sort());
+              this.storage.set('weightValues', this.weight.sort());
+              this.storage.set('changeTheMeasurementsView', true);
+              break;
           }
 
         });
       }
+      loading.dismiss();
       this.showImportAlert(val.length, imports, fails, others, "Messwerte");
 
     });
@@ -711,11 +719,11 @@ export class DataPage {
       message = "Es sind keine Ressourcen auf dem MIDATA-Account gespeichert.";
     }
     else if(all == 1) {
-      message = "Von einer verfügbaren Ressource ";
+      message = "Von 1 verfügbaren Ressource ";
       if(imports == 0) {
         message += "ist keine importiert worden. ";
         if(fails == 0) {
-          message += "Die Ressource ist bereits vorhanden.";
+          message += "Die Ressource ist ein Dublikat.";
         }
         else if(fails == 1) {
           message += "Die Ressource ist fehlerhaft.";
@@ -738,10 +746,10 @@ export class DataPage {
       }
 
       if(fails == 1) {
-        message += "Es ist 1 Ressource fehlerhaft und "+(all - fails - imports - others)+" bereits vorhanden. ";
+        message += "Es ist 1 Ressource fehlerhaft und "+(all - fails - imports - others)+" sind Dublikate. ";
       }
       else {
-        message += "Es sind "+fails+" Ressourcen fehlerhaft und "+(all - fails - imports - others)+" bereits vorhanden. ";
+        message += "Es sind "+fails+" Ressourcen fehlerhaft und "+(all - fails - imports - others)+" sind Dublikate. ";
       }
 
       message += "Nicht relevant: "+others;

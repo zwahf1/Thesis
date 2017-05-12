@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { App, NavController } from 'ionic-angular';
+import { App, NavController, AlertController } from 'ionic-angular';
 import { LoginPage } from '../login/login';
 import { TargetrangePage } from '../targetrange/targetrange';
 import { DisplayPage } from '../display/display';
@@ -29,7 +29,7 @@ export class SettingsPage {
    * @param  {App}           publicappCtrl app
    * @param  {Storage}       publicstorage ionic storage from phone
    */
-  constructor(public navCtrl: NavController, public appCtrl: App, public storage: Storage) { }
+  constructor(public navCtrl: NavController, public alertCtrl: AlertController, public appCtrl: App, public storage: Storage) { }
 
   /**
    * method to navigate to the next page
@@ -56,12 +56,24 @@ export class SettingsPage {
   * method to log out from the midata account and navigate to the LoginPage
   **/
   logout() {
-    this.storage.ready().then(() => {
-      this.storage.clear();
-      localStorage.clear();
+    let alert = this.alertCtrl.create({
+      title: 'Logout',
+      message: 'Wollen sie sich wirklich ausloggen? Die gespeicherten Daten auf der App werden '+'alle gelöscht!'.bold()
     });
-    this.mp.logout();
-    this.appCtrl.getRootNav().setRoot(LoginPage);
+    alert.addButton('Nein');
+    alert.addButton({
+      text: 'Ja',
+      handler: () => {
+        this.storage.ready().then(() => {
+          this.storage.clear();
+          localStorage.clear();
+        });
+        this.mp.logout();
+        this.appCtrl.getRootNav().setRoot(LoginPage);
+      }
+    });
+    alert.present();
+
   }
 
 }

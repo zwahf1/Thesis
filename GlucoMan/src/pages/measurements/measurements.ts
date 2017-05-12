@@ -504,53 +504,63 @@ export class MeasurementsPage {
                 let createAlert = false;
                 let alertMessage = "";
 
-                if(this.vitalRangeList[2].lowerLimit == this.vitalRangeList[2].upperLimit) {
-                  checkSys = false;
-                }
-                if(this.vitalRangeList[1].lowerLimit == this.vitalRangeList[1].upperLimit) {
-                  checkDia = false;
-                }
-                if(checkSys) {
-                  if(data.sys < this.vitalRangeList[2].lowerLimit || data.sys > this.vitalRangeList[2].upperLimit) {
-                    outOfRangeSys = true;
+                if(data.sys != "" && data.dia != "") {
+                  if(this.vitalRangeList[2].lowerLimit == this.vitalRangeList[2].upperLimit) {
+                    checkSys = false;
                   }
-                }
-                if(checkDia) {
-                  if(data.dia < this.vitalRangeList[1].lowerLimit || data.dia > this.vitalRangeList[1].upperLimit) {
-                    outOfRangeDia = true;
+                  if(this.vitalRangeList[1].lowerLimit == this.vitalRangeList[1].upperLimit) {
+                    checkDia = false;
                   }
-                }
+                  if(checkSys) {
+                    if(data.sys < this.vitalRangeList[2].lowerLimit || data.sys > this.vitalRangeList[2].upperLimit) {
+                      outOfRangeSys = true;
+                    }
+                  }
+                  if(checkDia) {
+                    if(data.dia < this.vitalRangeList[1].lowerLimit || data.dia > this.vitalRangeList[1].upperLimit) {
+                      outOfRangeDia = true;
+                    }
+                  }
 
-                if(outOfRangeSys && outOfRangeDia) {
-                  createAlert = true;
-                  alertMessage = 'Die eingegebenen Werte für den '+'systolischen & diastolischen Blutdruck'.bold()+
-                  ' sind ausserhalb der definierten Zielbereiche! Wollen Sie die Werte trotzdem speichern?';
-                }
-                else if(outOfRangeSys) {
-                  createAlert = true;
-                  alertMessage = 'Der eingegebene Wert für den '+'systolischen Blutdruck'.bold()+
-                  ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?';
-                }
-                else if(outOfRangeDia) {
-                  createAlert = true;
-                  alertMessage = 'Der eingegebene Wert für den '+'diastolischen Blutdruck'.bold()+
-                  ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?';
+                  if(outOfRangeSys && outOfRangeDia) {
+                    createAlert = true;
+                    alertMessage = 'Die eingegebenen Werte für den '+'systolischen & diastolischen Blutdruck'.bold()+
+                    ' sind ausserhalb der definierten Zielbereiche! Möchten Sie die Werte speichern?';
+                  }
+                  else if(outOfRangeSys) {
+                    createAlert = true;
+                    alertMessage = 'Der eingegebene Wert für den '+'systolischen Blutdruck'.bold()+
+                    ' ist ausserhalb des definierten Zielbereichs! Möchten Sie den Wert speichern?';
+                  }
+                  else if(outOfRangeDia) {
+                    createAlert = true;
+                    alertMessage = 'Der eingegebene Wert für den '+'diastolischen Blutdruck'.bold()+
+                    ' ist ausserhalb des definierten Zielbereichs! Möchten Sie den Wert speichern?';
+                  }
+                  else {
+                    this.addBloodPressure(data.sys, data.dia, new Date());
+                  }
+
+                  if(createAlert) {
+                    let alert = this.alertCtrl.create({
+                      title: 'Werte-Prüfung',
+                      message: alertMessage
+                    });
+                    alert.addButton('Nein');
+                    alert.addButton({
+                      text: 'Ja',
+                      handler: () => {
+                        this.addBloodPressure(data.sys, data.dia, new Date());
+                      }
+                    });
+                    alert.present();
+                  }
                 }
                 else {
-                  this.addBloodPressure(data.sys, data.dia, new Date());
-                }
-
-                if(createAlert) {
                   let alert = this.alertCtrl.create({
-                    title: 'Werte-Prüfung',
-                    message: alertMessage
-                  });
-                  alert.addButton('Nein');
-                  alert.addButton({
-                    text: 'Ja',
-                    handler: () => {
-                      this.addBloodPressure(data.sys, data.dia, new Date());
-                    }
+                    title: 'Falsche Eingabe',
+                    message: "Kein gültiger Wert eingegeben!",
+                    buttons:['OK']
                   });
                   alert.present();
                 }
@@ -560,32 +570,43 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(this.vitalRangeList[3].lowerLimit == this.vitalRangeList[3].upperLimit) {
-                  check = false;
-                }
+                if(data.data != "") {
 
-                if(check) {
-                  if(data.data < this.vitalRangeList[3].lowerLimit || data.data > this.vitalRangeList[3].upperLimit) {
-                    outOfRange = true;
+                  if(this.vitalRangeList[3].lowerLimit == this.vitalRangeList[3].upperLimit) {
+                    check = false;
+                  }
+
+                  if(check) {
+                    if(data.data < this.vitalRangeList[3].lowerLimit || data.data > this.vitalRangeList[3].upperLimit) {
+                      outOfRange = true;
+                    }
+                  }
+
+                  if(outOfRange) {
+                    let alert = this.alertCtrl.create({
+                      title: 'Werte-Prüfung',
+                      message: 'Der eingegebene Wert für den '+'Puls'.bold()+
+                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                    });
+                    alert.addButton('Nein');
+                    alert.addButton({
+                      text: 'Ja',
+                      handler: () => {
+                        this.addPulse(data.data, new Date());
+                      }
+                    });
+                    alert.present();
+                  } else {
+                    this.addPulse(data.data, new Date());
                   }
                 }
-
-                if(outOfRange) {
+                else {
                   let alert = this.alertCtrl.create({
-                    title: 'Werte-Prüfung',
-                    message: 'Der eingegebene Wert für den '+'Puls'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
-                  });
-                  alert.addButton('Nein');
-                  alert.addButton({
-                    text: 'Ja',
-                    handler: () => {
-                      this.addPulse(data.data, new Date());
-                    }
+                    title: 'Falsche Eingabe',
+                    message: "Kein gültiger Wert eingegeben!",
+                    buttons:['OK']
                   });
                   alert.present();
-                } else {
-                  this.addPulse(data.data, new Date());
                 }
                 break;
               }
@@ -593,32 +614,42 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(this.vitalRangeList[4].lowerLimit == this.vitalRangeList[4].upperLimit) {
-                  check = false;
-                }
+                if(data.data != "") {
+                  if(this.vitalRangeList[4].lowerLimit == this.vitalRangeList[4].upperLimit) {
+                    check = false;
+                  }
 
-                if(check) {
-                  if(data.data < this.vitalRangeList[4].lowerLimit || data.data > this.vitalRangeList[4].upperLimit) {
-                    outOfRange = true;
+                  if(check) {
+                    if(data.data < this.vitalRangeList[4].lowerLimit || data.data > this.vitalRangeList[4].upperLimit) {
+                      outOfRange = true;
+                    }
+                  }
+
+                  if(outOfRange) {
+                    let alert = this.alertCtrl.create({
+                      title: 'Werte-Prüfung',
+                      message: 'Der eingegebene Wert für das '+'Gewicht'.bold()+
+                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                    });
+                    alert.addButton('Nein');
+                    alert.addButton({
+                      text: 'Ja',
+                      handler: () => {
+                        this.addWeight(data.data, new Date());
+                      }
+                    });
+                    alert.present();
+                  } else {
+                    this.addWeight(data.data, new Date());
                   }
                 }
-
-                if(outOfRange) {
+                else {
                   let alert = this.alertCtrl.create({
-                    title: 'Werte-Prüfung',
-                    message: 'Der eingegebene Wert für das '+'Gewicht'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
-                  });
-                  alert.addButton('Nein');
-                  alert.addButton({
-                    text: 'Ja',
-                    handler: () => {
-                      this.addWeight(data.data, new Date());
-                    }
+                    title: 'Falsche Eingabe',
+                    message: "Kein gültiger Wert eingegeben!",
+                    buttons:['OK']
                   });
                   alert.present();
-                } else {
-                  this.addWeight(data.data, new Date());
                 }
                 break;
               }
@@ -626,32 +657,42 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(this.vitalRangeList[0].lowerLimit == this.vitalRangeList[0].upperLimit) {
-                  check = false;
-                }
+                if(data.data != "") {
+                  if(this.vitalRangeList[0].lowerLimit == this.vitalRangeList[0].upperLimit) {
+                    check = false;
+                  }
 
-                if(check) {
-                  if(data.data < this.vitalRangeList[0].lowerLimit || data.data > this.vitalRangeList[0].upperLimit) {
-                    outOfRange = true;
+                  if(check) {
+                    if(data.data < this.vitalRangeList[0].lowerLimit || data.data > this.vitalRangeList[0].upperLimit) {
+                      outOfRange = true;
+                    }
+                  }
+
+                  if(outOfRange) {
+                    let alert = this.alertCtrl.create({
+                      title: 'Werte-Prüfung',
+                      message: 'Der eingegebene Wert für den '+'Blutzucker'.bold()+
+                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                    });
+                    alert.addButton('Nein');
+                    alert.addButton({
+                      text: 'Ja',
+                      handler: () => {
+                        this.openAddAlert("Mess-Art", data.data);
+                      }
+                    });
+                    alert.present();
+                  } else {
+                    this.openAddAlert("Mess-Art", data.data);
                   }
                 }
-
-                if(outOfRange) {
+                else {
                   let alert = this.alertCtrl.create({
-                    title: 'Werte-Prüfung',
-                    message: 'Der eingegebene Wert für den '+'Blutzucker'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
-                  });
-                  alert.addButton('Nein');
-                  alert.addButton({
-                    text: 'Ja',
-                    handler: () => {
-                      this.openAddAlert("Mess-Art", data.data);
-                    }
+                    title: 'Falsche Eingabe',
+                    message: "Kein gültiger Wert eingegeben!",
+                    buttons:['OK']
                   });
                   alert.present();
-                } else {
-                  this.openAddAlert("Mess-Art", data.data);
                 }
                 break;
               }
