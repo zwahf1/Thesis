@@ -275,6 +275,7 @@ export class MeasurementsPage {
         spacingRight: 10,
         width: window.innerWidth,
         height: 300,
+        zoomType: 'x',
         //position of the resetZoomButton
         resetZoomButton: {
           position: {
