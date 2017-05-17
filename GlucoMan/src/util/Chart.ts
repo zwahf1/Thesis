@@ -34,8 +34,8 @@ input parameters:
         panning: true,
         resetZoomButton: {
           position: {
-            verticalAlign: 'bottom', // by default
-            y: -35,
+            verticalAlign: 'top', // by default
+            y: 0,
           },
           relativeTo: 'plot'
         },

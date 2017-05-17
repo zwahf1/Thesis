@@ -99,7 +99,7 @@ export class NutritionPage {
       let tempCarb: number = 0;
       tempCarb = this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)];
       //add the tempCarb and carb value of the entry and load it to the list
-      this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)] = (parseInt('' + entry.carb) + parseInt('' + tempCarb));
+      this.nutritionList[this.nutritionList.length - 1][this.getTimeOfDay(entry.date)] = (parseFloat('' + entry.carb) + parseFloat('' + tempCarb));
       //after creating the list, create the list specific for the times of day
       this.createTimeOfDayList();
     }
