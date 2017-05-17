@@ -20,6 +20,18 @@ export class MedicationDetailPage {
   category: string;
   array: [TYPES.LOCAL_MedicationStatementRes];
 
+  imgPack: boolean = false;
+  imgFrontPack: boolean = false;
+  imgBackPack: boolean = false;
+  imgBlister: boolean = false;
+  imgFrontBlister: boolean = false;
+  imgBackBlister: boolean = false;
+  imgDrug: boolean = false;
+  imgFrontDrug: boolean = false;
+  imgBackDrug: boolean = false;
+
+  wirkstoff: boolean = true;
+
   /**
    * get navigation parameters and save them local
    * @param  {NavController}   publicnavCtrl   navigation of app
@@ -32,6 +44,33 @@ export class MedicationDetailPage {
 
     this.medication = params.get('medi');
     this.array = params.get('array');
+    if(this.medication.dosage[0].route.text == undefined) {
+      this.wirkstoff = false;
+    }
+    if(this.medication.article.imgFrontPack != "No picture available") {
+      this.imgFrontPack = true;
+      this.imgPack = true;
+    }
+    if(this.medication.article.imgBackPack != "No picture available") {
+      this.imgBackPack = true;
+      this.imgPack = true;
+    }
+    if(this.medication.article.imgFrontBlister != "No picture available") {
+      this.imgFrontBlister = true;
+      this.imgBlister = true;
+    }
+    if(this.medication.article.imgBackBlister != "No picture available") {
+      this.imgBackBlister = true;
+      this.imgBlister = true;
+    }
+    if(this.medication.article.imgFrontDrug != "No picture available") {
+      this.imgFrontDrug = true;
+      this.imgDrug = true;
+    }
+    if(this.medication.article.imgBackDrug != "No picture available") {
+      this.imgBackDrug = true;
+      this.imgDrug = true;
+    }
   }
 
   /**

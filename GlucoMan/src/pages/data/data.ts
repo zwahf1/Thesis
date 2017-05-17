@@ -309,6 +309,7 @@ export class DataPage {
           this.storage.set('selfMedis', this.medis2);
           this.storage.set('insulin', this.medis3);
           this.storage.set('intolerances', this.medis4);
+          this.storage.set('changeTheMedicationView', true);
         });
       }
       loading.dismiss();
@@ -438,7 +439,7 @@ export class DataPage {
       if(imports > 0) {
         this.storage.ready().then(() => {
           console.log(res.code);
-          // save only the values with the code from the function mp.search() given params
+          // save only the values with the code for vital parameter from the function mp.search() given params
           switch(res.code) {
             case "15074-8":
               this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));

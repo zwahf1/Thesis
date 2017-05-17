@@ -19,7 +19,6 @@ export class MidataPersistence {
   private appname = 'GlucoMan';
   private appsecr = 'AkSyC8Ab2D2JgA5CjohH8q4JFDqOaSAw';
   private server = 'https://test.midata.coop:9000';
-  private role: string;
   private username: string;
   private password: string;
 

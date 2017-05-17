@@ -59,28 +59,24 @@ export class MedicationPage {
         if (val != undefined) {
           this.chronicMedis = val;
         }
-        this.storage.set('chronicMedis', this.chronicMedis);
       });
       // get all self medis, empty array if undefined
       this.storage.get('selfMedis').then((val) => {
         if (val != undefined) {
           this.selfMedis = val;
         }
-        this.storage.set('selfMedis', this.selfMedis);
       });
       // get all insulin medis, empty array if undefined
       this.storage.get('insulin').then((val) => {
         if (val != undefined) {
           this.insulin = val;
         }
-        this.storage.set('insulin', this.insulin);
       });
       // get all intolerances, empty array if undefined
       this.storage.get('intolerances').then((val) => {
         if (val != undefined) {
           this.intolerances = val;
         }
-        this.storage.set('intolerances', this.intolerances);
       });
     });
     loading.dismiss();
@@ -90,7 +86,16 @@ export class MedicationPage {
    * refresh if page is loaded
    */
   ionViewDidEnter() {
-    this.refreshPage();
+    // if storage is ready to use
+    this.storage.ready().then(() => {
+      // if view must be refresht
+      this.storage.get('changeTheMedicationView').then((val) => {
+        if(val) {
+          this.storage.set('changeTheMedicationView', false);
+          this.refreshPage();
+        }
+      });
+    });
   }
 
   /**
@@ -222,17 +227,15 @@ export class MedicationPage {
           } as TYPES.LOCAL_MedicationStatementRes;
           // if imgages are available get them with hci-api and save them
           if (img === "true") {
-            this.hciapi.hciGetPictureByPharmaCode(phar, "ALL").then((val: any) => {
+            this.hciapi.hciGetPicture("ALL", phar, prdno).then((val: any) => {
               console.log(val);
               var all = val;
               result.article.imgFrontPack = all.front;
               result.article.imgBackPack = all.back;
               result.article.imgFrontBlister = all.detailFront;
               result.article.imgBackBlister = all.detailBack;
-              // result.article.imgFrontDrug = all.drugFront;
-              // result.article.imgBackDrug = all.drugBack;
-              result.article.imgFrontDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Front/F";
-              result.article.imgBackDrug = "https://apps.hcisolutions.ch/MyProducts/picture/"+prdno+"/ProductNr/PI/Back/F";
+              result.article.imgFrontDrug = all.medicationFront;
+              result.article.imgBackDrug = all.medicationBack;
             });
           }
           // show medication category befor saving
@@ -325,7 +328,7 @@ export class MedicationPage {
                 // save the current medication to the storage
                 this.storage.set(data, medis);
                 // save the medication in MIDATA
-                this.saveMIDATAMedication(medication);
+                // this.saveMIDATAMedication(medication); TODO
                 // refresh page
                 navTransition.then(() => {
                   this.refreshPage();

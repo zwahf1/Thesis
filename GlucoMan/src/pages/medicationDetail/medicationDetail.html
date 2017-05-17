@@ -27,7 +27,7 @@
               {{medication.effectiveDateTime | date:'dd.MM.yyyy'}}
             </ion-col>
           </ion-row>
-          <ion-row class="row-border">
+          <ion-row class="row-border" *ngIf="wirkstoff">
             <ion-col col-6 style="text-align: left">
               Wirkstoffaufnahme:
             </ion-col>
@@ -62,33 +62,33 @@
         </ion-grid>
       </ion-col>
     </ion-row>
-    <ion-row *ngIf="medication.article.img">
+    <ion-row *ngIf="imgPack">
       <ion-card>
         <ion-card-header style="font-size: 5vw">
           Packung
         </ion-card-header>
         <ion-card-content>
           <div style="display: flex">
-            <img src="{{medication.article.imgFrontPack}}"/>
-            <img src="{{medication.article.imgBackPack}}"/>
+            <img *ngIf="imgFrontPack" src="{{medication.article.imgFrontPack}}"/>
+            <img *ngIf="imgBackPack" src="{{medication.article.imgBackPack}}"/>
           </div>
         </ion-card-content>
       </ion-card>
     </ion-row>
-    <ion-row *ngIf="medication.article.img">
+    <ion-row *ngIf="imgBlister">
       <ion-card>
         <ion-card-header style="font-size: 5vw">
           Blister
         </ion-card-header>
         <ion-card-content>
           <div style="display: flex">
-            <img src="{{medication.article.imgFrontBlister}}"/>
-            <img src="{{medication.article.imgBackBlister}}"/>
+            <img *ngIf="imgFrontBlister" src="{{medication.article.imgFrontBlister}}"/>
+            <img *ngIf="imgBackBlister" src="{{medication.article.imgBackBlister}}"/>
           </div>
         </ion-card-content>
       </ion-card>
     </ion-row>
-    <ion-row *ngIf="medication.article.img">
+    <ion-row *ngIf="imgDrug">
       <ion-col col12>
         <ion-card>
           <ion-card-header style="font-size: 5vw">
@@ -96,8 +96,8 @@
           </ion-card-header>
           <ion-card-content>
             <div style="display: flex">
-              <img src="{{medication.article.imgFrontDrug}}"/>
-              <img src="{{medication.article.imgBackDrug}}"/>
+              <img *ngIf="imgFrontDrug" src="{{medication.article.imgFrontDrug}}"/>
+              <img *ngIf="imgBackDrug" src="{{medication.article.imgBackDrug}}"/>
             </div>
           </ion-card-content>
         </ion-card>
