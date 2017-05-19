@@ -41,7 +41,7 @@ export class MedicationPage {
    */
   constructor(public navCtrl: NavController, public platform: Platform, public storage: Storage,
     public http: Http, public alertCtrl: AlertController, public loadingCtrl: LoadingController) {
-
+      this.refreshPage();
   }
 
   /**
@@ -59,24 +59,28 @@ export class MedicationPage {
         if (val != undefined) {
           this.chronicMedis = val;
         }
+        this.storage.set('chronicMedis',this.chronicMedis);
       });
       // get all self medis, empty array if undefined
       this.storage.get('selfMedis').then((val) => {
         if (val != undefined) {
           this.selfMedis = val;
         }
+        this.storage.set('selfMedis',this.selfMedis);
       });
       // get all insulin medis, empty array if undefined
       this.storage.get('insulin').then((val) => {
         if (val != undefined) {
           this.insulin = val;
         }
+        this.storage.set('insulin',this.insulin);
       });
       // get all intolerances, empty array if undefined
       this.storage.get('intolerances').then((val) => {
         if (val != undefined) {
           this.intolerances = val;
         }
+        this.storage.set('intolerances',this.intolerances);
       });
     });
     loading.dismiss();
@@ -91,8 +95,8 @@ export class MedicationPage {
       // if view must be refresht
       this.storage.get('changeTheMedicationView').then((val) => {
         if(val) {
-          this.storage.set('changeTheMedicationView', false);
           this.refreshPage();
+          this.storage.set('changeTheMedicationView', false);
         }
       });
     });
