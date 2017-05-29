@@ -68,10 +68,6 @@ export class CheckupsPage {
 
       this.openEntryNote(control);
     }
-
-    this.storage.ready().then(() => {
-      this.storage.set('arrayControls',this.arrayControls);
-    });
   }
 
   /**
@@ -98,6 +94,10 @@ export class CheckupsPage {
         control[0] = false;
         control[2] = "";
         control[3] = "";
+
+        this.storage.ready().then(() => {
+          this.storage.set('arrayControls',this.arrayControls);
+        });
       }
     });
     // present the alert popup
@@ -115,7 +115,8 @@ export class CheckupsPage {
     alert.setMessage('Wollen sie den Eintrag wirklich löschen?');
     // button to cancel
     alert.addButton({
-      text: 'Cancel'
+      text: 'Cancel',
+      role: 'cancel'
     });
     // button for save medication
     alert.addButton({
@@ -153,6 +154,7 @@ export class CheckupsPage {
     // button to cancel
     alert.addButton({
       text: 'Cancel',
+      role: 'cancel',
       handler: () => {
         control[0] = false;
       }
@@ -165,6 +167,10 @@ export class CheckupsPage {
         control[0] = true;
         control[2] = ""+ new Date();
         control[3] = data.note;
+
+        this.storage.ready().then(() => {
+          this.storage.set('arrayControls',this.arrayControls);
+        });
       }
     });
     // present the alert popup

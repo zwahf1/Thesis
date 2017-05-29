@@ -4,6 +4,7 @@ import { LoginPage } from '../login/login';
 import { TargetrangePage } from '../targetrange/targetrange';
 import { DisplayPage } from '../display/display';
 import { DataPage } from '../data/data';
+import { SchemaPage} from '../schema/schema';
 import { BluetoothPage } from '../bluetooth/bluetooth';
 
 import { MidataPersistence } from '../../util/midataPersistence';
@@ -45,6 +46,9 @@ export class SettingsPage {
         break;
       case 'DataPage':
         this.navCtrl.push(DataPage);
+        break;
+      case 'SchemaPage':
+        this.navCtrl.push(SchemaPage);
         break;
       case 'BluetoothPage':
         this.navCtrl.push(BluetoothPage);

@@ -14,8 +14,6 @@ import { Storage } from '@ionic/storage';
 export class DisplayPage {
 
   visibleList = [];
-  schemaList = ['Individuell', 'Tief', 'Mittel', 'Hoch'];
-  schema = this.schemaList[0];
 
 /**
  * get list of which charts are visible and which schema to show
@@ -34,11 +32,6 @@ export class DisplayPage {
           this.visibleList = val;
         }
       })
-      this.storage.get('Schema').then((val) => {
-        if (val) {
-          this.schema = val;
-        }
-      })
     });
   }
 
@@ -48,15 +41,6 @@ export class DisplayPage {
   visibleChange() {
     this.storage.ready().then(() => {
       this.storage.set('VisibleList', this.visibleList);
-    });
-  }
-
-  /**
-   * store changed schema of measureplan
-   */
-  schemaChange(){
-    this.storage.ready().then(() => {
-      this.storage.set('Schema', this.schema);
     });
   }
 }

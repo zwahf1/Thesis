@@ -432,7 +432,7 @@ export class MedicationPage {
                 // save the current medication to the storage
                 this.storage.set(result.note[0].text, medis);
                 // save the medication in MIDATA
-                this.saveMIDATAMedication(result);
+                // this.saveMIDATAMedication(result); TODO
                 // refresh page
                 this.refreshPage();
               });

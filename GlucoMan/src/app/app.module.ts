@@ -10,6 +10,7 @@ import { SettingsPage } from '../pages/settings/settings';
 import { TargetrangePage } from '../pages/targetrange/targetrange';
 import { DisplayPage } from  '../pages/display/display';
 import { DataPage } from '../pages/data/data';
+import { SchemaPage } from '../pages/schema/schema';
 import { MeasureplanPage } from '../pages/measureplan/measureplan';
 import { TabsPage } from '../pages/tabs/tabs';
 import { InformationPage } from '../pages/information/information';
@@ -60,6 +61,7 @@ export { Highcharts };
     SettingsPage,
     TargetrangePage,
     DisplayPage,
+    SchemaPage,
     DataPage,
     MeasureplanPage,
     InformationPage,
@@ -92,6 +94,7 @@ export { Highcharts };
     SettingsPage,
     TargetrangePage,
     DisplayPage,
+    SchemaPage,
     DataPage,
     MeasureplanPage,
     InformationPage,

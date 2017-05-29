@@ -29,14 +29,5 @@
       <ion-label>Gewicht</ion-label>
       <ion-toggle (ionChange)="visibleChange()" [(ngModel)]="visibleList['weight']"></ion-toggle>
     </ion-item>
-    <ion-list-header>
-      Messschema
-    </ion-list-header>
-    <ion-item>
-      <ion-label>Häufigkeit</ion-label>
-      <ion-select (ionChange)="schemaChange()" [(ngModel)]="schema">
-        <ion-option *ngFor="let entry of schemaList">{{entry}}</ion-option>
-      </ion-select>
-    </ion-item>
   </ion-list>
 </ion-content>

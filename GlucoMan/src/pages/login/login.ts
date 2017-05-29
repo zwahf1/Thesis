@@ -19,7 +19,10 @@ export class LoginPage {
 
   private mp = MidataPersistence.getInstance();
 
-  private input = {username: 'mia.egger@mail.com', password : 'PW4mia17'};
+  // demozwecke
+  // username: mia.egger@mail.com
+  // password: PW4mia17
+  private input = {username: '', password : ''};
 
   /**
    * auto log in if user credentials are saved and show tabs page.
@@ -38,9 +41,20 @@ export class LoginPage {
         if(val != undefined) {
           console.log("Logged in");
           // login to the saved account
-          this.mp.login(val[0], val[1]);
-          // set the start page to tabs (no login)
-          this.navCtrl.setRoot(TabsPage);
+          this.mp.login(val[0], val[1]).then(() => {
+            this.navCtrl.popToRoot();
+            this.navCtrl.setRoot(TabsPage);
+          }).catch(() => {
+            this.input.username = val[0];
+            this.input.password = val[1];
+            let alert = this.alertCtrl.create({
+              title: 'Login nicht möglich',
+              subTitle: 'Es besteht keine Internetverbindung!',
+              buttons: ['OK']
+            });
+            alert.present();
+          });
+          // set the start page to tabs (if logged in)
         } else {
           // normal login page
           console.log("Logged out");
@@ -73,8 +87,8 @@ export class LoginPage {
     }).catch((ex) => {
       console.error('Error fetching users', ex);
       let alert = this.alertCtrl.create({
-        title: 'false login',
-        subTitle: 'the entered username or password is incorrect',
+        title: 'Login nicht möglich',
+        subTitle: 'Username / Passwort ist nicht korrekt oder es besteht keine Internetverbindung!',
         buttons: ['OK']
       });
       alert.present();
