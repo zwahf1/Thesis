@@ -59,7 +59,7 @@ export class NutritionPage {
       this.storage.get('addNewValueFromHome').then((val) => {
         //if there's a value in 'NutritionDetailList', load it to local variable
         if (val == 'nutrition') {
-          this.storage.set('addNewValueFromHome',"");
+          this.storage.set('addNewValueFromHome', "");
           this.openActionSheet();
         }
       });
@@ -76,7 +76,7 @@ export class NutritionPage {
       //date of the current entry
       let dateEntry = new Date(entry.date);
       //negativ offset caused daily change at midnight
-      dateEntry.setTime(dateEntry.getTime()-10800000);
+      dateEntry.setTime(dateEntry.getTime() - 10800000);
       dateEntry.setHours(0, 0, 0, 0);
       //variable for last date in nutritionList, default 0, so it isn't the same day
       let dateLastInList = new Date(0);
@@ -84,7 +84,7 @@ export class NutritionPage {
       try {
         //date of the last entry
         dateLastInList = new Date(this.nutritionList[this.nutritionList.length - 1][0]);
-        dateLastInList.setTime(dateLastInList.getTime()-10800000);
+        dateLastInList.setTime(dateLastInList.getTime() - 10800000);
         dateLastInList.setHours(0, 0, 0, 0);
       } catch (Error) {
       }
@@ -259,6 +259,46 @@ export class NutritionPage {
           data: this.nutritionTimeOfDayList[5],
         }]
     };
+  }
+
+  fillSampledata() {
+    this.nutritionDetailList.push(new DetailNutrition('Gipfeli', 120, Math.round(Math.random()*120)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(8-48);
+    this.nutritionDetailList.push(new DetailNutrition('Snickers', 58, Math.round(Math.random()*58)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(10-48);
+    this.nutritionDetailList.push(new DetailNutrition('Teigwaren', 320, Math.round(Math.random()*320)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(13-48);
+    this.nutritionDetailList.push(new DetailNutrition('Darvida', 86, Math.round(Math.random()*86)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(16-48);
+    this.nutritionDetailList.push(new DetailNutrition('Pizza', 280, Math.round(Math.random()*280)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(19-48);
+    this.nutritionDetailList.push(new DetailNutrition('Bier', 500, Math.round(Math.random()*200)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(23-48);
+    this.nutritionDetailList.push(new DetailNutrition('Gipfeli', 120, Math.round(Math.random()*120)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(8-24);
+    this.nutritionDetailList.push(new DetailNutrition('Snickers', 58, Math.round(Math.random()*58)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(10-24);
+    this.nutritionDetailList.push(new DetailNutrition('Teigwaren', 320, Math.round(Math.random()*320)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(13-24);
+    this.nutritionDetailList.push(new DetailNutrition('Darvida', 86, Math.round(Math.random()*86)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(16-24);
+    this.nutritionDetailList.push(new DetailNutrition('Pizza', 280, Math.round(Math.random()*280)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(19-24);
+    this.nutritionDetailList.push(new DetailNutrition('Bier', 500, Math.round(Math.random()*200)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(23-24);
+    this.nutritionDetailList.push(new DetailNutrition('Gipfeli', 120, Math.round(Math.random()*120)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(8);
+    this.nutritionDetailList.push(new DetailNutrition('Snickers', 58, Math.round(Math.random()*58)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(10);
+    this.nutritionDetailList.push(new DetailNutrition('Teigwaren', 320, Math.round(Math.random()*320)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(13);
+    this.nutritionDetailList.push(new DetailNutrition('Darvida', 86, Math.round(Math.random()*86)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(16);
+    this.nutritionDetailList.push(new DetailNutrition('Pizza', 280, Math.round(Math.random()*280)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(19);
+    this.nutritionDetailList.push(new DetailNutrition('Bier', 500, Math.round(Math.random()*200)));
+    this.nutritionDetailList[this.nutritionDetailList.length-1].date.setHours(23);
+
   }
 
   /**

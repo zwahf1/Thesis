@@ -2,7 +2,7 @@
   <ion-navbar>
     <ion-title>Ernährung</ion-title>
     <ion-buttons end>
-      <button ion-button end (click)='openActionSheet()'>
+      <button ion-button end (click)='openActionSheet()' (dblclick)='fillSampledata()'>
       <ion-icon name="add"></ion-icon>
     </button>
     </ion-buttons>
@@ -76,7 +76,7 @@
           </ion-row>
           <ion-row class="borderBottom centerText" *ngFor="let item of nutritionDetailList" (click)="edit(item)">
             <ion-col col-3 class="borderRight">
-              {{item.date | date:'dd.MM.yyyy hh:mm'}}
+              {{item.date | date:'dd.MM.yyyy HH:mm'}}
             </ion-col>
             <ion-col col-3 class="borderRight">
               {{item.desc}}
