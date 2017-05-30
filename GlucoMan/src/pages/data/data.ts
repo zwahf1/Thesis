@@ -649,11 +649,15 @@ export class DataPage {
           //After the confirmation, the storage will
           //be cleared and the user is logged out
           handler: () => {
+
             this.storage.ready().then(() => {
-              this.storage.clear();
-              localStorage.clear();
+              this.storage.get('UserAuthentication').then((data) => {
+                let uAuth = data;
+                this.storage.clear();
+                localStorage.clear();
+                this.storage.set('UserAuthentication', uAuth);
+              });
             });
-            this.logout();
           }
         }
       ]
