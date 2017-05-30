@@ -5,6 +5,8 @@ import { MidataPersistence } from '../../util/midataPersistence';
 import { DisclaimerPage } from '../disclaimer/disclaimer';
 import { Storage } from '@ionic/storage';
 
+declare var cordova: any;
+
 /**
  * login page for start page
  * @param  {'page-login'}  {selector   [description]
@@ -22,7 +24,7 @@ export class LoginPage {
   // demozwecke
   // username: mia.egger@mail.com
   // password: PW4mia17
-  private input = {username: '', password : ''};
+  private input = { username: '', password: '' };
 
   /**
    * auto log in if user credentials are saved and show tabs page.
@@ -33,12 +35,12 @@ export class LoginPage {
    * @param  {PopoverController} publicpopoverCtrl handle popovers
    */
   constructor(public navCtrl: NavController, public alertCtrl: AlertController, public storage: Storage,
-                public popoverCtrl: PopoverController) {
+    public popoverCtrl: PopoverController) {
     this.storage.ready().then(() => {
       // get login data from storage
       this.storage.get('UserAuthentication').then((val) => {
         // if some login data is stored
-        if(val != undefined) {
+        if (val != undefined) {
           console.log("Logged in");
           // login to the saved account
           this.mp.login(val[0], val[1]).then(() => {
@@ -64,11 +66,14 @@ export class LoginPage {
   }
 
   /**
-   * present the popover with the disclaimer page
+   * Hide the keyboard and present the popover with the disclaimer page
    */
   presentPopover() {
-    let popover = this.popoverCtrl.create(DisclaimerPage);
-    popover.present();
+    cordova.plugins.Keyboard.close();
+    setTimeout(() => {
+      let popover = this.popoverCtrl.create(DisclaimerPage);
+      popover.present();
+    }, 100);
   }
 
   /**
@@ -77,7 +82,7 @@ export class LoginPage {
    */
   login() {
     this.mp.login(this.input.username, this.input.password).then((res) => {
-      if(this.mp.loggedIn() == true){
+      if (this.mp.loggedIn() == true) {
         this.storage.ready().then(() => {
           this.storage.set('UserAuthentication', [this.input.username, this.input.password, res]);
         });

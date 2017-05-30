@@ -7,11 +7,11 @@
 <ion-content padding>
   <form (ngSubmit)="login()">
     <ion-item>
-      <ion-label stacked>Username</ion-label>
-      <ion-input type="text" [(ngModel)]="input.username" name="title"></ion-input>
+      <ion-label stacked>E-Mail-Adresse</ion-label>
+      <ion-input type="email" [(ngModel)]="input.username" name="title"></ion-input>
     </ion-item>
     <ion-item>
-      <ion-label stacked>Password</ion-label>
+      <ion-label stacked>Passwort</ion-label>
       <ion-input type="password" [(ngModel)]="input.password" name="description"></ion-input>
     </ion-item>
     <ion-grid>
