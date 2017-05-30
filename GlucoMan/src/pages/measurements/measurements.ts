@@ -526,17 +526,17 @@ export class MeasurementsPage {
                   if(outOfRangeSys && outOfRangeDia) {
                     createAlert = true;
                     alertMessage = 'Die eingegebenen Werte für den '+'systolischen & diastolischen Blutdruck'.bold()+
-                    ' sind ausserhalb der definierten Zielbereiche! Möchten Sie die Werte speichern?';
+                    ' sind ausserhalb der definierten Zielbereiche!';
                   }
                   else if(outOfRangeSys) {
                     createAlert = true;
                     alertMessage = 'Der eingegebene Wert für den '+'systolischen Blutdruck'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs! Möchten Sie den Wert speichern?';
+                    ' ist ausserhalb des definierten Zielbereichs!';
                   }
                   else if(outOfRangeDia) {
                     createAlert = true;
                     alertMessage = 'Der eingegebene Wert für den '+'diastolischen Blutdruck'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs! Möchten Sie den Wert speichern?';
+                    ' ist ausserhalb des definierten Zielbereichs!';
                   }
                   else {
                     this.addBloodPressure(data.sys, data.dia, new Date());
@@ -547,9 +547,8 @@ export class MeasurementsPage {
                       title: 'Werte-Prüfung',
                       message: alertMessage
                     });
-                    alert.addButton('Nein');
                     alert.addButton({
-                      text: 'Ja',
+                      text: 'Ok',
                       handler: () => {
                         this.addBloodPressure(data.sys, data.dia, new Date());
                       }
@@ -587,11 +586,10 @@ export class MeasurementsPage {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
                       message: 'Der eingegebene Wert für den '+'Puls'.bold()+
-                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                      ' ist ausserhalb des definierten Zielbereichs!'
                     });
-                    alert.addButton('Nein');
                     alert.addButton({
-                      text: 'Ja',
+                      text: 'Ok',
                       handler: () => {
                         this.addPulse(data.data, new Date());
                       }
@@ -630,11 +628,10 @@ export class MeasurementsPage {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
                       message: 'Der eingegebene Wert für das '+'Gewicht'.bold()+
-                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                      ' ist ausserhalb des definierten Zielbereichs!'
                     });
-                    alert.addButton('Nein');
                     alert.addButton({
-                      text: 'Ja',
+                      text: 'Ok',
                       handler: () => {
                         this.addWeight(data.data, new Date());
                       }
@@ -673,11 +670,10 @@ export class MeasurementsPage {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
                       message: 'Der eingegebene Wert für den '+'Blutzucker'.bold()+
-                      ' ist ausserhalb des definierten Zielbereichs! Wollen Sie den Wert trotzdem speichern?'
+                      ' ist ausserhalb des definierten Zielbereichs!'
                     });
-                    alert.addButton('Nein');
                     alert.addButton({
-                      text: 'Ja',
+                      text: 'Ok',
                       handler: () => {
                         this.openAddAlert("Mess-Art", data.data);
                       }
