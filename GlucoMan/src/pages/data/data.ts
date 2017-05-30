@@ -338,9 +338,9 @@ export class DataPage {
       for(let i = 0; i < val.length; i++) {
 
         try {
-          switch(val[i].code.coding[0].display) {
+          switch(val[i].code.coding[0].code) {
 
-            case "Glucose [Moles/volume] in blood": {
+            case "15074-8": {
               if(!this.checkGlucose(val[i], this.glucose)) {
                 // create typ for glucose with date, value and event
                 let g: TYPES.LOCAL_Glucose = {
@@ -354,21 +354,21 @@ export class DataPage {
               }
               break;
             }
-            case "Gewicht": {
+            case "29463-7": {
               if(!this.checkWeight(val[i], this.weight)) {
                 this.weight.push([new Date(val[i].effectiveDateTime).getTime(), val[i].valueQuantity.value]);
                 imports++;
               }
               break;
             }
-            case "Diastolischer Blutdruck": {
-              this.bpDia.push([new Date(val[i].effectiveDateTime).getTime(), val[(i)].valueQuantity.value]);
-              break;
-            }
-            case "Systolischer Blutdruck": {
-              this.bpSys.push([new Date(val[i].effectiveDateTime).getTime(), val[(i)].valueQuantity.value]);
-              break;
-            }
+            // case "Diastolischer Blutdruck": {
+            //   this.bpDia.push([new Date(val[i].effectiveDateTime).getTime(), val[(i)].valueQuantity.value]);
+            //   break;
+            // }
+            // case "Systolischer Blutdruck": {
+            //   this.bpSys.push([new Date(val[i].effectiveDateTime).getTime(), val[(i)].valueQuantity.value]);
+            //   break;
+            // }
             default: {
               others++;
               break;
@@ -377,47 +377,33 @@ export class DataPage {
 
         } catch(Error) {
           try {
-            switch(val[i]._fhir.code.coding[0].display) {
-              case "Blutdruck": {
-                if(!this.checkBlutdruck(val[i]._fhir, this.bp)) {
-                  this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
-                                val[i]._fhir.component[1].valueQuantity.value,
-                                val[i]._fhir.component[0].valueQuantity.value]);
-                  imports++;
+            switch(val[i]._fhir.code.coding[0].code) {
+              case "55417-0": {
+                if(val[i]._fhir.code.coding[0].display == "Blutdruck") {
+                  if(!this.checkBlutdruck(val[i]._fhir, this.bp)) {
+                    this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
+                                  val[i]._fhir.component[1].valueQuantity.value,
+                                  val[i]._fhir.component[0].valueQuantity.value]);
+                    imports++;
+                  }
+                } else if(val[i]._fhir.code.coding[0].display == "Blood Pressure") {
+                  if(!this.checkBloodPressure(val[i]._fhir, this.bp)) {
+                    this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
+                                  val[i]._fhir.component[0].valueQuantity.value,
+                                  val[i]._fhir.component[1].valueQuantity.value]);
+                    imports++;
+                  }
                 }
                 break;
               }
-              case "Herzfrequenz": {
+              case "8867-4": {
                 if(!this.checkPulse(val[i]._fhir, this.pulse)) {
                   this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
                 }
                 break;
               }
-              case "Herzschlag": {
-                if(!this.checkPulse(val[i]._fhir, this.pulse)) {
-                  this.pulse.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                  imports++;
-                }
-                break;
-              }
-              case "Blood Pressure": {
-                if(!this.checkBloodPressure(val[i]._fhir, this.bp)) {
-                  this.bp.push([new Date(val[i]._fhir.effectiveDateTime).getTime(),
-                                val[i]._fhir.component[0].valueQuantity.value,
-                                val[i]._fhir.component[1].valueQuantity.value]);
-                  imports++;
-                }
-                break;
-              }
-              case "Weight Measured": {
-                if(!this.checkWeight(val[i]._fhir, this.weight)) {
-                  this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
-                  imports++;
-                }
-                break;
-              }
-              case "Gewicht": {
+              case "29463-7": {
                 if(!this.checkWeight(val[i]._fhir, this.weight)) {
                   this.weight.push([new Date(val[i]._fhir.effectiveDateTime).getTime(), val[i]._fhir.valueQuantity.value]);
                   imports++;
@@ -435,7 +421,7 @@ export class DataPage {
         }
       }
       // if storage is ready to use
-      imports += this.getBloodPressure2(this.bpSys, this.bpDia);
+      // imports += this.getBloodPressure2(this.bpSys, this.bpDia);
       if(imports > 0) {
         this.storage.ready().then(() => {
           console.log(res.code);
