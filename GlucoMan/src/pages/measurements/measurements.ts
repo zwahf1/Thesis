@@ -717,7 +717,7 @@ export class MeasurementsPage {
     let val: number = parseFloat(v);
     this.valuesWeight.push([d.getTime(), val]);
     this.storage.ready().then(() => {
-      this.storage.set('weightValues', this.valuesWeight.sort());
+      this.storage.set('weightValues', this.valuesWeight.sort().reverse());
       this.saveMIDATAWeight(val, d);
       this.refreshPage("w");
     });
@@ -733,7 +733,7 @@ export class MeasurementsPage {
     let val: number = parseInt(v);
     this.valuesPulse.push([d.getTime(), val]);
     this.storage.ready().then(() => {
-      this.storage.set('pulseValues', this.valuesPulse.sort());
+      this.storage.set('pulseValues', this.valuesPulse.sort().reverse());
       this.saveMIDATAPulse(val, d);
       this.refreshPage("p");
     });
@@ -751,7 +751,7 @@ export class MeasurementsPage {
     let val2: number = parseInt(v2);
     this.valuesBP.push([d.getTime(), val1, val2]);
     this.storage.ready().then(() => {
-      this.storage.set('bpValues', this.valuesBP.sort());
+      this.storage.set('bpValues', this.valuesBP.sort().reverse());
       this.saveMIDATABloodPressure(val1, val2, d);
       this.refreshPage("bp");
     });
@@ -772,7 +772,7 @@ export class MeasurementsPage {
     }
     this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
+      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues).reverse());
       this.saveMIDATAGlucose(gluco.value, d, e);
       this.refreshPage("g");
     });

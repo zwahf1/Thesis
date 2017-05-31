@@ -428,26 +428,26 @@ export class DataPage {
           // save only the values with the code for vital parameter from the function mp.search() given params
           switch(res.code) {
             case "15074-8":
-              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues).reverse());
               this.storage.set('changeTheMeasurementsView', true);
               break;
             case "8867-4":
-              this.storage.set('pulseValues', this.pulse.sort());
+              this.storage.set('pulseValues', this.pulse.sort().reverse());
               this.storage.set('changeTheMeasurementsView', true);
               break;
             case "29463-7":
-              this.storage.set('weightValues', this.weight.sort());
+              this.storage.set('weightValues', this.weight.sort().reverse());
               this.storage.set('changeTheMeasurementsView', true);
               break;
             case "55417-0":
-              this.storage.set('bpValues', this.bp.sort());
+              this.storage.set('bpValues', this.bp.sort().reverse());
               this.storage.set('changeTheMeasurementsView', true);
               break;
             default:
-              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
-              this.storage.set('pulseValues', this.pulse.sort());
-              this.storage.set('bpValues', this.bp.sort());
-              this.storage.set('weightValues', this.weight.sort());
+              this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues).reverse());
+              this.storage.set('pulseValues', this.pulse.sort().reverse());
+              this.storage.set('bpValues', this.bp.sort().reverse());
+              this.storage.set('weightValues', this.weight.sort().reverse());
               this.storage.set('changeTheMeasurementsView', true);
               break;
           }
@@ -939,7 +939,7 @@ export class DataPage {
     this.showImportAlert(num, imports, 0, 0, "MyGlucoHealth");
 
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues));
+      this.storage.set('glucoseValues', this.glucose.sort(this.compareGlucoseValues).reverse());
       this.storage.set('changeTheMeasurementsView', true);
     });
   }
