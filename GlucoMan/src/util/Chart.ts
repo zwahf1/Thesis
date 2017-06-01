@@ -50,7 +50,8 @@ input parameters:
       },
       //the lables in the x-axis are the dates of the measurements
       xAxis: {
-        type: 'datetime'
+        type: 'datetime',
+        ordinal: false
       },
       //on the y-axis, the unit is shown and it starts on zero. with opposite = false,
       //the y-axis is on the right side
@@ -86,8 +87,21 @@ input parameters:
         enabled: false
       },
       rangeSelector: {
-        selected: 1,
-        enabled: false,
+        allButtonsEnabled: false,
+        buttons: [{
+          type: 'week',
+          count: 1,
+          text: '7 Tage',
+        }, {
+            type: 'all',
+            text: 'Gesamt'
+          }
+        ],
+        buttonTheme: {
+          width: 60
+        },
+        selected: 0,
+        //enabled: false,
       },
       scrollbar: {
         enabled: false,

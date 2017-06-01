@@ -8,12 +8,13 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-<ion-content id="slides">
+<ion-content>
   <ion-slides pager (ionSlideDidChange)="slideChanged()">
     <ion-slide>
       <div class="all">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Überblick</ion-item-divider>
-        <chart (touchstart)="focusOver();" (touchend)="focusLeave();" class='c' [options]="chartAll"></chart>
+        <p *ngIf="valuesGlucose == 0 && valuesBP == 0 && valuesPulse == 0 && valuesWeight == 0">Es sind keine Messwerte vorhanden.</p>
+        <chart *ngIf="valuesGlucose != 0 || valuesBP != 0 || valuesPulse != 0 || valuesWeight != 0" (touchstart)="focusOver();" type="StockChart" (touchend)="focusLeave();" class='c' [options]="chartAll"></chart>
       </div>
       <!--
           Chart for blood glucose, provided by Highcharts.com
@@ -21,7 +22,8 @@
         -->
       <div class="glucose">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutzucker</ion-item-divider>
-        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
+        <p *ngIf="valuesGlucose == 0">Es sind keine Blutzuckermesswerte vorhanden.</p>
+        <chart *ngIf="valuesGlucose != 0" class='c' (touchstart)="focusOver();" type="StockChart"  (touchend)="focusLeave();" [options]="chartGluco" [ngStyle]="{'display': chartGlucoVisible}"></chart>
       </div>
       <!--
           Chart for blood pressure, provided by Highcharts.com
@@ -29,7 +31,8 @@
         -->
       <div class="bloodpressure">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Blutdruck</ion-item-divider>
-        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartBP"></chart>
+        <p *ngIf="valuesBP == 0">Es sind keine Blutdruckmesswerte vorhanden.</p>
+        <chart *ngIf="valuesBP != 0" class='c' (touchstart)="focusOver();" type="StockChart"  (touchend)="focusLeave();" [options]="chartBP"></chart>
       </div>
       <!--
           Chart for pulse, provided by Highcharts.com
@@ -37,7 +40,8 @@
         -->
       <div class="pulse">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Puls</ion-item-divider>
-        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartPulse"></chart>
+        <p *ngIf="valuesPulse == 0">Es sind keine Pulsmesswerte vorhanden.</p>
+        <chart  *ngIf="valuesPulse != 0" class='c' (touchstart)="focusOver();" type="StockChart"  (touchend)="focusLeave();" [options]="chartPulse"></chart>
       </div>
       <!--
           Chart for weight, provided by Highcharts.com
@@ -45,7 +49,8 @@
         -->
       <div class="weight">
         <ion-item-divider class="divider" (click)="expand($event.srcElement)">Gewicht</ion-item-divider>
-        <chart class='c' (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartWeight"></chart>
+        <p *ngIf=" valuesWeight == 0">Es sind keine Gewichtsmesswerte vorhanden.</p>
+        <chart *ngIf="valuesWeight != 0" class='c' (touchstart)="focusOver();" type="StockChart"  (touchend)="focusLeave();" [options]="chartWeight"></chart>
       </div>
     </ion-slide>
     <ion-slide>
@@ -66,7 +71,7 @@
               </ion-col>
             </ion-row>
             <div class="valueList">
-              <ion-row class="borderTop centerText" *ngFor="let entry of valuesGlucose">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesGlucose.reverse()">
                 <ion-col col-5 class="borderRight">
                   {{entry.date | date:'dd.MM.yyyy HH:mm'}}
                 </ion-col>
@@ -99,7 +104,7 @@
                 Wert
               </ion-col>
             </ion-row>
-              <ion-row class="borderTop centerText" *ngFor="let entry of valuesBP">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesBP.reverse()">
                 <ion-col col-6 class="borderRight">
                   {{entry[0] | date:'dd.MM.yyyy HH:mm'}}
                 </ion-col>
@@ -122,7 +127,7 @@
               </ion-col>
             </ion-row>
             <div class="valueList">
-              <ion-row class="borderTop centerText" *ngFor="let entry of valuesPulse">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesPulse.reverse()">
                 <ion-col col-6 class="borderRight">
                   {{entry[0] | date:'dd.MM.yyyy hh:mm'}}
                 </ion-col>
@@ -146,7 +151,7 @@
               </ion-col>
             </ion-row>
             <div class="valueList">
-              <ion-row class="borderTop centerText" *ngFor="let entry of valuesWeight">
+              <ion-row class="borderTop centerText" *ngFor="let entry of valuesWeight.reverse()">
                 <ion-col col-6 class="borderRight">
                   {{entry[0] | date:'dd.MM.yyyy'}}
                 </ion-col>

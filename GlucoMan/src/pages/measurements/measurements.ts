@@ -67,10 +67,10 @@ export class MeasurementsPage {
     });
   }
 
-  focusOver(){
+  focusOver() {
     this.slides.lockSwipes(true);
   }
-  focusLeave(){
+  focusLeave() {
     this.slides.lockSwipes(false);
   }
 
@@ -86,10 +86,10 @@ export class MeasurementsPage {
     this.storage.ready().then(() => {
       this.storage.get('addNewValueFromHome').then((val) => {
         //if there's a value in 'NutritionDetailList', load it to local variable
-        if(val != "" && val != undefined) {
+        if (val != "" && val != undefined) {
           this.openAddAlert(val);
         }
-        this.storage.set('addNewValueFromHome',"");
+        this.storage.set('addNewValueFromHome', "");
       });
       this.storage.get('VisibleList').then((val) => {
         if (val) {
@@ -109,21 +109,29 @@ export class MeasurementsPage {
           this.storage.get('glucoseValues').then((val) => {
             if (val) {
               this.valuesGlucose = val;
+            } else {
+              this.valuesGlucose = [];
             }
           });
           this.storage.get('bpValues').then((val) => {
             if (val) {
               this.valuesBP = val;
+            } else {
+              this.valuesBP = [];
             }
           });
           this.storage.get('pulseValues').then((val) => {
             if (val) {
               this.valuesPulse = val;
+            } else {
+              this.valuesPulse = [];
             }
           });
           this.storage.get('weightValues').then((val) => {
             if (val) {
               this.valuesWeight = val;
+            } else {
+              this.valuesWeight = [];
             }
             this.refreshPage("all");
           });
@@ -140,7 +148,7 @@ export class MeasurementsPage {
     let loading = this.loadingCtrl.create();
     loading.present();
 
-    if(typ == "g" || typ == "all") {
+    if (typ == "g" || typ == "all") {
       if (this.valuesGlucose.length > this.valuesGlucoseChart.length) {
         for (var i = 0; i < this.valuesGlucose.length; i++) {
           this.valuesGlucoseChart[i] = [this.valuesGlucose[i].date.getTime(), this.valuesGlucose[i].value];
@@ -148,7 +156,7 @@ export class MeasurementsPage {
       }
     }
 
-    switch(typ) {
+    switch (typ) {
       case "all": {
         //the charts are created by the Chart-class
         this.chartGluco = new Chart('spline', 'Blutzucker', 'mmol/L', this.valuesGlucoseChart, 25, this.vitalRangeList[0].lowerLimit, this.vitalRangeList[0].upperLimit, 0, 0);
@@ -198,17 +206,21 @@ export class MeasurementsPage {
         element.style.display = 'inline';
       }
     } catch (Error) {
-      //source navigate to the chart tag and store it to 'element'
-      let element = src.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
-      //mode is the style attribute of the chart element
-      let mode = '' + element.getAttribute('style');
-      //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
-      if (mode.search('none') < 0) {
-        //the attribute 'display' is set to none to hide the chart
-        element.style.display = 'none';
-      } else if (mode.search('none') > 0) {
-        //the attribute 'display' is set to inline to show the chart
-        element.style.display = 'inline';
+      try {
+        //source navigate to the chart tag and store it to 'element'
+        let element = src.parentNode.parentNode.parentNode.getElementsByTagName('chart')[0];
+        //mode is the style attribute of the chart element
+        let mode = '' + element.getAttribute('style');
+        //if 'style' contains the word 'none', the method 'search' returns a positive value, otherwise -1
+        if (mode.search('none') < 0) {
+          //the attribute 'display' is set to none to hide the chart
+          element.style.display = 'none';
+        } else if (mode.search('none') > 0) {
+          //the attribute 'display' is set to inline to show the chart
+          element.style.display = 'inline';
+        }
+      } catch (Error) {
+
       }
     }
   }
@@ -232,18 +244,22 @@ export class MeasurementsPage {
         element.style.display = 'inline';
       }
     } catch (Error) {
-      console.log('catched :)');
-      let element = src.parentNode.parentNode.nextElementSibling;
-      //mode is the style attribute of the chart element
-      let mode = '' + element.getAttribute('style');
-      //if 'style' contains the word 'none', the method 'search' returns a
-      //positive value, otherwise -1
-      if (mode.search('none') < 0) {
-        //the attribute 'display' is set to none to hide the chart
-        element.style.display = 'none';
-      } else if (mode.search('none') > 0) {
-        //the attribute 'display' is set to inline to show the chart
-        element.style.display = 'inline';
+      try {
+        console.log('catched :)');
+        let element = src.parentNode.parentNode.nextElementSibling;
+        //mode is the style attribute of the chart element
+        let mode = '' + element.getAttribute('style');
+        //if 'style' contains the word 'none', the method 'search' returns a
+        //positive value, otherwise -1
+        if (mode.search('none') < 0) {
+          //the attribute 'display' is set to none to hide the chart
+          element.style.display = 'none';
+        } else if (mode.search('none') > 0) {
+          //the attribute 'display' is set to inline to show the chart
+          element.style.display = 'inline';
+        }
+      } catch (Error) {
+
       }
     }
   }
@@ -253,14 +269,14 @@ export class MeasurementsPage {
    */
   hideCharts() {
     for (var key in this.visibleList) {
-      let  elements = (<HTMLElement[]><any>document.getElementsByClassName(key));
-      for(let e of elements ){
+      let elements = (<HTMLElement[]><any>document.getElementsByClassName(key));
+      for (let e of elements) {
         if (this.visibleList[key]) {
           e.style.display = 'block';
         } else {
           e.style.display = 'none';
         }
-    }
+      }
     }
   }
 
@@ -289,6 +305,7 @@ export class MeasurementsPage {
         text: null
       }, xAxis: {
         type: 'datetime',
+        ordinal: false
       }, yAxis: [{
         //there are two yAxis, on the left and on the right side, cause the different values.
         //on the left side there are values between 0 and 150, on the right side betweend 0 and 15
@@ -365,8 +382,24 @@ export class MeasurementsPage {
         followPointer: false
       },
       rangeSelector: {
-        selected: 1,
-        enabled: false,
+        allButtonsEnabled: false,
+        buttons: [{
+          type: 'week',
+          count: 1,
+          text: 'Woche',
+        }, {
+            type: 'all',
+            text: 'Gesamt'
+          }
+        ],
+        buttonTheme: {
+          width: 60
+        },
+        selected: 0,
+        //enabled: false,
+      },
+      buttonTheme: {
+        width: 60
       },
       scrollbar: {
         enabled: false,
@@ -505,44 +538,44 @@ export class MeasurementsPage {
                 let createAlert = false;
                 let alertMessage = "";
 
-                if(data.sys != "" && data.dia != "") {
-                  if(this.vitalRangeList[2].lowerLimit == this.vitalRangeList[2].upperLimit) {
+                if (data.sys != "" && data.dia != "") {
+                  if (this.vitalRangeList[2].lowerLimit == this.vitalRangeList[2].upperLimit) {
                     checkSys = false;
                   }
-                  if(this.vitalRangeList[1].lowerLimit == this.vitalRangeList[1].upperLimit) {
+                  if (this.vitalRangeList[1].lowerLimit == this.vitalRangeList[1].upperLimit) {
                     checkDia = false;
                   }
-                  if(checkSys) {
-                    if(data.sys < this.vitalRangeList[2].lowerLimit || data.sys > this.vitalRangeList[2].upperLimit) {
+                  if (checkSys) {
+                    if (data.sys < this.vitalRangeList[2].lowerLimit || data.sys > this.vitalRangeList[2].upperLimit) {
                       outOfRangeSys = true;
                     }
                   }
-                  if(checkDia) {
-                    if(data.dia < this.vitalRangeList[1].lowerLimit || data.dia > this.vitalRangeList[1].upperLimit) {
+                  if (checkDia) {
+                    if (data.dia < this.vitalRangeList[1].lowerLimit || data.dia > this.vitalRangeList[1].upperLimit) {
                       outOfRangeDia = true;
                     }
                   }
 
-                  if(outOfRangeSys && outOfRangeDia) {
+                  if (outOfRangeSys && outOfRangeDia) {
                     createAlert = true;
-                    alertMessage = 'Die eingegebenen Werte für den '+'systolischen & diastolischen Blutdruck'.bold()+
-                    ' sind ausserhalb der definierten Zielbereiche!';
+                    alertMessage = 'Die eingegebenen Werte für den ' + 'systolischen & diastolischen Blutdruck'.bold() +
+                      ' sind ausserhalb der definierten Zielbereiche!';
                   }
-                  else if(outOfRangeSys) {
+                  else if (outOfRangeSys) {
                     createAlert = true;
-                    alertMessage = 'Der eingegebene Wert für den '+'systolischen Blutdruck'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs!';
+                    alertMessage = 'Der eingegebene Wert für den ' + 'systolischen Blutdruck'.bold() +
+                      ' ist ausserhalb des definierten Zielbereichs!';
                   }
-                  else if(outOfRangeDia) {
+                  else if (outOfRangeDia) {
                     createAlert = true;
-                    alertMessage = 'Der eingegebene Wert für den '+'diastolischen Blutdruck'.bold()+
-                    ' ist ausserhalb des definierten Zielbereichs!';
+                    alertMessage = 'Der eingegebene Wert für den ' + 'diastolischen Blutdruck'.bold() +
+                      ' ist ausserhalb des definierten Zielbereichs!';
                   }
                   else {
                     this.addBloodPressure(data.sys, data.dia, new Date());
                   }
 
-                  if(createAlert) {
+                  if (createAlert) {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
                       message: alertMessage
@@ -560,7 +593,7 @@ export class MeasurementsPage {
                   let alert = this.alertCtrl.create({
                     title: 'Falsche Eingabe',
                     message: "Kein gültiger Wert eingegeben!",
-                    buttons:['OK']
+                    buttons: ['OK']
                   });
                   alert.present();
                 }
@@ -570,22 +603,22 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(data.data != "") {
+                if (data.data != "") {
 
-                  if(this.vitalRangeList[3].lowerLimit == this.vitalRangeList[3].upperLimit) {
+                  if (this.vitalRangeList[3].lowerLimit == this.vitalRangeList[3].upperLimit) {
                     check = false;
                   }
 
-                  if(check) {
-                    if(data.data < this.vitalRangeList[3].lowerLimit || data.data > this.vitalRangeList[3].upperLimit) {
+                  if (check) {
+                    if (data.data < this.vitalRangeList[3].lowerLimit || data.data > this.vitalRangeList[3].upperLimit) {
                       outOfRange = true;
                     }
                   }
 
-                  if(outOfRange) {
+                  if (outOfRange) {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
-                      message: 'Der eingegebene Wert für den '+'Puls'.bold()+
+                      message: 'Der eingegebene Wert für den ' + 'Puls'.bold() +
                       ' ist ausserhalb des definierten Zielbereichs!'
                     });
                     alert.addButton({
@@ -603,7 +636,7 @@ export class MeasurementsPage {
                   let alert = this.alertCtrl.create({
                     title: 'Falsche Eingabe',
                     message: "Kein gültiger Wert eingegeben!",
-                    buttons:['OK']
+                    buttons: ['OK']
                   });
                   alert.present();
                 }
@@ -613,21 +646,21 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(data.data != "") {
-                  if(this.vitalRangeList[4].lowerLimit == this.vitalRangeList[4].upperLimit) {
+                if (data.data != "") {
+                  if (this.vitalRangeList[4].lowerLimit == this.vitalRangeList[4].upperLimit) {
                     check = false;
                   }
 
-                  if(check) {
-                    if(data.data < this.vitalRangeList[4].lowerLimit || data.data > this.vitalRangeList[4].upperLimit) {
+                  if (check) {
+                    if (data.data < this.vitalRangeList[4].lowerLimit || data.data > this.vitalRangeList[4].upperLimit) {
                       outOfRange = true;
                     }
                   }
 
-                  if(outOfRange) {
+                  if (outOfRange) {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
-                      message: 'Der eingegebene Wert für das '+'Gewicht'.bold()+
+                      message: 'Der eingegebene Wert für das ' + 'Gewicht'.bold() +
                       ' ist ausserhalb des definierten Zielbereichs!'
                     });
                     alert.addButton({
@@ -645,7 +678,7 @@ export class MeasurementsPage {
                   let alert = this.alertCtrl.create({
                     title: 'Falsche Eingabe',
                     message: "Kein gültiger Wert eingegeben!",
-                    buttons:['OK']
+                    buttons: ['OK']
                   });
                   alert.present();
                 }
@@ -655,21 +688,21 @@ export class MeasurementsPage {
                 let check = true;
                 let outOfRange = false;
 
-                if(data.data != "") {
-                  if(this.vitalRangeList[0].lowerLimit == this.vitalRangeList[0].upperLimit) {
+                if (data.data != "") {
+                  if (this.vitalRangeList[0].lowerLimit == this.vitalRangeList[0].upperLimit) {
                     check = false;
                   }
 
-                  if(check) {
-                    if(data.data < this.vitalRangeList[0].lowerLimit || data.data > this.vitalRangeList[0].upperLimit) {
+                  if (check) {
+                    if (data.data < this.vitalRangeList[0].lowerLimit || data.data > this.vitalRangeList[0].upperLimit) {
                       outOfRange = true;
                     }
                   }
 
-                  if(outOfRange) {
+                  if (outOfRange) {
                     let alert = this.alertCtrl.create({
                       title: 'Werte-Prüfung',
-                      message: 'Der eingegebene Wert für den '+'Blutzucker'.bold()+
+                      message: 'Der eingegebene Wert für den ' + 'Blutzucker'.bold() +
                       ' ist ausserhalb des definierten Zielbereichs!'
                     });
                     alert.addButton({
@@ -687,7 +720,7 @@ export class MeasurementsPage {
                   let alert = this.alertCtrl.create({
                     title: 'Falsche Eingabe',
                     message: "Kein gültiger Wert eingegeben!",
-                    buttons:['OK']
+                    buttons: ['OK']
                   });
                   alert.present();
                 }
@@ -717,7 +750,7 @@ export class MeasurementsPage {
     let val: number = parseFloat(v);
     this.valuesWeight.push([d.getTime(), val]);
     this.storage.ready().then(() => {
-      this.storage.set('weightValues', this.valuesWeight.sort().reverse());
+      this.storage.set('weightValues', this.valuesWeight.sort());
       this.saveMIDATAWeight(val, d);
       this.refreshPage("w");
     });
@@ -733,7 +766,7 @@ export class MeasurementsPage {
     let val: number = parseInt(v);
     this.valuesPulse.push([d.getTime(), val]);
     this.storage.ready().then(() => {
-      this.storage.set('pulseValues', this.valuesPulse.sort().reverse());
+      this.storage.set('pulseValues', this.valuesPulse.sort());
       this.saveMIDATAPulse(val, d);
       this.refreshPage("p");
     });
@@ -751,7 +784,7 @@ export class MeasurementsPage {
     let val2: number = parseInt(v2);
     this.valuesBP.push([d.getTime(), val1, val2]);
     this.storage.ready().then(() => {
-      this.storage.set('bpValues', this.valuesBP.sort().reverse());
+      this.storage.set('bpValues', this.valuesBP.sort());
       this.saveMIDATABloodPressure(val1, val2, d);
       this.refreshPage("bp");
     });
@@ -772,7 +805,7 @@ export class MeasurementsPage {
     }
     this.valuesGlucose.push(gluco);
     this.storage.ready().then(() => {
-      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues).reverse());
+      this.storage.set('glucoseValues', this.valuesGlucose.sort(this.compareGlucoseValues));
       this.saveMIDATAGlucose(gluco.value, d, e);
       this.refreshPage("g");
     });
