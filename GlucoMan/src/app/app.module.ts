@@ -46,6 +46,9 @@ Highcharts.setOptions({
     shortWeekdays: ['So', 'Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa'],
     resetZoom: 'alles anzeigen'
   },
+  global: {
+    timezoneOffset: -2 * 60
+}
 });
 
 export { Highcharts };

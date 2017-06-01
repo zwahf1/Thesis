@@ -674,7 +674,11 @@ export class NutritionPage {
    * @param  {number} port  portion of product
    * @param  {number} carbo carbohydrates of product
    */
-  newNutrition(desc: string, port: number, carbo: number) {
+  newNutrition(desc: string, port?: number, carbo?: number) {
+
+    port > 0 ? null : port = 0;
+    carbo > 0 ? null : carbo = 0;
+
     this.nutritionDetailList.push(new DetailNutrition(desc, port, carbo));
     //save the updated list and create the new nutrition list
     this.saveDetailList();
