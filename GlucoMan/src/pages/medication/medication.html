@@ -13,28 +13,28 @@
   <ion-list class="mediList">
 
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Regelmässige Medikamente </ion-item-divider>
-    <p *ngIf="chronicMedis == 0 || chronicMedis == null">In dieser Kategorie sind kein Medikamente vorhanden.</p>
+    <p *ngIf="chronicMedis == 0 || chronicMedis == null">In dieser Kategorie sind keine Medikamente vorhanden.</p>
     <div>
       <ion-item *ngFor="let m of chronicMedis" (click)="detailMedi(chronicMedis, m)" text-wrap class="medi">
         {{m.article.title}}
       </ion-item>
     </div>
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Selbstgekaufte Medikamente </ion-item-divider>
-    <p *ngIf="selfMedis == 0 || selfMedis == null">In dieser Kategorie sind kein Medikamente vorhanden.</p>
+    <p *ngIf="selfMedis == 0 || selfMedis == null">In dieser Kategorie sind keine Medikamente vorhanden.</p>
     <div>
       <ion-item *ngFor="let m of selfMedis" (click)="detailMedi(selfMedis, m)" text-wrap class="medi">
         {{m.article.title}}
       </ion-item>
     </div>
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Insulin </ion-item-divider>
-    <p *ngIf="insulin == 0 || insulin == null">In dieser Kategorie sind kein Medikamente vorhanden.</p>
+    <p *ngIf="insulin == 0 || insulin == null">In dieser Kategorie sind keine Medikamente vorhanden.</p>
     <div>
       <ion-item *ngFor="let m of insulin" (click)="detailMedi(insulin, m)" text-wrap class="medi">
         {{m.article.title}}
       </ion-item>
     </div>
     <ion-item-divider class="divider" (click)="expand($event.srcElement)"> Unverträglichkeiten </ion-item-divider>
-    <p *ngIf="intolerances == 0 || intolerances == null">In dieser Kategorie sind kein Medikamente vorhanden.</p>
+    <p *ngIf="intolerances == 0 || intolerances == null">In dieser Kategorie sind keine Medikamente vorhanden.</p>
     <div>
       <ion-item *ngFor="let m of intolerances" (click)="detailMedi(intolerances, m)" text-wrap class="medi">
         {{m.article.title}}
