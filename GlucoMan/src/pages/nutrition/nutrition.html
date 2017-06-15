@@ -9,12 +9,12 @@
   </ion-navbar>
 </ion-header>
 <ion-content>
-  <ion-slides pager>
+  <ion-slides pager (ionSlideDidChange)="slideChanged()">
     <ion-slide>
       <content>
         <div id="nutrition">
           <ion-item-divider class="divider" (click)="expand($event.srcElement)">Kohlenhydrate</ion-item-divider>
-          <chart class='c' type="StockChart" [options]="chartCarbo"></chart>
+          <chart class='c' type="StockChart" (touchstart)="focusOver();" (touchend)="focusLeave();" [options]="chartCarbo"></chart>
         </div>
         <p *ngIf="nutritionDetailList == 0">Es sind keine Einträge zur Ernährung vorhanden.</p>
         <table *ngIf="nutritionDetailList != 0">

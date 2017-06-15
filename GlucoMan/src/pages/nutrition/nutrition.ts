@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { DayNutrition } from '../../util/DayNutrition';
 import { DetailNutrition } from '../../util/DetailNutrition';
-import { Platform, AlertController, ActionSheetController} from 'ionic-angular';
+import { Platform, AlertController, ActionSheetController, Slides, Content } from 'ionic-angular';
 import { Storage } from '@ionic/storage';
 
 declare var cordova: any;
@@ -20,6 +20,9 @@ declare var cordova: any;
 })
 
 export class NutritionPage {
+  @ViewChild(Slides) slides: Slides;
+  @ViewChild(Content) content: Content;
+
   //list with every single nutrition
   nutritionDetailList: DetailNutrition[] = [];
   //list with all nutrition of one day with, divided per time of day
@@ -64,6 +67,26 @@ export class NutritionPage {
         }
       });
     });
+  }
+  
+  /**
+   * Method to lock swipe, if focus is over the chart
+   */
+    focusOver() {
+      this.slides.lockSwipes(true);
+    }
+    /**
+     * Method to unlock swipe, if focus leaves the chart
+     */
+    focusLeave() {
+      this.slides.lockSwipes(false);
+    }
+
+  /**
+   * Method to scroll to top after slide changed
+   */
+  slideChanged() {
+    this.content.scrollToTop();
   }
 
   /**

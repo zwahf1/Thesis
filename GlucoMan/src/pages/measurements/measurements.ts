@@ -66,10 +66,15 @@ export class MeasurementsPage {
       this.storage.set('changeTheMeasurementsView', true);
     });
   }
-
+/**
+ * Method to lock swipe, if focus is over the chart
+ */
   focusOver() {
     this.slides.lockSwipes(true);
   }
+  /**
+   * Method to unlock swipe, if focus leaves the chart
+   */
   focusLeave() {
     this.slides.lockSwipes(false);
   }
